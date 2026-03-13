@@ -1,5 +1,9 @@
 package com.a6dig.digitalsignage.entity;
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> dev
 import jakarta.persistence.*;
 
 @Entity
