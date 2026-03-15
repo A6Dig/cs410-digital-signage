@@ -165,7 +165,8 @@ erDiagram
     DeviceGroup }|--o| Layout : uses
     Layout ||--o{ LayoutSlot : contains
     LayoutSlot }o--|| Module : displays
-    AdCollection ||--|{ AdContent : has
+    AdCollection ||--|{ AdCollectionContentLink : has
+    AdCollectionContentLink }|--|| AdContent : has
     Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 
@@ -247,14 +248,18 @@ DATETIME updatedAt
 
 AdContent {
 BIGINT id pk
-BIGINT AdCollectionId fk
 VARCHAR(5) name
 VARCHAR url(255)
 ENUM type "IMAGE | VIDEO"
-INT displayOrder
-INT durationSeconds
 DATETIME createdAt
 DATETIME updatedAt
+}
+
+AdCollectionContentLink {
+BIGINT AdCollectionId fk
+BIGINT AdContentId fk
+INT displayOrder
+INT durationSeconds
 }
 
 ```
@@ -2377,7 +2382,6 @@ DATETIME updatedAt
                     "adContent": [
                         {
                             "id": 1,
-                            "adCollectionId": 1,
                             "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
                             "type": "IMAGE",
                             "displayOrder": 1,
@@ -2385,7 +2389,6 @@ DATETIME updatedAt
                         },
                         {
                             "id": 2,
-                            "adCollectionId": 1,
                             "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
                             "type": "VIDEO",
                             "displayOrder": 2,
@@ -2502,7 +2505,6 @@ DATETIME updatedAt
                     "adContent": [
                         {
                             "id": 1,
-                            "adCollectionId": 1,
                             "url": "https://cdn.somecloudjson.com/assets/march-events-img1.jpg",
                             "type": "IMAGE",
                             "displayOrder": 1,
@@ -2510,7 +2512,6 @@ DATETIME updatedAt
                         },
                         {
                             "id": 2,
-                            "adCollectionId": 1,
                             "url": "https://cdn.somecloudjson.com/assets/march-events-video.mp4",
                             "type": "VIDEO",
                             "displayOrder": 2,
@@ -2639,36 +2640,50 @@ DATETIME updatedAt
         "data": [
                     {
                         "id": 1,
-                        "adCollectionId": 1,
                         "name": "March Event Image",
                         "url": "/localstorage/marchevent.jpg",
                         "type": "IMAGE",
                         "displayOrder": 2,
                         "durationSeconds": 30,
                         "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                        "adCollection": [{
+                                            "id": 1,
+                                            "name": "Custom Ad Collection",
+                                            "url": null,
+                                            "createdAt": "2026-03-15T02:45:45:00Z",
+                                            "updatedAt": "2026-03-15T03:10:45:00Z"
+                                        }
+                                    ]
                     },
                     {
                         "id": 2,
-                        "adCollectionId": 2,
                         "name": "June Event Video",
                         "url": "https://someremoteurl.com/juneevent.mp4",
                         "type": "VIDEO",
                         "displayOrder": 1,
                         "durationSeconds": 30,
                         "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                        "adCollection": [{
+                                            "id": 1,
+                                            "name": "Custom Ad Collection",
+                                            "url": null,
+                                            "createdAt": "2026-03-15T02:45:45:00Z",
+                                            "updatedAt": "2026-03-15T03:10:45:00Z"
+                                        }
+                                    ]
                     },
                     {
                         "id": 2,
-                        "adCollectionId": 1,
                         "name": "Some Random Event",
                         "url": "https://someremoteurl.com/somethingelse.mp4",
                         "type": "VIDEO",
                         "displayOrder": 1,
                         "durationSeconds": 30,
                         "createdAt": "2026-03-15T02:45:45:00Z",
-                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                        "adCollection": []
                     },
                 ],
         "errors":[]
@@ -2702,14 +2717,21 @@ DATETIME updatedAt
                 
                 {
                     "id": 1,
-                    "adCollectionId": 1,
                     "name": "March Event Image",
                     "url": "/localstorage/marchevent.jpg",
                     "type": "IMAGE",
-                    "displayOrder": 2,
-                    "durationSeconds": 30,
                     "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                    "adCollection": [{
+                                        "id": 1,
+                                        "name": "Custom Ad Collection",
+                                        "url": null,
+                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                                        "displayOrder": 2,
+                                        "durationSeconds": 30,
+                                    }
+                                ]
                 },
                 
         "errors":[]
@@ -2746,9 +2768,7 @@ DATETIME updatedAt
     {
         "name": "March Event Image",
         "url": "/localstorage/marchevent.jpg",
-        "type": "IMAGE",
-        "displayOrder": 2,
-        "durationSeconds": 30
+        "type": "IMAGE"
     }
 
     RESPONSE 201
@@ -2758,14 +2778,12 @@ DATETIME updatedAt
         "message": "Ad content created successfully",
         "data": {
                     "id": 1,
-                    "adCollectionId": null,
                     "name": "March Event Image",
                     "url": "/localstorage/marchevent.jpg",
                     "type": "IMAGE",
-                    "displayOrder": 2,
-                    "durationSeconds": 30,
                     "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                    "updatedAt": "2026-03-15T03:10:45:00Z",
+                    "adCollection": []
                 },
         "errors":[]
     }
@@ -2806,12 +2824,19 @@ DATETIME updatedAt
 
     REQUEST
     {
-        "adCollectionId": 1,                // updated . assigned to an ad collection
         "name": "March Event Image",
         "url": "/localstorage/marchevent.jpg",
         "type": "IMAGE",
-        "displayOrder": 2,
-        "durationSeconds": 30
+        "adCollection": [{                // updated . assigned to an ad collection
+                            "id": 1,
+                            "name": "Custom Ad Collection",
+                            "url": null,
+                            "createdAt": "2026-03-15T02:45:45:00Z",
+                            "updatedAt": "2026-03-15T03:10:45:00Z",
+                            "displayOrder": 2,
+                            "durationSeconds": 30
+                        }
+                    ]
     }
 
 
@@ -2822,14 +2847,21 @@ DATETIME updatedAt
         "message": "Ad content updated successfully",
         "data": {
                     "id": 1,
-                    "adCollectionId": 1,
                     "name": "March Event Image",
                     "url": "/localstorage/marchevent.jpg",
                     "type": "IMAGE",
-                    "displayOrder": 2,
-                    "durationSeconds": 30,
                     "createdAt": "2026-03-15T02:45:45:00Z",
                     "updatedAt": "2026-03-15T03:10:45:00Z"
+                    "adCollection": [{                // updated . assigned to an ad collection
+                                        "id": 1,
+                                        "name": "Custom Ad Collection",
+                                        "url": null,
+                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                                        "displayOrder": 2,
+                                        "durationSeconds": 30
+                                    }
+                                ]
                 },
         "errors":[]
     }
