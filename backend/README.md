@@ -403,27 +403,42 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
     RESPONSE 200
 
-    [
+    {
+        "status": 200,
+        "message": "",
+        "data": [
 
-        {
-            "id": 1,
-            "name": "Campus Center Default",
-            "col": 2,           // total number of columns
-            "row": 1,           // total number of rows
-            "createdAt": "2026-03-15T02:13:45:00Z",
-            "updatedAt": "2026-03-15T02:13:45:00Z"
-        },
+                    {
+                        "id": 1,
+                        "name": "Campus Center Default",
+                        "col": 2,           // total number of columns
+                        "row": 1,           // total number of rows
+                        "createdAt": "2026-03-15T02:13:45:00Z",
+                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                    },
+            
+                    {
+                        "id": 2,
+                        "name": "Test Layout",
+                        "col": 2,           // total number of columns
+                        "row": 3,           // total number of rows
+                        "createdAt": "2026-03-15T02:13:45:00Z",
+                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                    },
+                ],
+        "errors":[]
+    }
+    
+    RESPONSE 500
 
-        {
-            "id": 2,
-            "name": "Test Layout",
-            "col": 2,           // total number of columns
-            "row": 3,           // total number of rows
-            "createdAt": "2026-03-15T02:13:45:00Z",
-            "updatedAt": "2026-03-15T02:13:45:00Z"
-        },
-    ]
-
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
 </details>
 
 
@@ -441,14 +456,43 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     RESPONSE 201
 
     {
-        "id": 3,
-        "name": "Anohter Layout",
-        "col": 2,           // total number of columns
-        "row": 2,           // total number of rows
-        "createdAt": "2026-03-15T02:45:45:00Z",
-        "updatedAt": "2026-03-15T02:45:45:00Z"
+        "status": 201,
+        "message": "Layout created successfully",
+        "data": {
+                    "id": 3,
+                    "name": "Anohter Layout",
+                    "col": 2,           // total number of columns
+                    "row": 2,           // total number of rows
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T02:45:45:00Z"
+                },
+        "errors":[]
     }
 
+    
+    RESPONSE 400
+
+    {
+        "status": 400,
+        "message": "Validation failed",
+        "data": null,
+        "errors":[
+            {"error": "Grid column is not defined"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
 </details>
 
 
@@ -457,13 +501,44 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
     RESPONSE 200
 
+    
     {
-        "id": 3,
-        "name": "Anohter Layout",
-        "col": 2,           // total number of columns
-        "row": 2,           // total number of rows
-        "createdAt": "2026-03-15T02:45:45:00Z",
-        "updatedAt": "2026-03-15T02:45:45:00Z"
+        "status": 200,
+        "message": "",
+        "data": {
+                    "id": 3,
+                    "name": "Anohter Layout",
+                    "col": 2,           // total number of columns
+                    "row": 2,           // total number of rows
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T02:45:45:00Z"
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout with id 3 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
     }
 
 </details>
@@ -482,13 +557,44 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
     RESPONSE 200
 
+    
     {
-        "id": 3,
-        "name": "Updated Layout Name",
-        "col": 2,           // total number of columns
-        "row": 2,           // total number of rows
-        "createdAt": "2026-03-15T02:45:45:00Z",
-        "updatedAt": "2026-03-15T03:10:45:00Z"
+        "status": 200,
+        "message": "Layout updated successfully",
+        "data": {
+                    "id": 3,
+                    "name": "Updated Layout Name",
+                    "col": 2,           // total number of columns
+                    "row": 2,           // total number of rows
+                    "createdAt": "2026-03-15T02:45:45:00Z",
+                    "updatedAt": "2026-03-15T03:10:45:00Z"
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout with id 3 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
     }
 
 </details>
@@ -498,10 +604,39 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     <summary><b>DELETE</b> /api/layouts/3</summary>
 
 
+
     RESPONSE 200
 
     {
-        "message": "Layout deleted successfully."
+        "status": 200,
+        "message": "Layout deleted successfully.",
+        "data": null,
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout with id 3 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
     }
 
 </details>
@@ -520,6 +655,10 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         <td>Returns all layout slots</td>
     </tr>
     <tr>
+        <td>GET</td><td>/api/layouts/{id}/slots/{slotId}</td>
+        <td>Returns a layout slot.</td>
+    </tr>
+    <tr>
         <td>POST</td><td>/api/layouts/{id}/slots</td>
         <td>Add a new layout slot</td>
     </tr>
@@ -528,7 +667,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         <td>Updates a layout slot</td>
     </tr>
     <tr>
-        <td>GET</td><td>/api/layouts/{id}/slots/{slotId}</td>
+        <td>DELETE</td><td>/api/layouts/{id}/slots/{slotId}</td>
         <td>Deletes a slot from the layout.</td>
     </tr>
 </table>
@@ -538,33 +677,98 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 <details>
     <summary><b>GET</b> /api/layouts/1/slots</summary>
-    
+
+
     RESPONSE 200
 
-    [
+    {
+        "status": 200,
+        "message": "",
+        "data": [
+                    {
+                        "id": 1,
+                        "layoutId": 1,
+                        "moduleId": 1,
+                        "gridCol": 1,
+                        "gridRow": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1
+                    },
+                    {
+                        "id": 2,
+                        "layoutId": 2,
+                        "moduleId": 2,
+                        "gridCol": 2,
+                        "gridRow": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1
+                    }
+                ],
+        "errors":[]
+    }
+    
+    RESPONSE 500
 
-        {
-            "id": 1,
-            "layoutId": 1,
-            "moduleId": 1,
-            "gridCol": 1,
-            "gridRow": 1,
-            "colSpan": 1,
-            "rowSpan": 1,
-            "zIndex": 1
-        },
-        {
-            "id": 2,
-            "layoutId": 2,
-            "moduleId": 2,
-            "gridCol": 2,
-            "gridRow": 1,
-            "colSpan": 1,
-            "rowSpan": 1,
-            "zIndex": 1
-        }
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
 
-    ]
+</details>
+
+
+<details>
+    <summary><b>GET</b> /api/layouts/1/slots/1</summary>
+
+
+    RESPONSE 200
+
+    {
+        "status": 200,
+        "message": "",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 2,
+                    "gridCol": 1,
+                    "gridRow": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout slot not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout slot with id 1 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
 
 </details>
 
@@ -587,15 +791,47 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     RESPONSE 201
 
     {
-        "id": 1,
-        "layoutId": 1,
-        "moduleId": 1,
-        "gridCol": 1,
-        "gridRow": 1,
-        "colSpan": 1,
-        "rowSpan": 1,
-        "zIndex": 1
+        "status": 201,
+        "message": "Layout slot created successfully",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 1,
+                    "gridCol": 1,
+                    "gridRow": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1
+                },
+        "errors":[]
     }
+
+    
+    RESPONSE 400
+
+    {
+        "status": 400,
+        "message": "Validation failed",
+        "data": null,
+        "errors":[
+            {"error": "Grid column is not defined"},
+            {"error": "Grid row is not defined"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
+    
 
 </details>
 
@@ -603,7 +839,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 
 <details>
-    <summary><b>PUT</b> /api/layouts/1/slots/{slotId}</summary>
+    <summary><b>PUT</b> /api/layouts/1/slots/1</summary>
 
     REQUEST
     {
@@ -614,20 +850,50 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         "colSpan": 1,
         "rowSpan": 1,
         "zIndex": 1
-
     }
+
 
     RESPONSE 200
 
     {
-        "id": 1,
-        "layoutId": 1,
-        "moduleId": 2,
-        "gridCol": 1,
-        "gridRow": 1,
-        "colSpan": 1,
-        "rowSpan": 1,
-        "zIndex": 1
+        "status": 200,
+        "message": "Layout slot updated successfully",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 2,
+                    "gridCol": 1,
+                    "gridRow": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout slot not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout slot with id 1 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
     }
 
 </details>
@@ -635,13 +901,41 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 
 <details>
-    <summary><b>DELETE</b> /api/layouts/1/slots/{slotId}</summary>
+    <summary><b>DELETE</b> /api/layouts/1/slots/1</summary>
 
 
     RESPONSE 200
 
     {
-        "message": "Layout slot deleted successfully."
+        "status": 200,
+        "message": "Layout slot deleted successfully.",
+        "data": null,
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout slot not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout slot with id 1 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
     }
 
 </details>
