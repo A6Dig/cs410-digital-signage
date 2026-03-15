@@ -149,3 +149,92 @@ Each developer will write their own test code and modular test methods to ensure
 **Merging to GitHub Main Branch:**
 
 Every time someone does a pull request, run all the tests! Even though some tests might not be part of the work being merged, we should run all tests to make sure that someone's development didn't break another part of the software. The same process should be followed even if there is only a single line of code change. **Run all the tests and make sure they all pass.**
+
+## Database Architecture ERD
+
+### Database Name: digitalsignagedb
+
+```mermaid
+erDiagram
+DeviceGroup ||--o{ Device : has
+DeviceGroup ||--o{ Layout : uses
+Layout ||--o{ LayoutSlot : contains
+LayoutSlot }o--|| Module : displays
+AdCollection ||--|{ AdContent : has
+Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
+
+
+    User {
+        BIGINT id pk
+        VARCHAR(50) username
+        VARCHAR(50) email
+        VARCHAR(255) password
+        ENUM role "ADMIN"
+    }
+
+    DeviceGroup {
+        BIGINT id pk
+        VARCHAR(50) name
+        VARCHAR(255) description
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+
+    Device {
+        BIGINT id pk
+        VARCHAR(50) name
+        VARCHAR(50) pairingId
+        ENUM status "ONLINE | OFFLINE"
+        BIGINT DeviceGroupId fk
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+
+    Layout {
+        BIGINT id pk
+        VARCHAR(50) name
+        INT col
+        INT row
+        BIGINT DeviceGroupId fk
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+
+    LayoutSlot {
+        BIGINT id pk
+        BIGINT layoutId fk
+        BIGINT moduleId fk
+        INT gridCol
+        INT gridRow
+        INT colSpan
+        INT rowSpan
+        INT zIndex
+    }
+
+    Module {
+        BIGINT id pk
+        VARCHAR(50) name
+        ENUM type "CLOCK | WEATHER | ROTATING_AD"
+        JSON config
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+
+    AdCollection {
+        BIGINT id pk
+        VARCHAR(50) name
+        VARCHAR(255) url
+        DATETIME createdAt
+        DATETIME updatedAt
+    }
+
+    AdContent {
+        BIGINT id pk
+        BIGINT AdCollectionId fk
+        VARCHAR url(255)
+        ENUM type "IMAGE | VIDEO"
+        INT displayOrder
+        INT durationSeconds
+    }
+
+```
