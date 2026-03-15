@@ -156,92 +156,91 @@ Every time someone does a pull request, run all the tests! Even though some test
 
 ```mermaid
 erDiagram
-Device ||--|| Layout : "uses Layout. 
+    Device ||--|| Layout : "uses Layout. 
                         if DeviceGroup.layoutId <> NULL 
                         THEN show this layout
                         ELSE override with layout from DeviceGroup"
-DeviceGroup ||--o{ Device : has
-DeviceGroup }|--o| Layout : uses
-Layout ||--o{ LayoutSlot : contains
-LayoutSlot }o--|| Module : displays
-AdCollection ||--|{ AdContent : has
-Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
+    DeviceGroup ||--o{ Device : has
+    DeviceGroup }|--o| Layout : uses
+    Layout ||--o{ LayoutSlot : contains
+    LayoutSlot }o--|| Module : displays
+    AdCollection ||--|{ AdContent : has
+    Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 
     User {
-        BIGINT id pk
+BIGINT id pk
         VARCHAR(50) username
-        VARCHAR(50) email
-        VARCHAR(255) password
-        ENUM role "ADMIN"
+VARCHAR(50) email
+VARCHAR(255) password
+ENUM role "ADMIN"
+}
+
+DeviceGroup {
+BIGINT id pk
+BIGINT layoutId fk
+VARCHAR(50) name
+VARCHAR(255) description
+DATETIME createdAt
+DATETIME updatedAt
     }
 
-    DeviceGroup {
-        BIGINT id pk
-        BIGINT layoutId fk
-        VARCHAR(50) name
-        VARCHAR(255) description
-        DATETIME createdAt
-        DATETIME updatedAt
+Device {
+BIGINT id pk
+BIGINT layoutId fk
+VARCHAR(50) name
+VARCHAR(50) pairingId
+ENUM status "ONLINE | OFFLINE"
+BIGINT DeviceGroupId fk
+DATETIME createdAt
+DATETIME updatedAt
     }
 
-    Device {
-        BIGINT id pk
-        BIGINT layoutId fk
-        VARCHAR(50) name
-        VARCHAR(50) pairingId
-        ENUM status "ONLINE | OFFLINE"
-        BIGINT DeviceGroupId fk
-        DATETIME createdAt
-        DATETIME updatedAt
-    }
+Layout {
+BIGINT id pk
+VARCHAR(50) name
+INT col
+INT row
+DATETIME createdAt
+DATETIME updatedAt
+}
 
-    Layout {
-        BIGINT id pk
-        VARCHAR(50) name
-        INT col
-        INT row
-        BIGINT DeviceGroupId fk
-        DATETIME createdAt
-        DATETIME updatedAt
-    }
+LayoutSlot {
+BIGINT id pk
+BIGINT layoutId fk
+BIGINT moduleId fk
+INT gridCol
+INT gridRow
+INT colSpan
+INT rowSpan
+INT zIndex
+}
 
-    LayoutSlot {
-        BIGINT id pk
-        BIGINT layoutId fk
-        BIGINT moduleId fk
-        INT gridCol
-        INT gridRow
-        INT colSpan
-        INT rowSpan
-        INT zIndex
-    }
+Module {
+BIGINT id pk
+VARCHAR(50) name
+ENUM type "CLOCK | WEATHER | ROTATING_AD"
+JSON config
+DATETIME createdAt
+DATETIME updatedAt
+}
 
-    Module {
-        BIGINT id pk
-        VARCHAR(50) name
-        ENUM type "CLOCK | WEATHER | ROTATING_AD"
-        JSON config
-        DATETIME createdAt
-        DATETIME updatedAt
-    }
+AdCollection {
+BIGINT id pk
+VARCHAR(50) name
+VARCHAR(255) url
+DATETIME createdAt
+DATETIME updatedAt
+}
 
-    AdCollection {
-        BIGINT id pk
-        VARCHAR(50) name
-        VARCHAR(255) url
-        DATETIME createdAt
-        DATETIME updatedAt
-    }
-
-    AdContent {
-        BIGINT id pk
-        BIGINT AdCollectionId fk
-        VARCHAR url(255)
-        ENUM type "IMAGE | VIDEO"
-        INT displayOrder
-        INT durationSeconds
-    }
+AdContent {
+BIGINT id pk
+BIGINT AdCollectionId fk
+VARCHAR url(255)
+ENUM type "IMAGE | VIDEO"
+INT displayOrder
+INT durationSeconds
+}
 
 ```
 
@@ -400,7 +399,7 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 ##### JSON Request and Response
 
 <details>
-    <summary><b>GET</b> /api/layouts/1/slots</summary>
+    <summary><b>GET</b> /api/layouts</summary>
 
     RESPONSE 200
 
@@ -411,7 +410,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
             "name": "Campus Center Default",
             "col": 2,           // total number of columns
             "row": 1,           // total number of rows
-            "deviceGroupId": 1,
             "createdAt": "2026-03-15T02:13:45:00Z",
             "updatedAt": "2026-03-15T02:13:45:00Z"
         },
@@ -421,7 +419,6 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
             "name": "Test Layout",
             "col": 2,           // total number of columns
             "row": 3,           // total number of rows
-            "deviceGroupId": 1,
             "createdAt": "2026-03-15T02:13:45:00Z",
             "updatedAt": "2026-03-15T02:13:45:00Z"
         },
@@ -429,6 +426,85 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
 
 </details>
 
+
+<details>
+    <summary><b>POST</b> /api/layouts</summary>
+
+    REQUEST
+    
+    {
+        "name": "Another Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+    }
+
+    RESPONSE 201
+
+    {
+        "id": 3,
+        "name": "Anohter Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T02:45:45:00Z"
+    }
+
+</details>
+
+
+<details>
+    <summary><b>GET</b> /api/layouts/3</summary>
+
+    RESPONSE 200
+
+    {
+        "id": 3,
+        "name": "Anohter Layout",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T02:45:45:00Z"
+    }
+
+</details>
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/3</summary>
+
+    REQUEST
+        {
+            "name": "Updated Layout Name",
+            "col": 2,
+            "row": 2
+        }
+
+    RESPONSE 200
+
+    {
+        "id": 3,
+        "name": "Updated Layout Name",
+        "col": 2,           // total number of columns
+        "row": 2,           // total number of rows
+        "createdAt": "2026-03-15T02:45:45:00Z",
+        "updatedAt": "2026-03-15T03:10:45:00Z"
+    }
+
+</details>
+
+
+<details>
+    <summary><b>DELETE</b> /api/layouts/3</summary>
+
+
+    RESPONSE 200
+
+    {
+        "message": "Layout deleted successfully."
+    }
+
+</details>
 
 
 ### Layout Slots
