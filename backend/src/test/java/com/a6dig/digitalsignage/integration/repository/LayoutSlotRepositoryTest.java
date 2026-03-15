@@ -1,8 +1,9 @@
 package com.a6dig.digitalsignage.integration.repository;
 
+import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
-import com.a6dig.digitalsignage.repository.LayoutRespository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
+import com.a6dig.digitalsignage.repository.LayoutRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -17,12 +18,15 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
-class LayoutRespositoryTest {
+class LayoutSlotRepositoryTest {
     @Autowired
     private LayoutSlotRepository layoutSlotRepository;
 
-    private LayoutSlot build(Long moduleId, int col, int row, int colSpan, int rowSpan){
-        LayoutSlot layoutSlot = new LayoutSlot();
+    @Autowired
+    private LayoutRepository layoutRepository;
+
+    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan){
+        LayoutSlot layoutSlot = new LayoutSlot(layout);
         layoutSlot.setModuleId(moduleId);
         layoutSlot.setGridCol(col);
         layoutSlot.setGridRow(row);
@@ -32,10 +36,23 @@ class LayoutRespositoryTest {
         return layoutSlot;
     }
 
+
+
+    private Layout buildLayout(String name, int col, int row){
+        Layout layout = new Layout();
+        layout.setName(name);
+        layout.setLayoutCol(col);
+        layout.setLayoutRow(row);
+        return layout;
+    }
+
     // GET
     @Test
     void shouldFindById(){
-        LayoutSlot layoutSlot = this.build(1L, 2, 2, 2,1);
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout, 1L, 2, 2, 2,1);
+
+
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
@@ -53,8 +70,16 @@ class LayoutRespositoryTest {
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldFindAllLayouts(){
         List<LayoutSlot> layoutSlots = new ArrayList<>();
-        layoutSlots.add(this.build(1L, 2, 2, 2,1));
-        layoutSlots.add(this.build(1L, 2, 2, 2,1));
+
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(savedLayout, 1L,2, 2, 2,1);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(savedLayout,1L, 2, 2, 2,1);
+
+
+
+        layoutSlots.add(layoutSlot1);
+        layoutSlots.add(layoutSlot2);
 
         List<LayoutSlot> saved = layoutSlotRepository.saveAll(layoutSlots);
 
@@ -84,7 +109,12 @@ class LayoutRespositoryTest {
 
     @Test
     void shouldSave(){
-        LayoutSlot layoutSlot = this.build(1L, 2, 2, 2,1);
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout,1L, 2, 2, 2,1);
+
+
+
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
@@ -103,7 +133,12 @@ class LayoutRespositoryTest {
     // PUT
     @Test
     void shouldUpdateModule(){
-        LayoutSlot layoutSlot = this.build(1L, 2, 2, 2,1);
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout,1L, 2, 2, 2,1);
+
+
+
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
@@ -125,7 +160,12 @@ class LayoutRespositoryTest {
 
     @Test
     void shouldUpdateColRow(){
-        LayoutSlot layoutSlot = this.build(1L, 2, 2, 2,1);
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout,1L, 2, 2, 2,1);
+
+
+
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
@@ -149,7 +189,11 @@ class LayoutRespositoryTest {
 
     @Test
     void shouldUpdateColSpanRowSpan(){
-        LayoutSlot layoutSlot = this.build(1L, 2, 2, 2,1);
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout, 1L, 2, 2, 2,1);
+
+
 
         LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
 
@@ -175,14 +219,23 @@ class LayoutRespositoryTest {
     // DELETE
     @Test
     void shouldDeleteById() {
-        LayoutSlot saved = layoutSlotRepository.save(this.build(1L, 2, 2, 2,1));
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout, 1L, 2, 2, 2,1);
+
+
+
+
+        LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
         layoutSlotRepository.deleteById(saved.getId());
         assertFalse(layoutSlotRepository.findById(saved.getId()).isPresent());
     }
     @Test
     void shouldDeleteAll() {
-        layoutSlotRepository.save(this.build(1L, 2, 2, 2,1));
-        layoutSlotRepository.save(this.build(1L, 22, 22, 2,1));
+
+        Layout layout = this.buildLayout("Default Layout", 2,2);
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout, 1L, 2, 2, 2,1);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout, 1L, 22, 22, 2,1);
 
         layoutSlotRepository.deleteAll();
         assertEquals(0, layoutSlotRepository.count());
@@ -197,7 +250,13 @@ class LayoutRespositoryTest {
     // EXISTENCE
     @Test
     void shouldReturnTrueWhenExist() {
-        LayoutSlot saved = layoutSlotRepository.save(this.build(1L, 2, 2, 2,1));
+        Layout savedLayout = layoutRepository.save(this.buildLayout("Default Layout", 2,2));
+
+        LayoutSlot layoutSlot = this.buildLayoutSlot(savedLayout, 1L, 2, 2, 2,1);
+
+
+
+        LayoutSlot saved = layoutSlotRepository.save(layoutSlot);
         assertTrue(layoutSlotRepository.findById(saved.getId()).isPresent());
     }
 

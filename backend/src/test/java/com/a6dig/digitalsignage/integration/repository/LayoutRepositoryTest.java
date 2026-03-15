@@ -1,7 +1,8 @@
 package com.a6dig.digitalsignage.integration.repository;
 
 import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.repository.LayoutRespository;
+import com.a6dig.digitalsignage.repository.LayoutRepository;
+import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,9 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
-class LayoutSlotRespositoryTest {
+class LayoutRepositoryTest {
     @Autowired
-    private LayoutRespository layoutRespository;
+    private LayoutRepository layoutRepository;
+
+    @Autowired
+    private LayoutSlotRepository layoutSlotRepository;
 
     private Layout build(String name, int col, int row){
         Layout layout = new Layout();
@@ -33,9 +37,9 @@ class LayoutSlotRespositoryTest {
     void shouldFindById(){
         Layout layout = this.build("Default Layout", 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
-        Optional<Layout> result = layoutRespository.findById(saved.getId());
+        Optional<Layout> result = layoutRepository.findById(saved.getId());
 
         assertTrue(result.isPresent());
         assertEquals(2, result.get().getLayoutCol());
@@ -49,7 +53,7 @@ class LayoutSlotRespositoryTest {
         layouts.add(this.build("Default Layout", 1, 1));
         layouts.add(this.build("Default Layout 2", 2, 2));
 
-        List<Layout> saved = layoutRespository.saveAll(layouts);
+        List<Layout> saved = layoutRepository.saveAll(layouts);
 
         assertEquals(2, saved.size());
 
@@ -58,7 +62,7 @@ class LayoutSlotRespositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldReturnEmptyWhenNotFound(){
-        Optional<Layout> layout = layoutRespository.findById(1L);
+        Optional<Layout> layout = layoutRepository.findById(1L);
         assertFalse(layout.isPresent());
     }
 
@@ -66,7 +70,7 @@ class LayoutSlotRespositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldReturnEmptyListWhenNotFound(){
-        List<Layout> layout = layoutRespository.findAll();
+        List<Layout> layout = layoutRepository.findAll();
         assertEquals(0, layout.size());
     }
 
@@ -79,7 +83,7 @@ class LayoutSlotRespositoryTest {
     void shouldSave(){
         Layout layout = this.build("Default Layout", 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
         assertEquals("Default Layout", saved.getName());
@@ -93,7 +97,7 @@ class LayoutSlotRespositoryTest {
     void shouldSaveLayoutWithEmptyName(){
         Layout layout = this.build("", 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
         assertEquals("", saved.getName());
@@ -107,7 +111,7 @@ class LayoutSlotRespositoryTest {
     void shouldSaveLayoutWithNullName(){
         Layout layout = this.build(null, 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
         assertNotNull(saved.getId());
         assertNull(saved.getName());
@@ -123,11 +127,11 @@ class LayoutSlotRespositoryTest {
     void shouldUpdateName(){
         Layout layout = this.build(null, 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
         saved.setName("Default Name");
 
-        Layout updated = layoutRespository.save(saved);
+        Layout updated = layoutRepository.save(saved);
 
         assertNotNull(updated.getId());
         assertNotNull(updated.getName());
@@ -144,12 +148,12 @@ class LayoutSlotRespositoryTest {
     void shouldUpdateColRow(){
         Layout layout = this.build(null, 2, 2);
 
-        Layout saved = layoutRespository.save(layout);
+        Layout saved = layoutRepository.save(layout);
 
         saved.setLayoutCol(3);
         saved.setLayoutRow(3);
 
-        Layout updated = layoutRespository.save(saved);
+        Layout updated = layoutRepository.save(saved);
 
         assertNotNull(updated.getId());
         assertNull(updated.getName());
@@ -165,36 +169,36 @@ class LayoutSlotRespositoryTest {
     // DELETE
     @Test
     void shouldDeleteById() {
-        Layout saved = layoutRespository.save(build("Default Layout", 3, 3));
-        layoutRespository.deleteById(saved.getId());
-        assertFalse(layoutRespository.findById(saved.getId()).isPresent());
+        Layout saved = layoutRepository.save(build("Default Layout", 3, 3));
+        layoutRepository.deleteById(saved.getId());
+        assertFalse(layoutRepository.findById(saved.getId()).isPresent());
     }
     @Test
     void shouldDeleteAll() {
-        layoutRespository.save(build("Default Layout", 3, 3));
-        layoutRespository.save(build("Default Layout 2", 4, 4));
+        layoutRepository.save(build("Default Layout", 3, 3));
+        layoutRepository.save(build("Default Layout 2", 4, 4));
 
-        layoutRespository.deleteAll();
-        assertEquals(0, layoutRespository.count());
+        layoutRepository.deleteAll();
+        assertEquals(0, layoutRepository.count());
     }
 
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldNotThrowExceptionWhenDeletingNonExistingId(){
-        assertDoesNotThrow(() -> layoutRespository.deleteById(1L));
+        assertDoesNotThrow(() -> layoutRepository.deleteById(1L));
     }
 
     // EXISTENCE
     @Test
     void shouldReturnTrueWhenExist() {
-        Layout saved = layoutRespository.save(build("Default Layout", 3, 3));
-        assertTrue(layoutRespository.findById(saved.getId()).isPresent());
+        Layout saved = layoutRepository.save(build("Default Layout", 3, 3));
+        assertTrue(layoutRepository.findById(saved.getId()).isPresent());
     }
 
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldReturnFalseWhenNotExist() {
-        assertFalse(layoutRespository.findById(1L).isPresent());
+        assertFalse(layoutRepository.findById(1L).isPresent());
     }
 
 }

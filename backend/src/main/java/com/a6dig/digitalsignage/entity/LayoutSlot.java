@@ -12,9 +12,14 @@ public class LayoutSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // immutable
     @ManyToOne
-    @JoinColumn(name = "layoutId")
+    @JoinColumn(name = "layoutId", nullable = false, updatable = false)
     private Layout layout;
+
+    // read only
+    @Column(insertable = false, updatable = false)
+    private Long layoutId;
 
     private Long moduleId;
 
@@ -28,6 +33,10 @@ public class LayoutSlot {
 
     private int zIndex;
 
+    public LayoutSlot(){}
+    public LayoutSlot(Layout layout) {
+        this.layout = layout;
+    }
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
@@ -58,9 +67,14 @@ public class LayoutSlot {
         return layout;
     }
 
-    public void setLayout(Layout layout) {
-        this.layout = layout;
+//    public void setLayout(Layout layout) {
+//        this.layout = layout;
+//    }
+
+    public Long getLayoutId() {
+        return layoutId;
     }
+
 
     public Long getModuleId() {
         return moduleId;
