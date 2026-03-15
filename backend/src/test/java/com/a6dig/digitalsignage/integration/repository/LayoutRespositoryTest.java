@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
-class LayoutRespositoryTest {
+class LayoutSlotRespositoryTest {
     @Autowired
     private LayoutRespository layoutRespository;
 
