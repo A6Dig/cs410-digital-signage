@@ -328,3 +328,35 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
         <td>Delete a device from the system.</td>
     </tr>
 </table>
+
+
+
+### DeviceGroups
+#### Base Path /api/device-groups
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/device-groups</td>
+        <td>Returns all device groups with their assigned layout and device count.</td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/device-groups</td>
+        <td>Creates a new device group</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/device-groups/{id}</td>
+        <td>Returns a single device group with their assigned layout and device count.</td>
+    </tr>
+    <tr>
+        <td>PUT</td><td>/api/device-groups/{id}</td>
+        <td>Updates group name or description</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/device-groups/{id}</td>
+        <td>Deletes the group</td>
+    </tr>
+</table>
