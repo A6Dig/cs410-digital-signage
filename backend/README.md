@@ -238,3 +238,93 @@ Module ||--o| AdCollection : "has AdCollection if Module.type == ROTATING_AD"
     }
 
 ```
+
+## API Endpoints
+
+### Authentication
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/auth/login</td>
+        <td>Takes <b>username</b> and <b>password</b> returns a JWT token.</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/auth/user</td>
+        <td>Returns the currently logged in user info based on the JWT token.</td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/auth/logout</td>
+        <td>Destroy the JWT token</td>
+    </tr>
+</table>
+
+
+### Device
+#### Base Path /api/devices
+<table>
+    <tr>
+        <th>Method</th>
+        <th>API Endpoint</th>
+        <th>Description</th>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/devices/register</td>
+        <td>
+            <ul>
+                <li>Device boot first time and checks if the pairingId exists in local storage. If not, hit the endpoint</li>
+                <li>Server will generate a random id and returns the id to the device.</li>
+                <li>Save it in the device's local storage</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/devices/pair</td>
+        <td>
+            <ul>
+                <li>Admin sees the pairingId on the device screen. Takes note of that id and enters it in the admin panel</li>
+                <li>Hit this endpoint and server will register the pairingId</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>POST</td><td>/api/devices/verify-register</td>
+        <td>
+            <ul>
+                <li>If device reboot and device has the pairingId in the local storage, hit this endpoint.</li>
+                <li>Verify that the device is registered</li>
+            </ul>
+        </td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/devices/{id}/status</td>
+        <td>Verify device status (online | offline).</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/devices/{id}/layout</td>
+        <td>Gets currently assigned layout to this device. This will return fully resolved layout with layout slots, module, ad collection and ad contents</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/devices</td>
+        <td>Returns list of all devices with their name, status, group.</td>
+    </tr>
+    <tr>
+        <td>GET</td><td>/api/devices/{id}</td>
+        <td>Returns a single device with their name, status, group.</td>
+    </tr>
+    <tr>
+        <td>PATCH</td><td>/api/devices/{id}/group</td>
+        <td>Reassign a device to a different group</td>
+    </tr>
+    <tr>
+        <td>PATCH</td><td>/api/devices/{id}/status</td>
+        <td>Updates device status i.e. online | offline</td>
+    </tr>
+    <tr>
+        <td>DELETE</td><td>/api/devices/{id}</td>
+        <td>Delete a device from the system.</td>
+    </tr>
+</table>
