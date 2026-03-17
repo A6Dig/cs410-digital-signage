@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -95,5 +96,10 @@ public class Layout {
 
     public void setLayoutSlotList(List<LayoutSlot> layoutSlotList) {
         this.layoutSlotList = layoutSlotList;
+    }
+
+    public void addLayoutSlot(LayoutSlot slot) {
+        if(this.layoutSlotList == null) this.layoutSlotList = new ArrayList<>();
+        this.layoutSlotList.add(slot);
     }
 }

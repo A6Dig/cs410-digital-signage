@@ -2,13 +2,22 @@ package com.a6dig.digitalsignage.dto;
 
 import java.util.List;
 
-public class LayoutRequestDto {
+public class LayoutRequestUpdateDto {
+    private Long id;
     private String name;
     private int layoutCol;
     private int layoutRow;
 
     private List<LayoutSlotRequestDto> layoutSlotRequestDtoList;
 
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
