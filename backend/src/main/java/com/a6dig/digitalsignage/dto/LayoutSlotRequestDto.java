@@ -1,7 +1,7 @@
 package com.a6dig.digitalsignage.dto;
 
 public class LayoutSlotRequestDto {
-    private Long layoutId;
+
     private Long moduleId;
     private int gridCol;
     private int gridRow;
@@ -9,13 +9,6 @@ public class LayoutSlotRequestDto {
     private int rowSpan;
     private int zIndex;
 
-    public Long getLayoutId() {
-        return layoutId;
-    }
-
-    public void setLayoutId(Long layoutId) {
-        this.layoutId = layoutId;
-    }
 
     public Long getModuleId() {
         return moduleId;

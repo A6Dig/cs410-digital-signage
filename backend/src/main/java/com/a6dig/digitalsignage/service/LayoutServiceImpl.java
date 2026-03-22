@@ -4,17 +4,21 @@ import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.exception.InvalidLayoutIdException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
+import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Service
 public class LayoutServiceImpl implements LayoutService{
 
     @Autowired
@@ -28,6 +32,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     // GET
     @Override
+    @Transactional
     public LayoutResponseDto getLayoutById(Long id) {
 
         Layout layout = layoutRepository.findById(id)
@@ -37,6 +42,7 @@ public class LayoutServiceImpl implements LayoutService{
     }
 
     @Override
+    @Transactional
     public List<LayoutResponseDto> getAllLayouts() {
         return layoutRepository.findAll().stream().map(layoutMapper::toLayoutResponseDto).collect(Collectors.toList());
     }
@@ -78,7 +84,7 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setLayoutCol(dto.getLayoutCol());
         layout.setLayoutRow(dto.getLayoutRow());
 
-        Layout updated = layoutRepository.save(layout);
+        Layout updated = layoutRepository.saveAndFlush(layout);
         return layoutMapper.toLayoutResponseDto(updated);
     }
 
@@ -113,7 +119,7 @@ public class LayoutServiceImpl implements LayoutService{
     public void deleteLayout(Long id) {
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
-        layoutRepository.deleteById(id);
+        layoutRepository.delete(layout);
     }
 
     @Override
@@ -124,7 +130,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestUpdateDto dto) {
+    public LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
         Layout layout = layoutRepository.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
 
@@ -150,11 +156,17 @@ public class LayoutServiceImpl implements LayoutService{
         Layout layout = layoutRepository.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
 
-        // TODO
-//        Layout slot = layoutSlotRepository.findById(slotId)
-//                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_SLOT_NOT_FOUND));
+        LayoutSlot slot = layoutSlotRepository.findById(slotId)
+                .orElseThrow(() -> new LayoutSlotNotFoundException(AppConstant.ExceptionMessage.LAYOUT_SLOT_NOT_FOUND));
 
-        return null;
+        if(!slot.getLayout().getId().equals(layoutId)) {
+            throw new InvalidLayoutIdException(AppConstant.ExceptionMessage.LAYOUT_INVALID_LAYOUT_ID);
+        }
+
+        layout.getLayoutSlotList().removeIf(s -> s.getId().equals(slotId));
+        Layout updated = layoutRepository.save(layout);
+
+        return layoutMapper.toLayoutResponseDto(updated);
     }
 
 

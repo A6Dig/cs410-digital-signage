@@ -1,12 +1,11 @@
 package com.a6dig.digitalsignage.unit.service;
 
-import com.a6dig.digitalsignage.dto.LayoutRequestDto;
-import com.a6dig.digitalsignage.dto.LayoutRequestUpdateDto;
-import com.a6dig.digitalsignage.dto.LayoutResponseDto;
-import com.a6dig.digitalsignage.dto.LayoutSlotRequestUpdateDto;
+import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.exception.InvalidLayoutIdException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
+import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
@@ -89,6 +88,18 @@ class LayoutServiceImplTest {
         return dto;
     }
 
+    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
+        LayoutSlotRequestDto dto = new LayoutSlotRequestDto();
+        dto.setModuleId(moduleId);
+        dto.setGridCol(col);
+        dto.setGridRow(row);
+        dto.setColSpan(colSpan);
+        dto.setRowSpan(rowSpan);
+        dto.setzIndex(zIndex);
+        return dto;
+    }
+
+
     private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long layoutId, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
         LayoutSlotRequestUpdateDto dto = new LayoutSlotRequestUpdateDto();
         dto.setLayoutId(layoutId);
@@ -99,6 +110,17 @@ class LayoutServiceImplTest {
         dto.setRowSpan(rowSpan);
         dto.setzIndex(zIndex);
         return dto;
+    }
+
+    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
+        LayoutSlot slot = new LayoutSlot(layout);
+        slot.setModuleId(moduleId);
+        slot.setGridCol(col);
+        slot.setGridRow(row);
+        slot.setColSpan(colSpan);
+        slot.setRowSpan(rowSpan);
+        slot.setzIndex(zIndex);
+        return slot;
     }
 
 
@@ -187,7 +209,7 @@ class LayoutServiceImplTest {
         LayoutRequestUpdateDto request = this.buildLayoutRequestUpdateDto(1L, "Updated Main Layout", 4, 2);
 
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(layoutRepository.save(any(Layout.class))).thenReturn(updated);
+        when(layoutRepository.saveAndFlush(any(Layout.class))).thenReturn(updated);
         when(layoutMapper.toLayoutResponseDto(updated)).thenReturn(responseDto);
 
         LayoutResponseDto result = layoutServiceImpl.updateLayout(1L, request);
@@ -196,7 +218,7 @@ class LayoutServiceImplTest {
         assertEquals(2, result.getLayoutRow());
         assertEquals(4, result.getLayoutCol());
         verify(layoutRepository, times(1)).findById(1L);
-        verify(layoutRepository, times(1)).save(any(Layout.class));
+        verify(layoutRepository, times(1)).saveAndFlush(any(Layout.class));
     }
 
 
@@ -227,7 +249,7 @@ class LayoutServiceImplTest {
         layoutServiceImpl.deleteLayout(1L);
 
         verify(layoutRepository, times(1)).findById(any(Long.class));
-        verify(layoutRepository, times(1)).deleteById(any(Long.class));
+        verify(layoutRepository, times(1)).delete(any(Layout.class));
     }
 
     @Test
@@ -236,7 +258,7 @@ class LayoutServiceImplTest {
         assertThrows(LayoutNotFoundException.class, () -> layoutServiceImpl.deleteLayout(1L));
 
         verify(layoutRepository, times(1)).findById(any(Long.class));
-        verify(layoutRepository, never()).deleteById(any(Long.class));
+        verify(layoutRepository, never()).delete(any(Layout.class));
     }
 
     @Test
@@ -251,8 +273,7 @@ class LayoutServiceImplTest {
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
         LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 2, 2);
 
-        LayoutSlotRequestUpdateDto request = this.buildLayoutSlotRequestUpdateDto(1L, 1L, 2,2,1,1,0);
-
+        LayoutSlotRequestDto request = this.buildLayoutSlotRequestDto(1L, 2,2,1,1,0);
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
         when(layoutRepository.save(any(Layout.class))).thenReturn(layout);
         when(layoutMapper.toLayoutResponseDto(layout)).thenReturn(responseDto);
@@ -266,7 +287,7 @@ class LayoutServiceImplTest {
     }
     @Test
     void shouldThrowErrorWhenAddingSlotToNonExistentLayout() {
-        LayoutSlotRequestUpdateDto request = this.buildLayoutSlotRequestUpdateDto(1L, 1L, 2,2,1,1,0);
+        LayoutSlotRequestDto request = this.buildLayoutSlotRequestDto(1L, 2,2,1,1,0);
 
         when(layoutRepository.findById(1L)).thenReturn(Optional.empty());
         assertThrows(LayoutNotFoundException.class, () -> layoutServiceImpl.addLayoutSlotToLayout(1L, request));
@@ -274,5 +295,75 @@ class LayoutServiceImplTest {
         verify(layoutRepository, times(1)).findById(1L);
         verify(layoutRepository, never()).save(any(Layout.class));
 
+    }
+
+    @Test
+    void shouldRemoveSlotFromLayout() {
+        Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
+        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,1L, 2,2,1,1,0);
+        layoutSlot.setId(1L);
+
+        layout.addLayoutSlot(layoutSlot);
+
+        LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 2, 2);
+
+        when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
+        when(layoutSlotRepository.findById(1L)).thenReturn(Optional.of(layoutSlot));
+        when(layoutRepository.save(any(Layout.class))).thenReturn(layout);
+        when(layoutMapper.toLayoutResponseDto(layout)).thenReturn(responseDto);
+
+        LayoutResponseDto result = layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L);
+
+        verify(layoutRepository, times(1)).findById(1L);
+        verify(layoutSlotRepository, times(1)).findById(1L);
+        verify(layoutRepository, times(1)).save(any(Layout.class));
+
+        assertEquals(0, result.getLayoutSlotList().size());
+    }
+
+    @Test
+    void shouldThrowErrorWhenRemovingSlotFromNonExistentLayout() {
+
+        when(layoutRepository.findById(1L)).thenReturn(Optional.empty());
+        assertThrows(LayoutNotFoundException.class, () -> layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L));
+
+        verify(layoutRepository, times(1)).findById(1L);
+        verify(layoutSlotRepository, never()).findById(1L);
+        verify(layoutRepository, never()).save(any(Layout.class));
+    }
+
+    @Test
+    void shouldThrowErrorWhenRemovingNonExistentSlotFromLayout() {
+        Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
+        when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
+
+        assertThrows(LayoutSlotNotFoundException.class, () -> layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L));
+
+        verify(layoutRepository, times(1)).findById(1L);
+        verify(layoutSlotRepository, times(1)).findById(1L);
+        verify(layoutRepository, never()).save(any(Layout.class));
+    }
+
+    @Test
+    void shouldThrowErrorWhenRemovingFromLayoutWithInvalidLayoutId() {
+        Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
+        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,1L, 2,2,1,1,0);
+        layoutSlot.setId(1L);
+        layout.setId(2L);
+
+        layout.addLayoutSlot(layoutSlot);
+
+        LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 2, 2);
+
+        when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
+        when(layoutSlotRepository.findById(1L)).thenReturn(Optional.of(layoutSlot));
+
+
+        assertThrows(InvalidLayoutIdException.class, () -> layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L));
+
+
+        verify(layoutRepository, times(1)).findById(1L);
+        verify(layoutSlotRepository, times(1)).findById(1L);
+        verify(layoutRepository, never()).save(any(Layout.class));
     }
 }

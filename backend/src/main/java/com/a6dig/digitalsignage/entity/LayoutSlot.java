@@ -33,7 +33,10 @@ public class LayoutSlot {
 
     private int zIndex;
 
-    public LayoutSlot(){}
+    protected LayoutSlot() {
+
+    }
+
     public LayoutSlot(Layout layout) {
         this.layout = layout;
     }

@@ -25,7 +25,7 @@ public interface LayoutService {
 
 
     // Entity Relation
-    LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestUpdateDto dto);
+    LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto);
     LayoutResponseDto removeLayoutSlotFromLayout(Long layoutId, Long slotId);
 
 
