@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.integration.service;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -135,6 +139,7 @@ public class LayoutServiceImplTest {
         return slot;
     }
 
+    // create
 
     @Test
     void shouldCreateLayoutAndPersistToDatabase() {
@@ -150,6 +155,14 @@ public class LayoutServiceImplTest {
         assertNotNull(result.getUpdatedAt());
 
         assertTrue(this.layoutRepository.existsById(result.getId()));
+    }
+
+
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidData(){
+        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 0, 1);
+        request.setLayoutSlotRequestDtoList(null);
+        assertThrows(InvalidLayoutException.class, () -> this.layoutServiceImpl.createLayout(request));
     }
 
     @Test
@@ -337,6 +350,24 @@ public class LayoutServiceImplTest {
         updateRequest.setLayoutRow(1);
 
         assertThrows(LayoutNotFoundException.class, () -> this.layoutServiceImpl.updateLayout(1000L, updateRequest));
+    }
+
+
+
+    @Test
+    void shouldThrowErrorWhenUpdateLayoutWithInvalidData(){
+        LayoutResponseDto created = this.layoutServiceImpl.createLayout(
+                this.buildLayoutRequestDto("Main Layout", 1,1)
+        );
+
+        LayoutRequestUpdateDto updateRequest = new LayoutRequestUpdateDto();
+        updateRequest.setId(created.getId());
+        updateRequest.setName("Updated Layout");
+        updateRequest.setLayoutCol(0);
+        updateRequest.setLayoutRow(created.getLayoutRow());
+
+
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
     }
 
 

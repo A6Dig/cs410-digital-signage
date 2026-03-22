@@ -4,18 +4,20 @@ import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
-import com.a6dig.digitalsignage.exception.InvalidLayoutIdException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
+import com.a6dig.digitalsignage.util.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,11 +34,14 @@ public class LayoutServiceImpl implements LayoutService{
 
     // GET
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public LayoutResponseDto getLayoutById(Long id) {
 
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
+                ));
 
         return layoutMapper.toLayoutResponseDto(layout);
     }
@@ -49,11 +54,33 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     public LayoutResponseDto createLayout(LayoutRequestDto dto) {
+        List<Map<String, String>> errors = new ArrayList<>();
+
+
+        // validation
+        if(dto.getLayoutCol() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
+        }
+        if(dto.getLayoutRow() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
+        }
+        if(dto.getLayoutCol() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
+        }
+        if(dto.getLayoutRow() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
+        }
+
+        if(!errors.isEmpty()) {
+            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED, errors);
+        }
+
         Layout layout = new Layout();
         layout.setName(dto.getName());
         layout.setLayoutCol(dto.getLayoutCol());
         layout.setLayoutRow(dto.getLayoutRow());
         layout.setLayoutSlotList(new ArrayList<>());
+
 
         if(dto.getLayoutSlotRequestDtoList() != null) {
             for(LayoutSlotRequestDto s : dto.getLayoutSlotRequestDtoList()) {
@@ -77,9 +104,32 @@ public class LayoutServiceImpl implements LayoutService{
     @Override
     @Transactional
     public LayoutResponseDto updateLayout(Long id, LayoutRequestUpdateDto dto) {
+        List<Map<String, String>> errors = new ArrayList<>();
+
+
+        // validation
+        if(dto.getLayoutCol() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
+        }
+        if(dto.getLayoutRow() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
+        }
+        if(dto.getLayoutCol() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
+        }
+        if(dto.getLayoutRow() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
+        }
+
+        if(!errors.isEmpty()) {
+            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED, errors);
+        }
 
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
+                ));
         layout.setName(dto.getName());
         layout.setLayoutCol(dto.getLayoutCol());
         layout.setLayoutRow(dto.getLayoutRow());
@@ -93,7 +143,10 @@ public class LayoutServiceImpl implements LayoutService{
     public LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots) {
 
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
+                ));
 
         layout.getLayoutSlotList().clear();
 
@@ -118,7 +171,10 @@ public class LayoutServiceImpl implements LayoutService{
     @Transactional
     public void deleteLayout(Long id) {
         Layout layout = layoutRepository.findById(id)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
+                ));
         layoutRepository.delete(layout);
     }
 
@@ -132,7 +188,10 @@ public class LayoutServiceImpl implements LayoutService{
     @Transactional
     public LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
         Layout layout = layoutRepository.findById(layoutId)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(layoutId)))
+                ));
 
 
         LayoutSlot slot = new LayoutSlot(layout);
@@ -153,14 +212,24 @@ public class LayoutServiceImpl implements LayoutService{
     @Override
     @Transactional
     public LayoutResponseDto removeLayoutSlotFromLayout(Long layoutId, Long slotId) {
+        List<Map<String, String>> errors = new ArrayList<>();
+
         Layout layout = layoutRepository.findById(layoutId)
-                .orElseThrow(() -> new LayoutNotFoundException(AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
+
+                        , List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(layoutId))
+                )));
 
         LayoutSlot slot = layoutSlotRepository.findById(slotId)
-                .orElseThrow(() -> new LayoutSlotNotFoundException(AppConstant.ExceptionMessage.LAYOUT_SLOT_NOT_FOUND));
+                .orElseThrow(() -> new LayoutSlotNotFoundException(
+                        AppConstant.ExceptionMessage.LAYOUT_SLOT_NOT_FOUND
+                        , List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutSlotIdDoesNotExist(slotId))
+                )));
 
         if(!slot.getLayout().getId().equals(layoutId)) {
-            throw new InvalidLayoutIdException(AppConstant.ExceptionMessage.LAYOUT_INVALID_LAYOUT_ID);
+            errors.add(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(layoutId)));
+            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_INVALID_LAYOUT_ID, errors);
         }
 
         layout.getLayoutSlotList().removeIf(s -> s.getId().equals(slotId));

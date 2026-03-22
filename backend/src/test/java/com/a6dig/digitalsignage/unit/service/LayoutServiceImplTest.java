@@ -3,7 +3,7 @@ package com.a6dig.digitalsignage.unit.service;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
-import com.a6dig.digitalsignage.exception.InvalidLayoutIdException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
@@ -198,6 +198,15 @@ class LayoutServiceImplTest {
 
     }
 
+    @Test
+    void shouldThrowErrorWhenCreateLayoutWithInvalidData(){
+        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 0, 1);
+        request.setLayoutSlotRequestDtoList(null);
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.createLayout(request));
+
+        verify(layoutRepository, never()).save(any(Layout.class));
+        verify(layoutMapper, never()).toLayoutResponseDto(any(Layout.class));
+    }
     // Update
 
     @Test
@@ -219,8 +228,19 @@ class LayoutServiceImplTest {
         assertEquals(4, result.getLayoutCol());
         verify(layoutRepository, times(1)).findById(1L);
         verify(layoutRepository, times(1)).saveAndFlush(any(Layout.class));
+
     }
 
+
+    @Test
+    void shouldThrowErrorWhenUpdateLayoutWithInvalidData(){
+        Layout existing = this.buildLayout(1L, "Main Layout", 3, 3);
+        LayoutRequestUpdateDto updated = this.buildLayoutRequestUpdateDto(1L, "Updated Main Layout", 0, 2);
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.updateLayout(1L, updated));
+
+        verify(layoutRepository, never()).save(any(Layout.class));
+        verify(layoutMapper, never()).toLayoutResponseDto(any(Layout.class));
+    }
 
 
 
@@ -359,7 +379,7 @@ class LayoutServiceImplTest {
         when(layoutSlotRepository.findById(1L)).thenReturn(Optional.of(layoutSlot));
 
 
-        assertThrows(InvalidLayoutIdException.class, () -> layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L));
+        assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.removeLayoutSlotFromLayout(1L, 1L));
 
 
         verify(layoutRepository, times(1)).findById(1L);
