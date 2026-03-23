@@ -386,4 +386,20 @@ class LayoutServiceImplTest {
         verify(layoutSlotRepository, times(1)).findById(1L);
         verify(layoutRepository, never()).save(any(Layout.class));
     }
+
+//
+//    // Layout slots
+//    @Test
+//    void shouldGetAllLayoutSlotByLayoutid() {
+//        Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
+//        List<LayoutSlot> layoutSlots = List.of(
+//                this.buildLayoutSlot(layout, 1L, 2, 2, 1, 1, 0),
+//                this.buildLayoutSlot(layout, 2L, 1, 1, 1, 1, 0)
+//        );
+//
+//        layoutSlots.forEach(layout::addLayoutSlot);
+//
+//
+//
+//    }
 }

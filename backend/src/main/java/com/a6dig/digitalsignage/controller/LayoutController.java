@@ -64,4 +64,11 @@ public class LayoutController {
         this.layoutService.deleteAllLayouts();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.LAYOUT_ALL_DELETED));
     }
+
+    // layout slots
+
+    @GetMapping("/api/layouts/{id}/slots")
+    public ResponseEntity<APIResponse<List<LayoutResponseDto>>> getAllLayouts(@PathVariable(name = "id") Long layoutId) {
+        return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
+    }
 }
