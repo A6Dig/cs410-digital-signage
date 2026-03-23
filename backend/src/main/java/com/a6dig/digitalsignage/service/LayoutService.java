@@ -10,7 +10,7 @@ public interface LayoutService {
     LayoutResponseDto getLayoutById(Long id);
     List<LayoutResponseDto> getAllLayouts();
 
-
+    List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId);
 
     // POST
     LayoutResponseDto createLayout(LayoutRequestDto dto);

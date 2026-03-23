@@ -153,5 +153,41 @@ class LayoutAndLayoutSlotRepositoryTest {
     }
 
 
+    @Test
+    @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
+    void shouldGetAllLayoutSlotsByLayoutId(){
+        Layout layout = new Layout();
+        layout.setName("Default Layout");
+        layout.setLayoutCol(2);
+        layout.setLayoutRow(2);
+
+        Layout savedLayout = layoutRepository.save(layout);
+
+        LayoutSlot layoutSlot1 = new LayoutSlot(savedLayout);
+        layoutSlot1.setModuleId(1L);
+        layoutSlot1.setGridCol(1);
+        layoutSlot1.setGridRow(1);
+        layoutSlot1.setColSpan(2);
+        layoutSlot1.setRowSpan(1);
+
+        LayoutSlot layoutSlot2 = new LayoutSlot(savedLayout);
+        layoutSlot2.setModuleId(1L);
+        layoutSlot2.setGridCol(1);
+        layoutSlot2.setGridRow(2);
+        layoutSlot2.setColSpan(2);
+        layoutSlot2.setRowSpan(1);
+
+        List<LayoutSlot> savedLayoutSlots = layoutSlotRepository.saveAll(List.of(layoutSlot1, layoutSlot2));
+
+
+        Long layoutId = savedLayout.getId();;
+
+        List<LayoutSlot> result = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(layoutId);
+
+        assertEquals(2, result.size());
+        assertEquals(layoutId, result.get(0).getLayout().getId());
+        assertEquals(layoutId, result.get(1).getLayout().getId());
+
+    }
 
 }

@@ -53,6 +53,11 @@ public class LayoutServiceImpl implements LayoutService{
     }
 
     @Override
+    public List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId) {
+        return layoutSlotRepository.getAllLayoutSlotsByLayoutId(layoutId).stream().map(layoutMapper::toLayoutSlotResponseDto).collect(Collectors.toList());
+    }
+
+    @Override
     public LayoutResponseDto createLayout(LayoutRequestDto dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
