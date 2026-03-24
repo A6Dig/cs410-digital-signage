@@ -7,16 +7,16 @@ import java.util.List;
 public interface LayoutService {
     // GET
 
-    LayoutResponseDto getLayoutById(Long id);
-    List<LayoutResponseDto> getAllLayouts();
+    LayoutResponseDto<LayoutSlotResponseDto> getLayoutById(Long id);
+    List<LayoutResponseDto<LayoutSlotResponseDto>> getAllLayouts();
 
 
     // POST
-    LayoutResponseDto createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto);
+    LayoutResponseDto<LayoutSlotResponseDto> createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto);
 
     // PUT
-    LayoutResponseDto updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto);
-    LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots);
+    LayoutResponseDto<LayoutSlotResponseDto> updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto);
+    LayoutResponseDto<LayoutSlotResponseDto> updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots);
 
     // DELETE
     void deleteLayout(Long id);
@@ -24,8 +24,8 @@ public interface LayoutService {
 
 
     // Entity Relation
-    LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto);
-    LayoutResponseDto removeLayoutSlotFromLayout(Long layoutId, Long slotId);
+    LayoutResponseDto<LayoutSlotResponseDto> addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto);
+    LayoutResponseDto<LayoutSlotResponseDto> removeLayoutSlotFromLayout(Long layoutId, Long slotId);
 
 
 

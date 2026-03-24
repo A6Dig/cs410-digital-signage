@@ -35,7 +35,7 @@ public class LayoutServiceImpl implements LayoutService{
     // GET
     @Override
     @Transactional(readOnly = true)
-    public LayoutResponseDto getLayoutById(Long id) {
+    public LayoutResponseDto<LayoutSlotResponseDto> getLayoutById(Long id) {
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
@@ -48,12 +48,12 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public List<LayoutResponseDto> getAllLayouts() {
+    public List<LayoutResponseDto<LayoutSlotResponseDto>> getAllLayouts() {
         return layoutRepository.findAll().stream().map(layoutMapper::toLayoutResponseDto).collect(Collectors.toList());
     }
 
     @Override
-    public LayoutResponseDto createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto) {
+    public LayoutResponseDto<LayoutSlotResponseDto> createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
@@ -103,7 +103,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto) {
+    public LayoutResponseDto<LayoutSlotResponseDto> updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto) {
         List<Map<String, String>> errors = new ArrayList<>();
 
 
@@ -158,7 +158,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots) {
+    public LayoutResponseDto<LayoutSlotResponseDto> updateLayoutSlots(Long id, List<LayoutSlotRequestDto> slots) {
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
@@ -204,7 +204,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
+    public LayoutResponseDto<LayoutSlotResponseDto> addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
         Layout layout = layoutRepository.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(
                         AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
@@ -229,7 +229,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto removeLayoutSlotFromLayout(Long layoutId, Long slotId) {
+    public LayoutResponseDto<LayoutSlotResponseDto> removeLayoutSlotFromLayout(Long layoutId, Long slotId) {
         List<Map<String, String>> errors = new ArrayList<>();
 
         Layout layout = layoutRepository.findById(layoutId)

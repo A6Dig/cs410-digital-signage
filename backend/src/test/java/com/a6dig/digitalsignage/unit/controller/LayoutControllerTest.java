@@ -43,8 +43,8 @@ public class LayoutControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-    private LayoutResponseDto buildLayoutResponseDto(Long id, String name, int cols, int rows) {
-        LayoutResponseDto dto = new LayoutResponseDto();
+    private LayoutResponseDto<LayoutSlotResponseDto> buildLayoutResponseDto(Long id, String name, int cols, int rows) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = new LayoutResponseDto<>();
         dto.setId(id);
         dto.setName(name);
         dto.setCols(cols);
@@ -70,7 +70,7 @@ public class LayoutControllerTest {
     // GET
     @Test
     void shouldGetLayoutById() throws Exception {
-        LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
 
         when(this.layoutService.getLayoutById(1L)).thenReturn(responseDto);
 
@@ -122,7 +122,7 @@ public class LayoutControllerTest {
     }
     @Test
     void shouldGetAllLayouts() throws Exception {
-        List<LayoutResponseDto> layouts = List.of(
+        List<LayoutResponseDto<LayoutSlotResponseDto>> layouts = List.of(
                 this.buildLayoutResponseDto(1L, "Main Layout", 1, 1),
                 this.buildLayoutResponseDto(1L, "Secondary Layout", 1, 1)
         );
@@ -185,7 +185,7 @@ public class LayoutControllerTest {
     @Test
     void shouldCreateLayout() throws Exception {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 1, 1);
-        LayoutResponseDto response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
         when(this.layoutService.createLayout(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/layouts").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
@@ -231,7 +231,7 @@ public class LayoutControllerTest {
     @Test
     void shouldUpdateLayout() throws Exception {
         LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Main Layout", 1, 1);
-        LayoutResponseDto response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
 
         when(this.layoutService.updateLayout(anyLong(), any())).thenReturn(response);
 
