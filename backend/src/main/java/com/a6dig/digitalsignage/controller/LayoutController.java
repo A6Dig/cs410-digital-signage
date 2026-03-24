@@ -20,21 +20,21 @@ public class LayoutController {
 
     // get
     @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<LayoutResponseDto>> getLayoutById(@PathVariable Long id) {
-        LayoutResponseDto dto = this.layoutService.getLayoutById(id);
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> getLayoutById(@PathVariable Long id) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.getLayoutById(id);
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<LayoutResponseDto>>> getAllLayouts() {
+    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getAllLayouts() {
         return ResponseEntity.ok(APIResponse.success(this.layoutService.getAllLayouts()));
     }
 
     // post
 
     @PostMapping
-    public ResponseEntity<APIResponse<LayoutResponseDto>> createLayout(@RequestBody LayoutRequestDto<LayoutSlotRequestDto> request) {
-        LayoutResponseDto dto = this.layoutService.createLayout(request);
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> createLayout(@RequestBody LayoutRequestDto<LayoutSlotRequestDto> request) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.createLayout(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.created(dto)
         );
@@ -43,8 +43,8 @@ public class LayoutController {
     // update
 
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<LayoutResponseDto>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
-        LayoutResponseDto dto = this.layoutService.updateLayout(id, request);
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
         );
@@ -67,7 +67,7 @@ public class LayoutController {
     // layout slots
 
     @GetMapping("/api/layouts/{id}/slots")
-    public ResponseEntity<APIResponse<List<LayoutResponseDto>>> getAllLayouts(@PathVariable(name = "id") Long layoutId) {
+    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getAllLayouts(@PathVariable(name = "id") Long layoutId) {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
     }
 }

@@ -10,4 +10,6 @@ public class LayoutSlotRequestUpdateDto extends LayoutSlotRequestDto{
     public void setId(Long id) {
         this.id = id;
     }
+
+
 }

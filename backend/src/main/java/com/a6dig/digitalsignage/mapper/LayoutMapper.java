@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 
 @Component
 public class LayoutMapper {
-    public LayoutResponseDto toLayoutResponseDto(Layout layout) {
-        LayoutResponseDto dto = new LayoutResponseDto();
+    public LayoutResponseDto<LayoutSlotResponseDto> toLayoutResponseDto(Layout layout) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = new LayoutResponseDto<>();
         dto.setId(layout.getId());
         dto.setName(layout.getName());
         dto.setCols(layout.getCols());
