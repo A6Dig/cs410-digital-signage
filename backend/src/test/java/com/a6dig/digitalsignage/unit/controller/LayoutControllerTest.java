@@ -43,26 +43,12 @@ public class LayoutControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-
-    // helper methods
-    private Layout buildLayout(Long id, String name, int col, int row) {
-        Layout layout = new Layout();
-        layout.setId(id);
-        layout.setName(name);
-        layout.setCols(col);
-        layout.setRows(row);
-        layout.setCreatedAt(LocalDateTime.now());
-        layout.setUpdatedAt(LocalDateTime.now());
-        layout.setSlots(new ArrayList<>());
-        return layout;
-    }
-
-    private LayoutResponseDto buildLayoutResponseDto(Long id, String name, int col, int row) {
+    private LayoutResponseDto buildLayoutResponseDto(Long id, String name, int cols, int rows) {
         LayoutResponseDto dto = new LayoutResponseDto();
         dto.setId(id);
         dto.setName(name);
-        dto.setCols(col);
-        dto.setRows(row);
+        dto.setCols(cols);
+        dto.setRows(rows);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         dto.setSlots(new ArrayList<>());
@@ -71,39 +57,15 @@ public class LayoutControllerTest {
 
 
 
-    private LayoutRequestDto buildLayoutRequestDto(String name, int col, int row) {
+    private LayoutRequestDto buildLayoutRequestDto(String name, int cols, int rows) {
         LayoutRequestDto dto = new LayoutRequestDto();
         dto.setName(name);
-        dto.setCols(col);
-        dto.setRows(row);
+        dto.setCols(cols);
+        dto.setRows(rows);
         dto.setSlots(new ArrayList<>());
         return dto;
     }
 
-
-    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlotRequestDto dto = new LayoutSlotRequestDto();
-        dto.setModuleId(moduleId);
-        dto.setColPos(col);
-        dto.setRowPos(row);
-        dto.setColSpan(colSpan);
-        dto.setRowSpan(rowSpan);
-        dto.setzIndex(zIndex);
-        return dto;
-    }
-
-
-
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlot slot = new LayoutSlot(layout);
-        slot.setModuleId(moduleId);
-        slot.setColPos(col);
-        slot.setRowPos(row);
-        slot.setColSpan(colSpan);
-        slot.setRowSpan(rowSpan);
-        slot.setzIndex(zIndex);
-        return slot;
-    }
 
     // GET
     @Test

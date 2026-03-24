@@ -37,7 +37,7 @@ public class LayoutMapper {
         dto.setLayoutId(slot.getLayout().getId());
         dto.setModuleId(slot.getModuleId());
         dto.setColPos(slot.getColPos());
-        dto.setGridRow(slot.getRowPos());
+        dto.setRowPos(slot.getRowPos());
         dto.setColSpan(slot.getColSpan());
         dto.setRowSpan(slot.getRowSpan());
         dto.setCreatedAt(slot.getCreatedAt());

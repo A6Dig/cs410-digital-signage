@@ -8,7 +8,7 @@ public class LayoutSlotResponseDto {
     private Long layoutId;
     private Long moduleId;
     private int colPos;
-    private int gridRow;
+    private int rowPos;
     private int colSpan;
     private int rowSpan;
     private int zIndex;
@@ -49,12 +49,12 @@ public class LayoutSlotResponseDto {
         this.colPos = colPos;
     }
 
-    public int getGridRow() {
-        return gridRow;
+    public int getRowPos() {
+        return rowPos;
     }
 
-    public void setGridRow(int gridRow) {
-        this.gridRow = gridRow;
+    public void setRowPos(int rowPos) {
+        this.rowPos = rowPos;
     }
 
     public int getColSpan() {
@@ -96,4 +96,5 @@ public class LayoutSlotResponseDto {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }

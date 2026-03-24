@@ -16,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("test")
@@ -44,67 +46,38 @@ public class LayoutControllerTest {
     }
 
 
-    // helper methods
-    private Layout buildLayout(Long id, String name, int col, int row) {
-        Layout layout = new Layout();
-        layout.setId(id);
-        layout.setName(name);
-        layout.setCols(col);
-        layout.setRows(row);
-        layout.setCreatedAt(LocalDateTime.now());
-        layout.setUpdatedAt(LocalDateTime.now());
-        layout.setSlots(new ArrayList<>());
-        return layout;
-    }
-
-    private LayoutResponseDto buildLayoutResponseDto(Long id, String name, int col, int row) {
-        LayoutResponseDto dto = new LayoutResponseDto();
-        dto.setId(id);
-        dto.setName(name);
-        dto.setCols(col);
-        dto.setRows(row);
-        dto.setCreatedAt(LocalDateTime.now());
-        dto.setUpdatedAt(LocalDateTime.now());
-        dto.setSlots(new ArrayList<>());
-        return dto;
+    private void assertLayout(LayoutResponseDto layout, String expectedName, int expectedCols, int expectedRows) {
+        assertNotNull(layout.getId());
+        assertNotNull(layout.getName());
+        assertEquals(expectedName, layout.getName());
+        assertEquals(expectedCols, layout.getCols());
+        assertEquals(expectedRows, layout.getRows());
+        assertNotNull(layout.getCreatedAt());
+        assertNotNull(layout.getUpdatedAt());
+        assertTrue(layoutRepository.existsById(layout.getId()));
     }
 
 
-
-    private LayoutRequestDto buildLayoutRequestDto(String name, int col, int row) {
-        LayoutRequestDto dto = new LayoutRequestDto();
-        dto.setName(name);
-        dto.setCols(col);
-        dto.setRows(row);
-        dto.setSlots(new ArrayList<>());
-        return dto;
-    }
-
-
-
-
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlot slot = new LayoutSlot(layout);
-        slot.setModuleId(moduleId);
-        slot.setColPos(col);
-        slot.setRowPos(row);
-        slot.setColSpan(colSpan);
-        slot.setRowSpan(rowSpan);
-        slot.setzIndex(zIndex);
-        return slot;
-    }
-
-    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex){
-        LayoutSlotRequestDto slot = new LayoutSlotRequestDto();
-
-        slot.setModuleId(moduleId);
-        slot.setColPos(col);
-        slot.setRowPos(row);
-        slot.setColSpan(colSpan);
-        slot.setRowSpan(rowSpan);
-        slot.setzIndex(zIndex);
-
-        return slot;
+    private void assertLayoutSlot(LayoutSlotResponseDto slot
+            , Long expectedLayoutId
+            , Long expectedModuleId
+            , int expectedColPos
+            , int expectedRowPos
+            , int expectedColSpan
+            , int expectedRowSpan
+            , int expectedzIndex) {
+        assertNotNull(slot.getId());
+        assertNotNull(slot.getLayoutId());
+        assertEquals(expectedLayoutId, slot.getLayoutId());
+        assertEquals(expectedModuleId, slot.getModuleId());
+        assertEquals(expectedColPos, slot.getColPos());
+        assertEquals(expectedRowPos, slot.getRowPos());
+        assertEquals(expectedColSpan, slot.getColSpan());
+        assertEquals(expectedRowSpan, slot.getRowSpan());
+        assertEquals(expectedzIndex, slot.getzIndex());
+        assertNotNull(slot.getCreatedAt());
+        assertNotNull(slot.getUpdatedAt());
+        assertTrue(layoutSlotRepository.existsById(slot.getId()));
     }
 
     // GET

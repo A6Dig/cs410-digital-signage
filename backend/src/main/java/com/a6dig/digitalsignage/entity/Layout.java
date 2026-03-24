@@ -16,10 +16,10 @@ public class Layout {
     @Column(length = 50)
     private String name;
 
-    @Column(name = "cols", nullable = false)
+    @Column(name = "`cols`", nullable = false)
     private int cols;
 
-    @Column(name = "rows", nullable = false)
+    @Column(name = "`rows`", nullable = false)
     private int rows;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
@@ -27,6 +27,7 @@ public class Layout {
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
+
 
     @OneToMany(mappedBy = "layout", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
     private List<LayoutSlot> slots;

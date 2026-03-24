@@ -13,13 +13,11 @@ public class LayoutSlot {
     private Long id;
 
     // immutable
+
     @ManyToOne
     @JoinColumn(name = "layoutId", nullable = false, updatable = false)
     private Layout layout;
 
-    // read only
-    @Column(insertable = false, updatable = false)
-    private Long layoutId;
 
     private Long moduleId;
 
@@ -74,9 +72,6 @@ public class LayoutSlot {
 //        this.layout = layout;
 //    }
 
-    public Long getLayoutId() {
-        return layoutId;
-    }
 
 
     public Long getModuleId() {

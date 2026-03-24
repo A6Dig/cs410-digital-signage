@@ -85,7 +85,7 @@ public class LayoutServiceImpl implements LayoutService{
         if(dto.getSlots() != null) {
             for(LayoutSlotRequestDto s : dto.getSlots()) {
                 LayoutSlot slot = new LayoutSlot(layout);
-                slot.setModuleId(null);
+                slot.setModuleId(s.getModuleId());
                 slot.setColPos(s.getColPos());
                 slot.setRowPos(s.getRowPos());
                 slot.setColSpan(s.getColSpan());
