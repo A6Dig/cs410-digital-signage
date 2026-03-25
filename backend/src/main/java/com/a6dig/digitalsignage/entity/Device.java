@@ -4,31 +4,45 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "devices")
 public class Device {
 
-    private String id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OneToOne
+    @JoinColumn(name = "layout_id", insertable = false, updatable = false)
+    private Layout layout;
+
     private String name;
-    private String ipAddress;
-    private Integer deviceGroupId;
-    private LocalDateTime lastConnected;
-    
-    public Device() {
-    }
 
-    public Device(String id, String name, String ipAddress, Integer deviceGroupId, LocalDateTime lastConnected) {
-        this.id = id;
-        this.name = name;
-        this.ipAddress = ipAddress;
-        this.deviceGroupId = deviceGroupId;
-        this.lastConnected = lastConnected;
-    }
+    private String ipAddress;;
 
-    public String getId() {
+    @ManyToOne
+    @JoinColumn(name = "device_group_id", insertable = false, updatable = false)
+    private DeviceGroup deviceGroup;
+
+    private boolean status;
+
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 
     public String getName() {
@@ -47,22 +61,40 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
-    public Integer getDeviceGroupId() {
-        return deviceGroupId;
+    public DeviceGroup getDeviceGroup() {
+        return deviceGroup;
     }
 
-    public void setDeviceGroupId(Integer deviceGroupId) {
-        this.deviceGroupId = deviceGroupId;
+    public void setDeviceGroup(DeviceGroup deviceGroup) {
+        this.deviceGroup = deviceGroup;
     }
 
-    public LocalDateTime getLastConnected() {
-        return lastConnected;
+    public boolean isStatus() {
+        return status;
     }
 
-    public void setLastConnected(LocalDateTime lastConnected) {
-        this.lastConnected = lastConnected;
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    
+    
     
 
 }

@@ -15,12 +15,15 @@ public class DeviceController {
     @Autowired
     private DeviceRepository deviceRepository;
 
-    // Endpoint for receivers to check-in/register [cite: 52]
-    @PostMapping("/register")
-    public Device registerDevice(@RequestBody Device device) {
-        device.setLastConnected(LocalDateTime.now());
-        // Simple registration: assume all receivers are legitimate 
-        return deviceRepository.save(device);
+    @GetMapping
+    public List<Device> getAllDevices() {
+        return deviceRepository.findAll();
     }
+
+    @GetMapping("/{id}")
+    public Device getDeviceById(@PathVariable Integer id) {
+        return deviceRepository.findById(id).orElse(null);
+    }
+
     
 }
