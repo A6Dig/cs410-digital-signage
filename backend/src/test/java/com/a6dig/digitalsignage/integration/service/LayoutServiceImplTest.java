@@ -4,6 +4,7 @@ import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
@@ -72,6 +73,20 @@ public class LayoutServiceImplTest {
         return slot;
     }
 
+
+    private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long id, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex){
+        LayoutSlotRequestUpdateDto slot = new LayoutSlotRequestUpdateDto();
+
+        slot.setId(id);
+        slot.setModuleId(moduleId);
+        slot.setColPos(colPos);
+        slot.setRowPos(rowPos);
+        slot.setColSpan(colSpan);
+        slot.setRowSpan(rowSpan);
+        slot.setzIndex(zIndex);
+
+        return slot;
+    }
 
     private void assertLayout(LayoutResponseDto<LayoutSlotResponseDto> layout, String expectedName, int expectedCols, int expectedRows) {
         assertNotNull(layout.getId());
@@ -239,6 +254,24 @@ public class LayoutServiceImplTest {
         assertLayout(updated, "Updated Layout", 1,1);
     }
 
+//
+//
+//    @Test
+//    void shouldUpdateLayoutWithNewLayoutSlot() {
+//        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
+//                this.buildLayoutRequestDto("Main Layout", 1,1)
+//        );
+//
+//        LayoutSlotRequestUpdateDto slot = this.buildLayoutSlotRequestDto(1L,1,1,1,1,0);
+//
+//
+//        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
+//        updateRequest.setSlots(List.of(slot));
+//
+//        LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(created.getId(), updateRequest);
+//        assertLayout(updated, "Updated Layout", 1,1);
+//    }
+
     @Test
     void shouldUpdateUpdatedAtOnUpdate() throws InterruptedException {
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
@@ -306,6 +339,27 @@ public class LayoutServiceImplTest {
         );
         LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,-1);
         assertThrows(InvalidLayoutException.class, () -> layoutServiceImpl.updateLayout(created.getId(), updateRequest));
+    }
+
+    @Test void shouldThrowErrorWhenUpdateLayoutWithLayoutSlotsThatDontBelongToTheLayout() {
+        LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Main Layout", 1, 1);
+        layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)));
+        LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
+
+        LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
+        layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(2L, 1,1,1,1,0)));
+        LayoutResponseDto<LayoutSlotResponseDto> savedLayout2 = this.layoutServiceImpl.createLayout(layout2);
+
+
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Layout", 1, 1);
+        List<LayoutSlotRequestUpdateDto> slots = new ArrayList<>();
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
+        request.setSlots(slots);
+
+        assertThrows(InvalidLayoutSlotException.class, () -> this.layoutServiceImpl.updateLayout(savedLayout2.getId(), request));
+
+
     }
 
     // Delete
