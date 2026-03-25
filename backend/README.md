@@ -649,7 +649,7 @@ INT durationSeconds
                                         "rows": 1,           // total number of rows
                                         "createdAt": "2026-03-15T02:13:45:00Z",
                                         "updatedAt": "2026-03-15T02:13:45:00Z",
-                                        "layoutSlots": [
+                                        "slots": [
                                                             {
                                                                 "id": 1,
                                                                 "layoutId": 1,
@@ -744,7 +744,7 @@ INT durationSeconds
                                         "rows": 1,           // total number of rows
                                         "createdAt": "2026-03-15T02:13:45:00Z",
                                         "updatedAt": "2026-03-15T02:13:45:00Z",
-                                        "layoutSlots": [
+                                        "slots": [
                                                             {
                                                                 "id": 1,
                                                                 "layoutId": 1,
@@ -948,7 +948,7 @@ INT durationSeconds
                         "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
-                        "layoutSlots": [
+                        "slots": [
                                             {
                                                 "id": 1,
                                                 "layoutId": 1,
@@ -985,7 +985,7 @@ INT durationSeconds
                             "rows": 1,           // total number of rows
                             "createdAt": "2026-03-15T02:13:45:00Z",
                             "updatedAt": "2026-03-15T02:13:45:00Z",
-                            "layoutSlots": [
+                            "slots": [
                                                 {
                                                     "id": 1,
                                                     "layoutId": 1,
@@ -1092,7 +1092,7 @@ INT durationSeconds
                         "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
-                        "layoutSlots": [
+                        "slots": [
                                             {
                                                 "id": 1,
                                                 "layoutId": 1,
@@ -1176,7 +1176,7 @@ INT durationSeconds
                         "rows": 1,           // total number of rows
                         "createdAt": "2026-03-15T02:13:45:00Z",
                         "updatedAt": "2026-03-15T02:13:45:00Z",
-                        "layoutSlots": [
+                        "slots": [
                                             {
                                                 "id": 3,
                                                 "layoutId": 1,
@@ -1311,6 +1311,10 @@ INT durationSeconds
         <td>DELETE</td><td>/api/layouts/{id}</td>
         <td>Deletes the layout.</td>
     </tr>
+    <tr>
+        <td>DELETE</td><td>/api/layouts</td>
+        <td>Deletes all layouts.</td>
+    </tr>
 </table>
 
 
@@ -1321,190 +1325,260 @@ INT durationSeconds
 <details>
     <summary><b>GET</b> /api/layouts</summary>
 
-    RESPONSE 200
-
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "",
+  "data": [
     {
-        "status": 200,
-        "message": "",
-        "data": [
-
-                    {
-                        "id": 1,
-                        "name": "Campus Center Default",
-                        "cols": 2,           // total number of columns
-                        "rows": 1,           // total number of rows
-                        "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z",
-                        "layoutSlots": [
-                                            {
-                                                "id": 1,
-                                                "layoutId": 1,
-                                                "moduleId": 1,
-                                                "colPos": 1,
-                                                "rowPos": 1,
-                                                "colSpan": 1,
-                                                "rowSpan": 1,
-                                                "zIndex": 1
-                                            },
-                                            {
-                                                "id": 2,
-                                                "layoutId": 2,
-                                                "moduleId": 2,
-                                                "colPos": 2,
-                                                "rowPos": 1,
-                                                "colSpan": 1,
-                                                "rowSpan": 1,
-                                                "zIndex": 1
-                                            }
-                                    ]
-                    },
-            
-                    {
-                        "id": 2,
-                        "name": "Test Layout",
-                        "cols": 2,           // total number of columns
-                        "rows": 3,           // total number of rows
-                        "createdAt": "2026-03-15T02:13:45:00Z",
-                        "updatedAt": "2026-03-15T02:13:45:00Z",
-                        "layoutSlots": []
-                    },
-                ],
-        "errors":[]
-    }
-    
-    RESPONSE 500
-
+      "name": "Main Layout",
+      "cols": 2,
+      "rows": 2,
+      "slots": [],
+      "id": 2,
+      "createdAt": "2026-03-24T17:39:25.503526",
+      "updatedAt": "2026-03-24T17:39:25.504403"
+    },
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "name": "Main Layout",
+      "cols": 2,
+      "rows": 2,
+      "slots": [
+        {
+          "moduleId": 1,
+          "colPos": 1,
+          "rowPos": 1,
+          "colSpan": 1,
+          "rowSpan": 1,
+          "zIndex": 0,
+          "id": 1,
+          "layoutId": 3,
+          "createdAt": "2026-03-24T18:02:07.309213",
+          "updatedAt": "2026-03-24T18:02:07.30923"
+        }
+      ],
+      "id": 3,
+      "createdAt": "2026-03-24T18:02:07.300755",
+      "updatedAt": "2026-03-24T18:02:07.30092"
     }
+  ],
+  "errors": []
+}
+```
+
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
+    {
+      "error": "Unexpected error occurred."
+    },
+    {
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
+    }
+  ]
+}
+```
 </details>
 
 
 <details>
-    <summary><b>POST</b> /api/layouts</summary>
+<summary><b>POST</b> /api/layouts</summary>
 
-    REQUEST
-    
+
+
+***REQUEST BODY*** Layout without slots
+```json
+{
+  "name": "Another Layout",
+  "cols": 2,
+  "rows": 2
+}
+```
+
+***RESPONSE 201*** Layout without slots
+```json
+{
+    "status": 201,
+    "message": "Layout created successfully",
+    "data": {
+                "id": 3,
+                "name": "Anohter Layout",
+                "cols": 2,
+                "rows": 2,
+                "createdAt": "2026-03-15T02:45:45:00Z",
+                "updatedAt": "2026-03-15T02:45:45:00Z"
+            },
+    "errors":[]
+}
+```
+
+
+***REQUEST BODY*** Layout with slots
+```json
+{
+  "name": "Main Layout",
+  "cols": 2,
+  "rows": 2,
+  "slots": [
     {
-        "name": "Another Layout",
-        "cols": 2,           // total number of columns
-        "rows": 2,           // total number of rows
+      "layoutId": 1,
+      "moduleId": 1,
+      "colPos": 1,
+      "rowPos": 1,
+      "colSpan": 1,
+      "rowSpan": 1,
+      "zIndex": 1
     }
+  ]
+}
+```
 
-    RESPONSE 201
+***RESPONSE 201*** Layout with slots
+```json
+{
+  "status": 201,
+  "message": "Layout created successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 0,
+        "id": 1,
+        "layoutId": 3,
+        "createdAt": "2026-03-24T18:02:07.309213",
+        "updatedAt": "2026-03-24T18:02:07.30923"
+      }
+    ],
+    "id": 3,
+    "createdAt": "2026-03-24T18:02:07.300755",
+    "updatedAt": "2026-03-24T18:02:07.30092"
+  },
+  "errors": []
+}
+```
 
+
+
+***RESPONSE 400***
+```json
+{
+  "status": 400,
+  "message": "Layout validation failed.",
+  "data": null,
+  "errors": [
     {
-        "status": 201,
-        "message": "Layout created successfully",
-        "data": {
-                    "id": 3,
-                    "name": "Anohter Layout",
-                    "cols": 2,           // total number of columns
-                    "rows": 2,           // total number of rows
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T02:45:45:00Z"
-                },
-        "errors":[]
+      "error": "Layout row cannot be negative."
     }
+  ]
+}
+```
 
-    
-    RESPONSE 400
-
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
-        "status": 400,
-        "message": "Validation failed",
-        "data": null,
-        "errors":[
-            {"error": "Grid column is not defined"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
+      "error": "Unexpected error occurred."
+    },
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
     }
+  ]
+}
+```
+
 </details>
 
 
 <details>
     <summary><b>GET</b> /api/layouts/3</summary>
 
-    RESPONSE 200
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 1,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 0,
+        "id": 1,
+        "layoutId": 3,
+        "createdAt": "2026-03-24T18:02:07.309213",
+        "updatedAt": "2026-03-24T18:02:07.30923"
+      }
+    ],
+    "id": 3,
+    "createdAt": "2026-03-24T18:02:07.300755",
+    "updatedAt": "2026-03-24T18:02:07.30092"
+  },
+  "errors": []
+}
+```
 
-    
+
+***RESPONSE 404***
+```json
+{
+  "status": 404,
+  "message": "Layout not found.",
+  "data": null,
+  "errors": [
     {
-        "status": 200,
-        "message": "",
-        "data": {
-                    "id": 3,
-                    "name": "Anohter Layout",
-                    "cols": 2,           // total number of columns
-                    "rows": 2,           // total number of rows
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T02:45:45:00Z",
-                    "layoutSlots": [
-                                        {
-                                            "id": 1,
-                                            "layoutId": 1,
-                                            "moduleId": 1,
-                                            "colPos": 1,
-                                            "rowPos": 1,
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "zIndex": 1
-                                        },
-                                        {
-                                            "id": 2,
-                                            "layoutId": 2,
-                                            "moduleId": 2,
-                                            "colPos": 2,
-                                            "rowPos": 1,
-                                            "colSpan": 1,
-                                            "rowSpan": 1,
-                                            "zIndex": 1
-                                        }
-                                ]
-                },
-        "errors":[]
+      "error": "Layout with id 1 doesn't exist"
     }
+  ]
+}
+```
 
-    
-    RESPONSE 404
-
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
-        "status": 404,
-        "message": "Layout not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout with id 3 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
+      "error": "Unexpected error occurred."
+    },
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
     }
+  ]
+}
+```
 
 </details>
 
@@ -1513,54 +1587,144 @@ INT durationSeconds
 <details>
     <summary><b>PUT</b> /api/layouts/3</summary>
 
-    REQUEST
-        {
-            "name": "Updated Layout Name",
-            "cols": 2,
-            "rows": 2
-        }
+***REQUEST BODY*** Layout without slots
+```json
+{
+  "name": "Updated Layout Name",
+  "cols": 2,
+  "rows": 2
+}
+```
 
-    RESPONSE 200
+***RESPONSE 200*** Layout without slots
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Updated Layout Name",
+    "cols": 2,
+    "rows": 2,
+    "slots": [],
+    "id": 2,
+    "createdAt": "2026-03-24T17:39:25.503526",
+    "updatedAt": "2026-03-24T18:23:24.528091"
+  },
+  "errors": []
+}
+```
 
-    
+
+***REQUEST BODY*** Layout with slots
+```json
+
+{
+  "name": "Main Layout",
+  "cols": 2,
+  "rows": 2,
+  "slots": [
     {
-        "status": 200,
-        "message": "Layout updated successfully",
-        "data": {
-                    "id": 3,
-                    "name": "Updated Layout Name",
-                    "cols": 2,           // total number of columns
-                    "rows": 2,           // total number of rows
-                    "createdAt": "2026-03-15T02:45:45:00Z",
-                    "updatedAt": "2026-03-15T03:10:45:00Z"
-                },
-        "errors":[]
-    }
-
-    
-    RESPONSE 404
+      "id": 1,
+      "layoutId": 3,
+      "moduleId": 156432,
+      "colPos": 1,
+      "rowPos": 1,
+      "colSpan": 1,
+      "rowSpan": 1,
+      "zIndex": 1
+    },
 
     {
-        "status": 404,
-        "message": "Layout not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout with id 3 doesn't exist"}
-        ]
+      "id": null,
+      "layoutId": 3,
+      "moduleId": 5,
+      "colPos": 10,
+      "rowPos": 12,
+      "colSpan": 12,
+      "rowSpan": 12,
+      "zIndex": 100
     }
-    
+  ]
+}
 
-    
-    RESPONSE 500
+```
 
+***RESPONSE 200*** Layout with slots
+```json
+{
+  "status": 200,
+  "message": "Layout updated successfully.",
+  "data": {
+    "name": "Main Layout",
+    "cols": 2,
+    "rows": 2,
+    "slots": [
+      {
+        "moduleId": 156432,
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 0,
+        "id": 1,
+        "layoutId": 3,
+        "createdAt": "2026-03-24T18:02:07.30092",
+        "updatedAt": "2026-03-24T18:26:05.266895"
+      },
+      {
+        "moduleId": 5,
+        "colPos": 10,
+        "rowPos": 12,
+        "colSpan": 12,
+        "rowSpan": 12,
+        "zIndex": 0,
+        "id": 2,
+        "layoutId": 3,
+        "createdAt": "2026-03-24T18:26:05.264973",
+        "updatedAt": "2026-03-24T18:26:05.264985"
+      }
+    ],
+    "id": 3,
+    "createdAt": "2026-03-24T18:02:07.300755",
+    "updatedAt": "2026-03-24T18:02:07.30092"
+  },
+  "errors": []
+}
+```
+
+***RESPONSE 404***
+```json
+{
+  "status": 404,
+  "message": "Layout not found.",
+  "data": null,
+  "errors": [
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "Layout with id 1 doesn't exist"
     }
+  ]
+}
+```
+
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
+    {
+      "error": "Unexpected error occurred."
+    },
+    {
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
+    }
+  ]
+}
+```
 
 </details>
 
@@ -1569,40 +1733,89 @@ INT durationSeconds
     <summary><b>DELETE</b> /api/layouts/3</summary>
 
 
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "Layout deleted successfully.",
+  "data": null,
+  "errors": []
+}
+```
 
-    RESPONSE 200
 
+***RESPONSE 404***
+```json
+{
+  "status": 404,
+  "message": "Layout not found.",
+  "data": null,
+  "errors": [
     {
-        "status": 200,
-        "message": "Layout deleted successfully.",
-        "data": null,
-        "errors":[]
+      "error": "Layout with id 55 doesn't exist"
     }
+  ]
+}
+```
 
-    
-    RESPONSE 404
-
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
     {
-        "status": 404,
-        "message": "Layout not found",
-        "data": null,
-        "errors":[
-            {"error": "Layout with id 3 doesn't exist"}
-        ]
-    }
-    
-
-    
-    RESPONSE 500
-
+      "error": "Unexpected error occurred."
+    },
     {
-        "status": 500,
-        "message": "Internal server error",
-        "data": null,
-        "errors":[
-            {"error": "Unexpected error occurred"}
-        ]
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
     }
+  ]
+}
+```
+
+</details>
+
+
+<details>
+    <summary><b>DELETE</b> /api/layouts</summary>
+
+
+
+***RESPONSE 200***
+```json
+{
+  "status": 200,
+  "message": "Layouts deleted successfully.",
+  "data": null,
+  "errors": []
+}
+```
+
+
+***RESPONSE 500***
+```json
+{
+  "status": 500,
+  "message": "Internal server error",
+  "data": null,
+  "errors": [
+    {
+      "error": "Unexpected error occurred."
+    },
+    {
+      "error": "No static resource api/layouts."
+    },
+    {
+      "error": "No static resource api/layouts."
+    }
+  ]
+}
+```
 
 </details>
 
