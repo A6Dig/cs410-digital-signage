@@ -5,6 +5,7 @@ import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
@@ -82,6 +83,7 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setSlots(new ArrayList<>());
 
 
+
         if(dto.getSlots() != null) {
             for(LayoutSlotRequestDto s : dto.getSlots()) {
                 LayoutSlot slot = new LayoutSlot(layout);
@@ -135,10 +137,19 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setRows(dto.getRows());
 
 
+        List<Long> existingSlotIds = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(id).stream().map(LayoutSlot::getId).toList();
 
 
         if(dto.getSlots() != null) {
             for(LayoutSlotRequestUpdateDto s : dto.getSlots()) {
+
+                if (s.getId() != null && !existingSlotIds.contains(s.getId())) {
+                    throw new InvalidLayoutSlotException(
+                            AppConstant.ExceptionMessage.LAYOUT_SLOT_INVALID_LAYOUT_SLOT
+                            ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutSlotIdDoesNotBelongToTheLayout(s.getId(), layout.getName())))
+                    );
+                }
+
                 LayoutSlot slot = new LayoutSlot(layout);
                 slot.setId(s.getId());
                 slot.setModuleId(s.getModuleId());
