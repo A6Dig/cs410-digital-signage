@@ -156,13 +156,13 @@ Every time someone does a pull request, run all the tests! Even though some test
 
 ```mermaid
 erDiagram
-    Device ||--|| Layout : "uses Layout. 
-                        if DeviceGroup.layoutId <> NULL 
-                        THEN show this layout
-                        ELSE override with layout from DeviceGroup"
-    Device ||--o| Pairing : has
+    Device ||--|| Layout : "uses Layout" 
+%%                        if DeviceGroup.layoutId <> NULL 
+%%                        THEN show this layout
+%%                        ELSE override with layout from DeviceGroup"
+%%    Device ||--o| Pairing : has
     DeviceGroup ||--o{ Device : has
-    DeviceGroup }|--o| Layout : uses
+%%    DeviceGroup }|--o| Layout : uses
     Layout ||--o{ LayoutSlot : contains
     LayoutSlot }o--|| Module : displays
     AdCollection ||--|{ AdCollectionContentLink : has
@@ -182,7 +182,7 @@ DATETIME updatedAt
 
 DeviceGroup {
 BIGINT id pk
-BIGINT layoutId fk
+%%BIGINT layoutId fk
 VARCHAR(50) name
 VARCHAR(255) description
 DATETIME createdAt
@@ -193,18 +193,19 @@ Device {
 BIGINT id pk
 BIGINT layoutId fk
 VARCHAR(50) name
-VARCHAR(50) pairingId
+%%VARCHAR(50) pairingId
+VARCHAR ipAddress
 ENUM status "ONLINE | OFFLINE"
 BIGINT DeviceGroupId fk
 DATETIME createdAt
 DATETIME updatedAt
     }
-Pairing {
-BIGINT id pk
-BOOLEAN paired
-DATETIME createdAt
-DATETIME updatedAt
-}
+%%Pairing {
+%%BIGINT id pk
+%%BOOLEAN paired
+%%DATETIME createdAt
+%%DATETIME updatedAt
+%%}
 
 Layout {
 BIGINT id pk
