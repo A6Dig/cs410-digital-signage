@@ -1,6 +1,6 @@
 package com.a6dig.digitalsignage.dto;
 
-public class AdCollectionRequestUpdateDto<T extends AdContentRequestUpdateDto> extends AdCollectionRequestDto<T>{
+public class AdCollectionRequestUpdateDto extends AdCollectionRequestDto<AdContentRequestDto>{
     private Long id;
 
     public Long getId() {
