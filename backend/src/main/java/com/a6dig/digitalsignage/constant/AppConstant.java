@@ -1,6 +1,10 @@
 package com.a6dig.digitalsignage.constant;
 
 public final class AppConstant {
+    public static final class SystemConstant {
+        public static final String DOMAIN_TYPE_AD_CONTENT = "Ad Content";
+        public static final String DOMAIN_TYPE_MODULE = "Module";
+    }
     public static final class ExceptionMessage {
         public static final String LAYOUT_NOT_FOUND = "Layout not found.";
         public static final String LAYOUT_INVALID_LAYOUT_ID = "Invalid layout ID provided. Layout with this ID doesn't exist.";

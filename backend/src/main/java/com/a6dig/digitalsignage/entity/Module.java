@@ -14,7 +14,7 @@ public class Module {
     private Long id;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="adCollectionId")
+    @JoinColumn(name="adCollectionId", updatable = false)
     private AdCollection adCollection;
 
     private String name;

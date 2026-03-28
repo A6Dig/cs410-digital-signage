@@ -1,6 +1,7 @@
 package com.a6dig.digitalsignage.config;
 
 import com.a6dig.digitalsignage.constant.AdContentTypeEnum;
+import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
 import com.a6dig.digitalsignage.repository.DomainRepository;
 import jakarta.annotation.PostConstruct;
@@ -16,9 +17,13 @@ public class DatabaseInit {
     private final DomainRepository domainRepository;
     private final JdbcTemplate jdbcTemplate;
 
-    public DatabaseInit(DomainRepository domainRepository, JdbcTemplate jdbcTemplate) {
+    @Autowired
+    private final DomainCache domainCache;
+
+    public DatabaseInit(DomainRepository domainRepository, JdbcTemplate jdbcTemplate, DomainCache domainCache) {
         this.domainRepository = domainRepository;
         this.jdbcTemplate = jdbcTemplate;
+        this.domainCache = domainCache;
     }
 
     @PostConstruct
@@ -60,6 +65,9 @@ public class DatabaseInit {
 
         validateEnum(ModuleTypeEnum.class, "Module");
         validateEnum(AdContentTypeEnum.class, "Ad Content");
+
+        this.domainCache.refresh(AppConstant.SystemConstant.DOMAIN_TYPE_MODULE);
+        this.domainCache.refresh(AppConstant.SystemConstant.DOMAIN_TYPE_AD_CONTENT);
     }
 
     private <T extends Enum<T>> void validateEnum(Class<T> enumClass, String type) {
