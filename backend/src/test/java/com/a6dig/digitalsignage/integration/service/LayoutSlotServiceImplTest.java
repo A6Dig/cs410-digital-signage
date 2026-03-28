@@ -4,6 +4,9 @@ package com.a6dig.digitalsignage.integration.service;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
+import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import com.a6dig.digitalsignage.service.LayoutService;
@@ -262,5 +265,86 @@ public class LayoutSlotServiceImplTest {
         List<LayoutSlot> response2 = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(saved2.getId());
 
         assertEquals(2, response2.size());
+    }
+
+
+
+    @Test
+    void shouldThrowErrorLayoutNotFoundWhenDeleteLayoutSlotsByLayoutId() {
+
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> layout = this.buildLayoutRequestDto(null,null,null);
+        LayoutSlotRequestUpdateDto deleteSlot1 = this.buildLayoutSlotRequestUpdateDto(1L,null, null, null, null, null, null);
+        layout.setSlots(List.of(deleteSlot1));
+
+        assertThrows(LayoutNotFoundException.class, () -> this.layoutSlotService.deleteLayoutSlotsByLayoutId(1L, layout));
+    }
+
+
+
+
+    @Test
+    void shouldThrowErrorLayoutSlotIdCannotBeNullWhenDeleteLayoutSlotsByLayoutId() {
+
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> layout = this.buildLayoutRequestDto(null,null,null);
+        LayoutSlotRequestUpdateDto deleteSlot1 = this.buildLayoutSlotRequestUpdateDto(null,null, null, null, null, null, null);
+        layout.setSlots(List.of(deleteSlot1));
+
+        assertThrows(LayoutNotFoundException.class, () -> this.layoutSlotService.deleteLayoutSlotsByLayoutId(1L, layout));
+    }
+
+
+    @Test
+    void shouldThrowErrorLayoutSlotDoesntBelongToTheLayoutWhenDeleteLayoutSlotsByLayoutId() {
+
+
+
+        // layout 1
+        LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Default Layout", 2,2);
+        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(1L, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(1L, 22, 22, 2,1,0);
+
+        layout1.setSlots(List.of(layoutSlot11, layoutSlot12));
+
+        LayoutResponseDto<LayoutSlotResponseDto> saved1 = this.layoutServiceImpl.createLayout(layout1);
+        List<LayoutSlotResponseDto> savedSlots1 = new ArrayList<>(saved1.getSlots());
+        savedSlots1.sort(Comparator.comparing(LayoutSlotResponseDto::getColPos));
+
+        assertLayout(saved1, "Default Layout", 2,2);
+        assertEquals(2, saved1.getSlots().size());
+        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), 1L, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), 1L, 22, 22, 2,1,0);
+
+
+        // layout 2
+
+        LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 2,2);
+        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( 1L, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( 1L, 22, 22, 2,1,0);
+
+
+
+        layout2.setSlots(List.of(layoutSlot21, layoutSlot22));
+
+        LayoutResponseDto<LayoutSlotResponseDto> saved2 = this.layoutServiceImpl.createLayout(layout2);
+        List<LayoutSlotResponseDto> savedSlots2 = new ArrayList<>(saved2.getSlots());
+        savedSlots2.sort(Comparator.comparing(LayoutSlotResponseDto::getColPos));
+
+        assertLayout(saved2, "Secondary Layout", 2,2);
+        assertEquals(2, saved2.getSlots().size());
+        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), 1L, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), 1L, 22, 22, 2,1,0);
+
+
+
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> layout = this.buildLayoutRequestDto(null,null,null);
+        LayoutSlotRequestUpdateDto deleteSlot1 = this.buildLayoutSlotRequestUpdateDto(savedSlots2.get(0).getId(),null, null, null, null, null, null);
+        layout.setSlots(List.of(deleteSlot1));
+
+        assertThrows(InvalidLayoutSlotException.class, () -> this.layoutSlotService.deleteLayoutSlotsByLayoutId(saved1.getId(), layout));
+    }
+
+    @Test
+    void shouldThrowErrorWhenDeleteAllLayoutSlotsByLayoutId() {
+        assertThrows(LayoutNotFoundException.class, () -> this.layoutSlotService.deleteAllSlotsByLayoutId(1L));
     }
 }
