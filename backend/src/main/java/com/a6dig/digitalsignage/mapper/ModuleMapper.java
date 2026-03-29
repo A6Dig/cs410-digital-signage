@@ -6,7 +6,9 @@ import com.a6dig.digitalsignage.dto.AdContentResponseDto;
 import com.a6dig.digitalsignage.dto.ModuleResponseDto;
 import com.a6dig.digitalsignage.entity.AdCollection;
 import com.a6dig.digitalsignage.entity.Module;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ModuleMapper {
     public ModuleResponseDto toModuleResponseDto(Module module) {
         ModuleResponseDto moduleResponseDto = new ModuleResponseDto();

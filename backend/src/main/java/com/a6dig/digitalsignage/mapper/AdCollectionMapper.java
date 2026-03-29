@@ -3,7 +3,10 @@ package com.a6dig.digitalsignage.mapper;
 import com.a6dig.digitalsignage.dto.AdCollectionResponseDto;
 import com.a6dig.digitalsignage.dto.AdContentResponseDto;
 import com.a6dig.digitalsignage.entity.AdCollection;
+import org.springframework.stereotype.Component;
 
+
+@Component
 public class AdCollectionMapper {
     public static AdCollectionResponseDto toAdCollectionResponseDto(AdCollection adCollection) {
         AdCollectionResponseDto dto = new AdCollectionResponseDto();
