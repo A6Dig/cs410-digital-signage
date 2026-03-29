@@ -16,20 +16,21 @@ public class Layout {
     @Column(length = 50)
     private String name;
 
-    @Column(name = "layoutCol", nullable = false)
-    private int layoutCol;
+    @Column(name = "`cols`", nullable = false)
+    private int cols;
 
-    @Column(name = "layoutRow", nullable = false)
-    private int layoutRow;
+    @Column(name = "`rows`", nullable = false)
+    private int rows;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+
     @OneToMany(mappedBy = "layout", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE}, orphanRemoval = true)
-    private List<LayoutSlot> layoutSlotList;
+    private List<LayoutSlot> slots;
 
     @PrePersist
     protected void onCreate() {
@@ -58,20 +59,20 @@ public class Layout {
         this.name = name;
     }
 
-    public int getLayoutCol() {
-        return layoutCol;
+    public int getCols() {
+        return cols;
     }
 
-    public void setLayoutCol(int layoutCol) {
-        this.layoutCol = layoutCol;
+    public void setCols(int cols) {
+        this.cols = cols;
     }
 
-    public int getLayoutRow() {
-        return layoutRow;
+    public int getRows() {
+        return rows;
     }
 
-    public void setLayoutRow(int layoutRow) {
-        this.layoutRow = layoutRow;
+    public void setRows(int rows) {
+        this.rows = rows;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -90,16 +91,20 @@ public class Layout {
         this.updatedAt = updatedAt;
     }
 
-    public List<LayoutSlot> getLayoutSlotList() {
-        return layoutSlotList;
+    public List<LayoutSlot> getSlots() {
+        return slots;
     }
 
-    public void setLayoutSlotList(List<LayoutSlot> layoutSlotList) {
-        this.layoutSlotList = layoutSlotList;
+    public void setSlots(List<LayoutSlot> slots) {
+        this.slots = slots;
     }
 
     public void addLayoutSlot(LayoutSlot slot) {
-        if(this.layoutSlotList == null) this.layoutSlotList = new ArrayList<>();
-        this.layoutSlotList.add(slot);
+        if(this.slots == null) this.slots = new ArrayList<>();
+        this.slots.add(slot);
+    }
+
+    public void addLayoutSlots(List<LayoutSlot> slots) {
+        slots.forEach(this::addLayoutSlot);
     }
 }

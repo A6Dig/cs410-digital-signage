@@ -2,6 +2,7 @@ package com.a6dig.digitalsignage.util;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(InvalidLayoutException.class)
     public ResponseEntity<APIResponse<Void>> handleInvalidLayout(InvalidLayoutException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                APIResponse.badRequest(exception.getMessage(), exception.getErrors())
+        );
+    }
+
+    @ExceptionHandler(InvalidLayoutSlotException.class)
+    public ResponseEntity<APIResponse<Void>> handleInvalidLayoutSlot(InvalidLayoutSlotException exception) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 APIResponse.badRequest(exception.getMessage(), exception.getErrors())
         );

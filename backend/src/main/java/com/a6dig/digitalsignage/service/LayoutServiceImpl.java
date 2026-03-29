@@ -5,6 +5,7 @@ import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
@@ -15,9 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -35,7 +34,7 @@ public class LayoutServiceImpl implements LayoutService{
     // GET
     @Override
     @Transactional(readOnly = true)
-    public LayoutResponseDto getLayoutById(Long id) {
+    public LayoutResponseDto<LayoutSlotResponseDto> getLayoutById(Long id) {
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
@@ -48,46 +47,31 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public List<LayoutResponseDto> getAllLayouts() {
+    public List<LayoutResponseDto<LayoutSlotResponseDto>> getAllLayouts() {
         return layoutRepository.findAll().stream().map(layoutMapper::toLayoutResponseDto).collect(Collectors.toList());
     }
 
     @Override
-    public LayoutResponseDto createLayout(LayoutRequestDto dto) {
-        List<Map<String, String>> errors = new ArrayList<>();
-
-
-        // validation
-        if(dto.getLayoutCol() < 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
-        }
-        if(dto.getLayoutRow() < 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
-        }
-        if(dto.getLayoutCol() == 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
-        }
-        if(dto.getLayoutRow() == 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
-        }
-
-        if(!errors.isEmpty()) {
-            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED, errors);
-        }
+    public LayoutResponseDto<LayoutSlotResponseDto> createLayout(LayoutRequestDto<LayoutSlotRequestDto> dto) {
+        this.validateLayout(true, dto);
 
         Layout layout = new Layout();
         layout.setName(dto.getName());
-        layout.setLayoutCol(dto.getLayoutCol());
-        layout.setLayoutRow(dto.getLayoutRow());
-        layout.setLayoutSlotList(new ArrayList<>());
+        layout.setCols(dto.getCols());
+        layout.setRows(dto.getRows());
+        layout.setSlots(new ArrayList<>());
 
 
-        if(dto.getLayoutSlotRequestDtoList() != null) {
-            for(LayoutSlotRequestDto s : dto.getLayoutSlotRequestDtoList()) {
+
+        if(dto.getSlots() != null) {
+            for(LayoutSlotRequestDto s : dto.getSlots()) {
+
+                validateLayoutSlot(true, s);
+
                 LayoutSlot slot = new LayoutSlot(layout);
-                slot.setModuleId(null);
-                slot.setGridCol(s.getGridCol());
-                slot.setGridRow(s.getGridRow());
+                slot.setModuleId(s.getModuleId());
+                slot.setColPos(s.getColPos());
+                slot.setRowPos(s.getRowPos());
                 slot.setColSpan(s.getColSpan());
                 slot.setRowSpan(s.getRowSpan());
                 slot.setzIndex(s.getzIndex());
@@ -103,36 +87,63 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayout(Long id, LayoutRequestUpdateDto dto) {
-        List<Map<String, String>> errors = new ArrayList<>();
-
-
-        // validation
-        if(dto.getLayoutCol() < 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
-        }
-        if(dto.getLayoutRow() < 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
-        }
-        if(dto.getLayoutCol() == 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
-        }
-        if(dto.getLayoutRow() == 0) {
-            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
-        }
-
-        if(!errors.isEmpty()) {
-            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED, errors);
-        }
+    public LayoutResponseDto<LayoutSlotResponseDto> updateLayout(Long id, LayoutRequestDto<LayoutSlotRequestUpdateDto> dto) {
+        validateLayout(false, dto);
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
                         AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
                         ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
                 ));
-        layout.setName(dto.getName());
-        layout.setLayoutCol(dto.getLayoutCol());
-        layout.setLayoutRow(dto.getLayoutRow());
+        layout.setName(dto.getName() == null ? layout.getName() : dto.getName());
+        layout.setCols(dto.getCols() == null ? layout.getCols() : dto.getCols());
+        layout.setRows(dto.getRows() == null ? layout.getRows() : dto.getRows());
+
+
+        Map<Long, LayoutSlot> slots = new HashMap<>();
+
+        layout.getSlots().forEach(layoutSlot -> {
+            slots.put(layoutSlot.getId(), layoutSlot);
+        });
+
+//        layout.getSlots().clear();
+
+        if(dto.getSlots() != null) {
+            for(LayoutSlotRequestUpdateDto s : dto.getSlots()) {
+
+                validateLayoutSlot(s.getId() == null, s);
+
+                if (s.getId() != null && !slots.containsKey(s.getId())) {
+                    throw new InvalidLayoutSlotException(
+                            AppConstant.ExceptionMessage.LAYOUT_SLOT_INVALID_LAYOUT_SLOT
+                            ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutSlotIdDoesNotBelongToTheLayout(s.getId(), layout.getName())))
+                    );
+                }
+
+
+                if (s.getId() == null) {
+
+                    LayoutSlot slot = new LayoutSlot(layout);
+                    slot.setModuleId(s.getModuleId());
+                    slot.setColPos(s.getColPos());
+                    slot.setRowPos(s.getRowPos());
+                    slot.setColSpan(s.getColSpan());
+                    slot.setRowSpan(s.getRowSpan());
+                    slot.setzIndex(s.getzIndex());
+
+                    layout.addLayoutSlot(slot);
+                } else {
+                    LayoutSlot existing = slots.get(s.getId());
+                    existing.setId(s.getId());
+                    existing.setModuleId(s.getModuleId());
+                    existing.setColPos(s.getColPos() == null ? existing.getColPos() : s.getColPos());
+                    existing.setRowPos(s.getRowPos() == null ? existing.getRowPos() : s.getRowPos());
+                    existing.setColSpan(s.getColSpan() == null ? existing.getColSpan() : s.getColSpan());
+                    existing.setRowSpan(s.getRowSpan() == null ? existing.getRowSpan() : s.getRowSpan());
+                    existing.setzIndex(s.getzIndex() == null ? existing.getzIndex() : s.getzIndex());
+                }
+            }
+        }
 
         Layout updated = layoutRepository.saveAndFlush(layout);
         return layoutMapper.toLayoutResponseDto(updated);
@@ -140,7 +151,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots) {
+    public LayoutResponseDto<LayoutSlotResponseDto> updateLayoutSlots(Long id, List<LayoutSlotRequestUpdateDto> slots) {
 
         Layout layout = layoutRepository.findById(id)
                 .orElseThrow(() -> new LayoutNotFoundException(
@@ -148,16 +159,31 @@ public class LayoutServiceImpl implements LayoutService{
                         ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(id)))
                 ));
 
-        layout.getLayoutSlotList().clear();
 
-        for (LayoutSlotRequestUpdateDto s : slots) {
+
+    Map<Long, LayoutSlot> existingSlots = new HashMap<>();
+    this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(id).forEach(layoutSlot -> existingSlots.put(layoutSlot.getId(), layoutSlot));
+
+
+        for(LayoutSlotRequestUpdateDto s : slots) {
+
+            if (s.getId() != null && !existingSlots.containsKey(s.getId())) {
+                throw new InvalidLayoutSlotException(
+                        AppConstant.ExceptionMessage.LAYOUT_SLOT_INVALID_LAYOUT_SLOT
+                        ,List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutSlotIdDoesNotBelongToTheLayout(s.getId(), layout.getName())))
+                );
+            }
+
+            LayoutSlot existing = existingSlots.get(s.getId());
+
             LayoutSlot slot = new LayoutSlot(layout);
+            slot.setId(s.getId());
             slot.setModuleId(s.getModuleId());
-            slot.setGridCol(s.getGridCol());
-            slot.setGridRow(s.getGridRow());
-            slot.setColSpan(s.getColSpan());
-            slot.setRowSpan(s.getRowSpan());
-            slot.setzIndex(s.getzIndex());
+            slot.setColPos(s.getColPos() == null ? existing.getColPos() : s.getColPos());
+            slot.setRowPos(s.getRowPos() == null ? existing.getRowPos() : s.getRowPos());
+            slot.setColSpan(s.getColSpan() == null ? existing.getColSpan() : s.getColSpan());
+            slot.setRowSpan(s.getRowSpan() == null ? existing.getRowSpan() : s.getRowSpan());
+            slot.setzIndex(s.getzIndex() == null ? existing.getzIndex() : s.getzIndex());
 
             layout.addLayoutSlot(slot);
 
@@ -186,7 +212,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
+    public LayoutResponseDto<LayoutSlotResponseDto> addLayoutSlotToLayout(Long layoutId, LayoutSlotRequestDto dto) {
         Layout layout = layoutRepository.findById(layoutId)
                 .orElseThrow(() -> new LayoutNotFoundException(
                         AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND
@@ -196,8 +222,8 @@ public class LayoutServiceImpl implements LayoutService{
 
         LayoutSlot slot = new LayoutSlot(layout);
         slot.setModuleId(dto.getModuleId());
-        slot.setGridCol(dto.getGridCol());
-        slot.setGridRow(dto.getGridRow());
+        slot.setColPos(dto.getColPos());
+        slot.setRowPos(dto.getRowPos());
         slot.setColSpan(dto.getColSpan());
         slot.setRowSpan(dto.getRowSpan());
         slot.setzIndex(dto.getzIndex());
@@ -211,7 +237,7 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Override
     @Transactional
-    public LayoutResponseDto removeLayoutSlotFromLayout(Long layoutId, Long slotId) {
+    public LayoutResponseDto<LayoutSlotResponseDto> removeLayoutSlotFromLayout(Long layoutId, Long slotId) {
         List<Map<String, String>> errors = new ArrayList<>();
 
         Layout layout = layoutRepository.findById(layoutId)
@@ -232,7 +258,7 @@ public class LayoutServiceImpl implements LayoutService{
             throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_INVALID_LAYOUT_ID, errors);
         }
 
-        layout.getLayoutSlotList().removeIf(s -> s.getId().equals(slotId));
+        layout.getSlots().removeIf(s -> s.getId().equals(slotId));
         Layout updated = layoutRepository.save(layout);
 
         return layoutMapper.toLayoutResponseDto(updated);
@@ -247,5 +273,107 @@ public class LayoutServiceImpl implements LayoutService{
     @Override
     public long layoutCount() {
         return layoutRepository.count();
+    }
+
+
+    // layout slots
+
+    @Override
+    public List<LayoutSlotResponseDto> getAllLayoutSlotsByLayoutId(Long layoutId) {
+        return layoutSlotRepository.getAllLayoutSlotsByLayoutId(layoutId).stream().map(layoutMapper::toLayoutSlotResponseDto).collect(Collectors.toList());
+    }
+
+
+
+
+    private void validateLayoutSlot(boolean isNew, LayoutSlotRequestDto dto) {
+        List<Map<String, String>> errors = new ArrayList<>();
+
+        // validation
+
+
+        if(isNew && dto.getColPos() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column cannot be empty."));
+        }
+        if(isNew && dto.getRowPos() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row cannot be empty."));
+        }
+
+        if(isNew && dto.getColSpan() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column span cannot be empty."));
+        }
+        if(isNew && dto.getRowSpan() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row span cannot be empty."));
+        }
+        if(isNew && dto.getzIndex() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's Z-index cannot be empty."));
+        }
+
+
+        if(dto.getColPos() != null && dto.getColPos() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column cannot be 0."));
+        }
+        if(dto.getColPos() != null && dto.getColPos() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column cannot be negative."));
+        }
+        if(dto.getRowPos() != null && dto.getRowPos() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row cannot be 0."));
+        }
+        if(dto.getRowPos() != null && dto.getRowPos() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row cannot be negative."));
+        }
+
+
+        if(dto.getColSpan() != null && dto.getColSpan() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column span cannot be 0."));
+        }
+        if(dto.getColSpan() != null && dto.getColSpan() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position column span cannot be negative."));
+        }
+
+
+        if(dto.getRowSpan() != null && dto.getRowSpan() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row span cannot be 0."));
+        }
+        if(dto.getRowSpan() != null && dto.getRowSpan() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout slot's position row span cannot be negative."));
+        }
+
+        if(!errors.isEmpty()) {
+            throw new InvalidLayoutSlotException(AppConstant.ExceptionMessage.LAYOUT_SLOT_VALIDATION_FAILED, errors);
+        }
+    }
+
+
+    private void validateLayout(boolean isNew, LayoutRequestDto<? extends LayoutSlotRequestDto> dto) {
+        List<Map<String, String>> errors = new ArrayList<>();
+
+
+        // validation
+
+
+        if(isNew && dto.getRows() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be empty."));
+        }
+        if(isNew && dto.getCols() == null) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be empty."));
+        }
+
+        if(dto.getCols() != null && dto.getCols() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be negative."));
+        }
+        if(dto.getRows() != null && dto.getRows() < 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be negative."));
+        }
+        if(dto.getCols() != null && dto.getCols() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout column cannot be 0."));
+        }
+        if(dto.getRows() != null && dto.getRows() == 0) {
+            errors.add(ErrorMessage.createErrorMessage("Layout row cannot be 0."));
+        }
+
+        if(!errors.isEmpty()) {
+            throw new InvalidLayoutException(AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED, errors);
+        }
     }
 }

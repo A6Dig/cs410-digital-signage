@@ -7,29 +7,20 @@ import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
-import com.a6dig.digitalsignage.mapper.LayoutMapper;
-import com.a6dig.digitalsignage.repository.LayoutRepository;
-import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import com.a6dig.digitalsignage.service.LayoutService;
-import com.a6dig.digitalsignage.service.LayoutServiceImpl;
 import com.a6dig.digitalsignage.util.ErrorMessage;
 import org.junit.jupiter.api.Test;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.io.InvalidClassException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -52,94 +43,34 @@ public class LayoutControllerTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
-
-    // helper methods
-    private Layout buildLayout(Long id, String name, int col, int row) {
-        Layout layout = new Layout();
-        layout.setId(id);
-        layout.setName(name);
-        layout.setLayoutCol(col);
-        layout.setLayoutRow(row);
-        layout.setCreatedAt(LocalDateTime.now());
-        layout.setUpdatedAt(LocalDateTime.now());
-        layout.setLayoutSlotList(new ArrayList<>());
-        return layout;
-    }
-
-    private LayoutResponseDto buildLayoutResponseDto(Long id, String name, int col, int row) {
-        LayoutResponseDto dto = new LayoutResponseDto();
+    private LayoutResponseDto<LayoutSlotResponseDto> buildLayoutResponseDto(Long id, String name, int cols, int rows) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = new LayoutResponseDto<>();
         dto.setId(id);
         dto.setName(name);
-        dto.setLayoutCol(col);
-        dto.setLayoutRow(row);
+        dto.setCols(cols);
+        dto.setRows(rows);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
-        dto.setLayoutSlotList(new ArrayList<>());
+        dto.setSlots(new ArrayList<>());
         return dto;
     }
 
 
 
-    private LayoutRequestDto buildLayoutRequestDto(String name, int col, int row) {
-        LayoutRequestDto dto = new LayoutRequestDto();
+    private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, int cols, int rows) {
+        LayoutRequestDto<T> dto = new LayoutRequestDto<>();
         dto.setName(name);
-        dto.setLayoutCol(col);
-        dto.setLayoutRow(row);
-        dto.setLayoutSlotRequestDtoList(new ArrayList<>());
+        dto.setCols(cols);
+        dto.setRows(rows);
+        dto.setSlots(new ArrayList<>());
         return dto;
     }
 
-
-
-    private LayoutRequestUpdateDto buildLayoutRequestUpdateDto(Long id, String name, int col, int row) {
-        LayoutRequestUpdateDto dto = new LayoutRequestUpdateDto();
-        dto.setId(id);
-        dto.setName(name);
-        dto.setLayoutCol(col);
-        dto.setLayoutRow(row);
-        dto.setLayoutSlotRequestDtoList(new ArrayList<>());
-        return dto;
-    }
-
-    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlotRequestDto dto = new LayoutSlotRequestDto();
-        dto.setModuleId(moduleId);
-        dto.setGridCol(col);
-        dto.setGridRow(row);
-        dto.setColSpan(colSpan);
-        dto.setRowSpan(rowSpan);
-        dto.setzIndex(zIndex);
-        return dto;
-    }
-
-
-    private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long layoutId, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlotRequestUpdateDto dto = new LayoutSlotRequestUpdateDto();
-        dto.setLayoutId(layoutId);
-        dto.setModuleId(moduleId);
-        dto.setGridCol(col);
-        dto.setGridRow(row);
-        dto.setColSpan(colSpan);
-        dto.setRowSpan(rowSpan);
-        dto.setzIndex(zIndex);
-        return dto;
-    }
-
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int col, int row, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlot slot = new LayoutSlot(layout);
-        slot.setModuleId(moduleId);
-        slot.setGridCol(col);
-        slot.setGridRow(row);
-        slot.setColSpan(colSpan);
-        slot.setRowSpan(rowSpan);
-        slot.setzIndex(zIndex);
-        return slot;
-    }
 
     // GET
     @Test
     void shouldGetLayoutById() throws Exception {
-        LayoutResponseDto responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
 
         when(this.layoutService.getLayoutById(1L)).thenReturn(responseDto);
 
@@ -151,8 +82,8 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.message").value(""))
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("Main Layout"))
-                .andExpect(jsonPath("$.data.layoutCol").value(1))
-                .andExpect(jsonPath("$.data.layoutRow").value(1))
+                .andExpect(jsonPath("$.data.cols").value(1))
+                .andExpect(jsonPath("$.data.rows").value(1))
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(this.layoutService, times(1)).getLayoutById(1L);
@@ -191,7 +122,7 @@ public class LayoutControllerTest {
     }
     @Test
     void shouldGetAllLayouts() throws Exception {
-        List<LayoutResponseDto> layouts = List.of(
+        List<LayoutResponseDto<LayoutSlotResponseDto>> layouts = List.of(
                 this.buildLayoutResponseDto(1L, "Main Layout", 1, 1),
                 this.buildLayoutResponseDto(1L, "Secondary Layout", 1, 1)
         );
@@ -206,11 +137,11 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.message").value(""))
                 .andExpect(jsonPath("$.data.length()").value(2))
                 .andExpect(jsonPath("$.data[0].name").value("Main Layout"))
-                .andExpect(jsonPath("$.data[0].layoutCol").value(1))
-                .andExpect(jsonPath("$.data[0].layoutRow").value(1))
+                .andExpect(jsonPath("$.data[0].cols").value(1))
+                .andExpect(jsonPath("$.data[0].rows").value(1))
                 .andExpect(jsonPath("$.data[1].name").value("Secondary Layout"))
-                .andExpect(jsonPath("$.data[1].layoutCol").value(1))
-                .andExpect(jsonPath("$.data[1].layoutRow").value(1))
+                .andExpect(jsonPath("$.data[1].cols").value(1))
+                .andExpect(jsonPath("$.data[1].rows").value(1))
                 .andExpect(jsonPath("$.errors").isEmpty());
 
         verify(this.layoutService, times(1)).getAllLayouts();
@@ -253,9 +184,9 @@ public class LayoutControllerTest {
     // post
     @Test
     void shouldCreateLayout() throws Exception {
-        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 1, 1);
-        LayoutResponseDto response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
-        when(this.layoutService.createLayout(any(LayoutRequestDto.class))).thenReturn(response);
+        LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        when(this.layoutService.createLayout(any())).thenReturn(response);
 
         mockMvc.perform(post("/api/layouts").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -263,20 +194,20 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.message").value(AppConstant.SuccessMessage.LAYOUT_CREATED))
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("Main Layout"))
-                .andExpect(jsonPath("$.data.layoutCol").value(1))
-                .andExpect(jsonPath("$.data.layoutRow").value(1))
+                .andExpect(jsonPath("$.data.cols").value(1))
+                .andExpect(jsonPath("$.data.rows").value(1))
                 .andExpect(jsonPath("$.errors").isEmpty());
 
-        verify(this.layoutService, times(1)).createLayout(any(LayoutRequestDto.class));
+        verify(this.layoutService, times(1)).createLayout(any());
 
     }
 
     @Test
     void shouldReturn400WhenCreateLayoutWithInvalidRequest() throws Exception {
-        LayoutRequestDto request = this.buildLayoutRequestDto("Main Layout", 0, 1);
+        LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 0, 1);
 
 
-        when(this.layoutService.createLayout(any(LayoutRequestDto.class))).thenThrow(new InvalidLayoutException(
+        when(this.layoutService.createLayout(any())).thenThrow(new InvalidLayoutException(
                 AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED,
                 List.of(ErrorMessage.createErrorMessage("Layout column cannot be 0."))
         ));
@@ -291,7 +222,7 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.errors").isNotEmpty());
 
 
-        verify(this.layoutService, times(1)).createLayout(any(LayoutRequestDto.class));
+        verify(this.layoutService, times(1)).createLayout(any());
     }
 
 
@@ -299,10 +230,10 @@ public class LayoutControllerTest {
 
     @Test
     void shouldUpdateLayout() throws Exception {
-        LayoutRequestUpdateDto request = this.buildLayoutRequestUpdateDto(1L, "Main Layout", 1, 1);
-        LayoutResponseDto response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Main Layout", 1, 1);
+        LayoutResponseDto<LayoutSlotResponseDto> response = this.buildLayoutResponseDto(1L, "Main Layout", 1, 1);
 
-        when(this.layoutService.updateLayout(anyLong(), any(LayoutRequestUpdateDto.class))).thenReturn(response);
+        when(this.layoutService.updateLayout(anyLong(), any())).thenReturn(response);
 
         mockMvc.perform(put("/api/layouts/1").contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isCreated())
@@ -310,20 +241,20 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.message").value(AppConstant.SuccessMessage.LAYOUT_UPDATED))
                 .andExpect(jsonPath("$.data.id").value(1L))
                 .andExpect(jsonPath("$.data.name").value("Main Layout"))
-                .andExpect(jsonPath("$.data.layoutCol").value(1))
-                .andExpect(jsonPath("$.data.layoutRow").value(1))
+                .andExpect(jsonPath("$.data.cols").value(1))
+                .andExpect(jsonPath("$.data.rows").value(1))
                 .andExpect(jsonPath("$.errors").isEmpty());
 
-        verify(this.layoutService, times(1)).updateLayout(anyLong(), any(LayoutRequestUpdateDto.class));
+        verify(this.layoutService, times(1)).updateLayout(anyLong(), any());
     }
 
 
     @Test
     void shouldReturn400WhenUpdateLayoutWithInvalidRequest() throws Exception {
-        LayoutRequestUpdateDto request = this.buildLayoutRequestUpdateDto(1L, "Main Layout", 0, 1);
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto( "Main Layout", 0, 1);
 
 
-        when(this.layoutService.updateLayout(anyLong(), any(LayoutRequestUpdateDto.class))).thenThrow(new InvalidLayoutException(
+        when(this.layoutService.updateLayout(anyLong(), any())).thenThrow(new InvalidLayoutException(
                 AppConstant.ExceptionMessage.LAYOUT_VALIDATION_FAILED,
                 List.of(ErrorMessage.createErrorMessage("Layout column cannot be 0."))
         ));
@@ -337,16 +268,16 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.errors").isNotEmpty());
 
-        verify(this.layoutService, times(1)).updateLayout(anyLong(), any(LayoutRequestUpdateDto.class));
+        verify(this.layoutService, times(1)).updateLayout(anyLong(), any());
     }
 
 
     @Test
     void shouldReturn404WhenUpdateLayoutForNonExistingLayout() throws Exception {
-        LayoutRequestUpdateDto request = this.buildLayoutRequestUpdateDto(1L, "Main Layout", 0, 1);
+        LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Main Layout", 0, 1);
 
 
-        when(this.layoutService.updateLayout(anyLong(), any(LayoutRequestUpdateDto.class))).thenThrow(new LayoutNotFoundException(
+        when(this.layoutService.updateLayout(anyLong(), any())).thenThrow(new LayoutNotFoundException(
                 AppConstant.ExceptionMessage.LAYOUT_NOT_FOUND,
                 List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.layoutIdDoesNotExist(1L)))
         ));
@@ -360,7 +291,7 @@ public class LayoutControllerTest {
                 .andExpect(jsonPath("$.data").doesNotExist())
                 .andExpect(jsonPath("$.errors").isNotEmpty());
 
-        verify(this.layoutService, times(1)).updateLayout(anyLong(), any(LayoutRequestUpdateDto.class));
+        verify(this.layoutService, times(1)).updateLayout(anyLong(), any());
     }
 
     // delete

@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "layoutSlot")
@@ -13,19 +14,17 @@ public class LayoutSlot {
     private Long id;
 
     // immutable
+
     @ManyToOne
     @JoinColumn(name = "layoutId", nullable = false, updatable = false)
     private Layout layout;
 
-    // read only
-    @Column(insertable = false, updatable = false)
-    private Long layoutId;
 
     private Long moduleId;
 
-    private int gridCol;
+    private int colPos;
 
-    private int gridRow;
+    private int rowPos;
 
     private int colSpan;
 
@@ -41,7 +40,7 @@ public class LayoutSlot {
         this.layout = layout;
     }
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
@@ -74,9 +73,6 @@ public class LayoutSlot {
 //        this.layout = layout;
 //    }
 
-    public Long getLayoutId() {
-        return layoutId;
-    }
 
 
     public Long getModuleId() {
@@ -87,20 +83,20 @@ public class LayoutSlot {
         this.moduleId = moduleId;
     }
 
-    public int getGridCol() {
-        return gridCol;
+    public int getColPos() {
+        return colPos;
     }
 
-    public void setGridCol(int gridCol) {
-        this.gridCol = gridCol;
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
     }
 
-    public int getGridRow() {
-        return gridRow;
+    public int getRowPos() {
+        return rowPos;
     }
 
-    public void setGridRow(int gridRow) {
-        this.gridRow = gridRow;
+    public void setRowPos(int rowPos) {
+        this.rowPos = rowPos;
     }
 
     public int getColSpan() {
@@ -142,4 +138,5 @@ public class LayoutSlot {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
 }

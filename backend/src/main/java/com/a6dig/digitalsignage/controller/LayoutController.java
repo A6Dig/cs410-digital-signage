@@ -1,9 +1,8 @@
 package com.a6dig.digitalsignage.controller;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
+import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.dto.LayoutRequestDto;
-import com.a6dig.digitalsignage.dto.LayoutRequestUpdateDto;
-import com.a6dig.digitalsignage.dto.LayoutResponseDto;
 import com.a6dig.digitalsignage.service.LayoutService;
 import com.a6dig.digitalsignage.util.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,22 +19,22 @@ public class LayoutController {
     private LayoutService layoutService;
 
     // get
-    @GetMapping("/{id}")
-    public ResponseEntity<APIResponse<LayoutResponseDto>> getLayoutById(@PathVariable Long id) {
-        LayoutResponseDto dto = this.layoutService.getLayoutById(id);
+    @GetMapping({"/{id}", "/{id}/slots"})
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> getLayoutById(@PathVariable Long id) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.getLayoutById(id);
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
     @GetMapping
-    public ResponseEntity<APIResponse<List<LayoutResponseDto>>> getAllLayouts() {
+    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getAllLayouts() {
         return ResponseEntity.ok(APIResponse.success(this.layoutService.getAllLayouts()));
     }
 
     // post
 
     @PostMapping
-    public ResponseEntity<APIResponse<LayoutResponseDto>> createLayout(@RequestBody LayoutRequestDto request) {
-        LayoutResponseDto dto = this.layoutService.createLayout(request);
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> createLayout(@RequestBody LayoutRequestDto<LayoutSlotRequestDto> request) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.createLayout(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.created(dto)
         );
@@ -43,9 +42,10 @@ public class LayoutController {
 
     // update
 
-    @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<LayoutResponseDto>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestUpdateDto request) {
-        LayoutResponseDto dto = this.layoutService.updateLayout(id, request);
+    @PutMapping({"/{id}", "/{id}/slots"})
+    @PostMapping("/{id}/slots")
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
         );
@@ -63,5 +63,12 @@ public class LayoutController {
     public ResponseEntity<APIResponse<Void>> deleteAllLayouts() {
         this.layoutService.deleteAllLayouts();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.LAYOUT_ALL_DELETED));
+    }
+
+    // layout slots
+
+    @GetMapping("/api/layouts/{id}/slots")
+    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getAllLayouts(@PathVariable(name = "id") Long layoutId) {
+        return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
     }
 }

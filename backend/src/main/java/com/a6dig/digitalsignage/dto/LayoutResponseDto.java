@@ -1,21 +1,12 @@
 package com.a6dig.digitalsignage.dto;
 
-import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.entity.LayoutSlot;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
-public class LayoutResponseDto {
+public class LayoutResponseDto<T extends LayoutSlotResponseDto> extends LayoutDtoBase<T>{
     private Long id;
-    private String name;
-    private int layoutCol;
-    private int layoutRow;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-
-    private List<LayoutSlotResponseDto> layoutSlotList;
 
     public Long getId() {
         return id;
@@ -23,30 +14,6 @@ public class LayoutResponseDto {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getLayoutCol() {
-        return layoutCol;
-    }
-
-    public void setLayoutCol(int layoutCol) {
-        this.layoutCol = layoutCol;
-    }
-
-    public int getLayoutRow() {
-        return layoutRow;
-    }
-
-    public void setLayoutRow(int layoutRow) {
-        this.layoutRow = layoutRow;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -63,13 +30,5 @@ public class LayoutResponseDto {
 
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
-    }
-
-    public List<LayoutSlotResponseDto> getLayoutSlotList() {
-        return layoutSlotList;
-    }
-
-    public void setLayoutSlotList(List<LayoutSlotResponseDto> layoutSlotList) {
-        this.layoutSlotList = layoutSlotList;
     }
 }

@@ -11,18 +11,18 @@ import java.util.stream.Collectors;
 
 @Component
 public class LayoutMapper {
-    public LayoutResponseDto toLayoutResponseDto(Layout layout) {
-        LayoutResponseDto dto = new LayoutResponseDto();
+    public LayoutResponseDto<LayoutSlotResponseDto> toLayoutResponseDto(Layout layout) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = new LayoutResponseDto<>();
         dto.setId(layout.getId());
         dto.setName(layout.getName());
-        dto.setLayoutCol(layout.getLayoutCol());
-        dto.setLayoutRow(layout.getLayoutRow());
+        dto.setCols(layout.getCols());
+        dto.setRows(layout.getRows());
         dto.setCreatedAt(layout.getCreatedAt());
         dto.setUpdatedAt(layout.getUpdatedAt());
 
-        dto.setLayoutSlotList(
-                layout.getLayoutSlotList() == null ? new ArrayList<>()
-                        : layout.getLayoutSlotList()
+        dto.setSlots(
+                layout.getSlots() == null ? new ArrayList<>()
+                        : layout.getSlots()
                         .stream()
                         .map(this::toLayoutSlotResponseDto)
                         .collect(Collectors.toList())
@@ -36,10 +36,11 @@ public class LayoutMapper {
         dto.setId(slot.getId());
         dto.setLayoutId(slot.getLayout().getId());
         dto.setModuleId(slot.getModuleId());
-        dto.setGridCol(slot.getGridCol());
-        dto.setGridRow(slot.getGridRow());
+        dto.setColPos(slot.getColPos());
+        dto.setRowPos(slot.getRowPos());
         dto.setColSpan(slot.getColSpan());
         dto.setRowSpan(slot.getRowSpan());
+        dto.setzIndex(slot.getzIndex());
         dto.setCreatedAt(slot.getCreatedAt());
         dto.setUpdatedAt(slot.getUpdatedAt());
         return dto;
