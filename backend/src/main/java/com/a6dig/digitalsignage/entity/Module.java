@@ -14,12 +14,12 @@ public class Module {
     private Long id;
 
     @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name="adCollectionId", updatable = false)
+    @JoinColumn(name="adCollectionId")
     private AdCollection adCollection;
 
     private String name;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "domainId")
     private Domain domain;
 

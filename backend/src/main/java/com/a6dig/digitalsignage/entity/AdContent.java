@@ -18,7 +18,7 @@ public class AdContent {
     @Column(columnDefinition = "TEXT")
     private String url;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "domainId")
     private Domain domain;
 
