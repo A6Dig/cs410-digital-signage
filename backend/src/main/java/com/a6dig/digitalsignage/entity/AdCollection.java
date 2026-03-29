@@ -21,7 +21,7 @@ public class AdCollection {
     @Column(columnDefinition = "TEXT")
     private String url;
 
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany
     @JoinTable(
             name = "AdCollectionContentLink",
             joinColumns = @JoinColumn(name = "adCollectionId", referencedColumnName = "id"),

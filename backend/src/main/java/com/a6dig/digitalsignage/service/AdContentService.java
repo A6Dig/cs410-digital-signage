@@ -7,7 +7,7 @@ import java.util.List;
 public interface AdContentService {
     // get
     List<AdContentResponseDto> getAllAdContents();
-    AdContentResponseDto getAdContentById();
+    AdContentResponseDto getAdContentById(Long id);
     // post
     AdContentResponseDto
         createAdContent(AdContentRequestDto adContent);

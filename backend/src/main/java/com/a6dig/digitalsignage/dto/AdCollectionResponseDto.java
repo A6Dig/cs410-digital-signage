@@ -2,7 +2,7 @@ package com.a6dig.digitalsignage.dto;
 
 import java.time.LocalDateTime;
 
-public class AdCollectionResponseDto<T extends AdContentResponseDto> extends AdCollectionDtoBase<T>{
+public class AdCollectionResponseDto extends AdCollectionDtoBase<AdContentResponseDto>{
     private Long id;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

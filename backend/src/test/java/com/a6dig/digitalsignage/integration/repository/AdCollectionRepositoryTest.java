@@ -144,7 +144,8 @@ public class AdCollectionRepositoryTest {
     @Test
     void shouldFindById() {
         Set<AdContent> adContents = new HashSet<>();
-        adContents.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent = this.adContentRepository.save(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents.add(savedAdContent);
         AdCollection adCollection = this.buildAdCollection("Default Ad Collection", "", adContents);
         AdCollection created = this.adCollectionRepository.save(adCollection);
         Optional<AdCollection> response = this.adCollectionRepository.findById(created.getId());
@@ -158,14 +159,16 @@ public class AdCollectionRepositoryTest {
     @Test
     void shouldFindAll() {
         Set<AdContent> adContents1 = new HashSet<>();
-        adContents1.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent1 = this.adContentRepository.save(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents1.add(savedAdContent1);
 
         AdCollection adCollection1 = this.buildAdCollection("Default Ad Collection 1", "", adContents1);
         AdCollection created1 = this.adCollectionRepository.save(adCollection1);
 
 
         Set<AdContent> adContents2 = new HashSet<>();
-        adContents2.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent2 = this.adContentRepository.save(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents2.add(savedAdContent2);
 
 
         AdCollection adCollection2 = this.buildAdCollection("Default Ad Collection 2", "", adContents2);
@@ -214,24 +217,25 @@ public class AdCollectionRepositoryTest {
         assertNull(created.getAdContents());
     }
 
-    @Test
-    void shouldSaveWithPersistingAdContent() {
-
-        Set<AdContent> adContents = new HashSet<>();
-        adContents.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
-        AdCollection adCollection = this.buildAdCollection("Default Ad Collection", "", adContents);
-        AdCollection created = this.adCollectionRepository.save(adCollection);
-
-        assertAdCollection(created, "Default Ad Collection", "");
-        assertAdContent(created.getAdContents().stream().toList().get(0), "Default Ad Content", "http://localhost:3000/image1");
-    }
+//    @Test
+//    void shouldSaveWithPersistingAdContent() {
+//
+//        Set<AdContent> adContents = new HashSet<>();
+//        adContents.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+//        AdCollection adCollection = this.buildAdCollection("Default Ad Collection", "", adContents);
+//        AdCollection created = this.adCollectionRepository.save(adCollection);
+//
+//        assertAdCollection(created, "Default Ad Collection", "");
+//        assertAdContent(created.getAdContents().stream().toList().get(0), "Default Ad Content", "http://localhost:3000/image1");
+//    }
 
     // Update
     @Test
     void shouldUpdate() {
 
         Set<AdContent> adContents = new HashSet<>();
-        adContents.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent = this.adContentRepository.save(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents.add(savedAdContent);
         AdCollection adCollection = this.buildAdCollection("Default Ad Collection", "", adContents);
         AdCollection created = this.adCollectionRepository.save(adCollection);
 
@@ -282,7 +286,8 @@ public class AdCollectionRepositoryTest {
 
 
         Set<AdContent> adContents = new HashSet<>();
-        adContents.add(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent = this.adContentRepository.save(this.buildAdContent("Default Ad Content", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents.add(savedAdContent);
         AdCollection adCollection = this.buildAdCollection("Default Ad Collection", "", adContents);
         AdCollection created = this.adCollectionRepository.save(adCollection);
 
@@ -357,14 +362,16 @@ public class AdCollectionRepositoryTest {
 
 
         Set<AdContent> adContents1 = new HashSet<>();
-        adContents1.add(this.buildAdContent("Default Ad Content 1", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent1 = this.adContentRepository.save(this.buildAdContent("Default Ad Content 1", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents1.add(savedAdContent1);
 
         AdCollection adCollection1 = this.buildAdCollection("Default Ad Collection 1", "", adContents1);
         AdCollection created1 = this.adCollectionRepository.save(adCollection1);
 
 
         Set<AdContent> adContents2 = new HashSet<>();
-        adContents2.add(this.buildAdContent("Default Ad Content 2", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        AdContent savedAdContent2 = this.adContentRepository.save(this.buildAdContent("Default Ad Content 2", "http://localhost:3000/image1", this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)));
+        adContents2.add(savedAdContent2);
 
 
         AdCollection adCollection2 = this.buildAdCollection("Default Ad Collection 2", "", adContents2);

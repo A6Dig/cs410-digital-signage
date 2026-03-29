@@ -17,6 +17,28 @@ public final class AppConstant {
         public static final String INTERNAL_SERVER_ERROR = "Internal server error";
         public static final String UNEXPECTED_ERROR = "Unexpected error occurred.";
 
+        public static final class Module {
+            public static final String NOT_FOUND = "Module not found";
+            public static String idDoesNotExist(Long id) {
+                return "Module with id " + id + " doesn't exist";
+            }
+        }
+        public static final class AdCollection {
+            public static final String NOT_FOUND = "Ad collection not found";
+            public static String idDoesNotExist(Long id) {
+                return "Ad collection with id " + id + " doesn't exist";
+            }
+        }
+
+        public static final class AdContent {
+            public static final String NOT_FOUND = "Ad content not found";
+            public static String idDoesNotExist(Long id) {
+                return "Ad content with id " + id + " doesn't exist";
+            }
+        }
+
+
+
         public static String layoutIdDoesNotExist(Long id) {
             return "Layout with id " + id + " doesn't exist";
         }
@@ -35,6 +57,30 @@ public final class AppConstant {
         public static final String LAYOUT_DELETED = "Layout deleted successfully.";
         public static final String LAYOUT_ALL_DELETED = "Layouts deleted successfully.";
         public static final String LAYOUT_SLOT_DELETED_SELECTED = "Selected layout slots have been deleted.";
+
+
+        public static final class Module {
+            public static final String CREATED = "Module created successfully";
+            public static final String UPDATED = "Module updated successfully";
+            public static final String DELETED = "Module deleted successfully";
+            public static final String DELETED_ALL = "Modules deleted successfully";
+        }
+
+        public static final class AdCollection {
+            public static final String CREATED = "Ad collection created successfully";
+            public static final String UPDATED = "Ad collection updated successfully";
+            public static final String DELETED = "Ad collection deleted successfully";
+            public static final String DELETED_ALL = "Ad collections deleted successfully";
+
+        }
+
+        public static final class AdContent {
+            public static final String CREATED = "Ad content created successfully";
+            public static final String UPDATED = "Ad content updated successfully";
+            public static final String DELETED = "Ad content deleted successfully";
+            public static final String DELETED_ALL = "Ad contents deleted successfully";
+
+        }
 
 
         public static String allLayoutSlotsOfTheLayoutDeleted(Long id) {

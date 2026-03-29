@@ -4,23 +4,13 @@ import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
 
 import java.util.Optional;
 
-public class ModuleDtoBase <T extends AdCollectionDtoBase>{
-
-    private T adCollection;
+public class ModuleDtoBase {
 
     private String name;
 
     private ModuleTypeEnum type;
 
     private String config;
-
-    public Optional<T> getAdCollection() {
-        return Optional.ofNullable(adCollection);
-    }
-
-    public void setAdCollection(T adCollection) {
-        this.adCollection = adCollection;
-    }
 
     public String getName() {
         return name;

@@ -6,14 +6,14 @@ import java.util.List;
 
 public interface AdCollectionService {
     // get
-    List<AdCollectionResponseDto<AdContentResponseDto>> getAllAdCollections();
-    AdCollectionResponseDto<AdContentResponseDto> getAdCollectionById();
+    List<AdCollectionResponseDto> getAllAdCollections();
+    AdCollectionResponseDto getAdCollectionById(Long id);
     // post
-    AdCollectionResponseDto<AdContentResponseDto>
-        createAdCollection(AdCollectionRequestDto<AdContentRequestDto> adCollection);
+    AdCollectionResponseDto
+        createAdCollection(AdCollectionRequestDto adCollection);
 
     // update
-    AdCollectionResponseDto<AdContentResponseDto>
+    AdCollectionResponseDto
         updateAdCollectionById(Long id, AdCollectionRequestUpdateDto adCollection);
 
     // delete

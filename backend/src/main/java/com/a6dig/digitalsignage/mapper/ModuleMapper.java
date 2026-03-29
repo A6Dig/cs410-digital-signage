@@ -8,12 +8,12 @@ import com.a6dig.digitalsignage.entity.AdCollection;
 import com.a6dig.digitalsignage.entity.Module;
 
 public class ModuleMapper {
-    public ModuleResponseDto<? extends AdCollectionResponseDto<AdContentResponseDto>> toModuleResponseDto(Module module) {
-        ModuleResponseDto<AdCollectionResponseDto<AdContentResponseDto>> moduleResponseDto = new ModuleResponseDto<>();
+    public ModuleResponseDto toModuleResponseDto(Module module) {
+        ModuleResponseDto moduleResponseDto = new ModuleResponseDto();
 
         moduleResponseDto.setId(module.getId());
         moduleResponseDto.setType(ModuleTypeEnum.valueOf(module.getDomain().getAlphaNumCode()));
-        moduleResponseDto.setAdCollection(module.getAdCollection() == null ? null : AdCollectionMapper.toAdCollectionResponseDto(module.getAdCollection()));
+        moduleResponseDto.setAdCollectionResponseDto(module.getAdCollection() == null ? null : AdCollectionMapper.toAdCollectionResponseDto(module.getAdCollection()));
         moduleResponseDto.setName(module.getName());
         moduleResponseDto.setConfig(module.getConfig());
         moduleResponseDto.setUpdatedAt(module.getUpdatedAt());

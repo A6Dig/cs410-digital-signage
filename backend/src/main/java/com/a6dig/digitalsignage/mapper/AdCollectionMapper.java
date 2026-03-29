@@ -5,8 +5,8 @@ import com.a6dig.digitalsignage.dto.AdContentResponseDto;
 import com.a6dig.digitalsignage.entity.AdCollection;
 
 public class AdCollectionMapper {
-    public static AdCollectionResponseDto<AdContentResponseDto> toAdCollectionResponseDto(AdCollection adCollection) {
-        AdCollectionResponseDto<AdContentResponseDto> dto = new AdCollectionResponseDto<>();
+    public static AdCollectionResponseDto toAdCollectionResponseDto(AdCollection adCollection) {
+        AdCollectionResponseDto dto = new AdCollectionResponseDto();
 
         dto.setId(adCollection.getId());
         dto.setName(adCollection.getName());

@@ -2,8 +2,10 @@ package com.a6dig.digitalsignage.dto;
 
 import java.time.LocalDateTime;
 
-public class ModuleResponseDto<T extends AdCollectionResponseDto<AdContentResponseDto>> extends ModuleDtoBase<T>{
+public class ModuleResponseDto extends ModuleDtoBase{
     private Long id;
+
+    private AdCollectionResponseDto adCollectionResponseDto;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -13,6 +15,14 @@ public class ModuleResponseDto<T extends AdCollectionResponseDto<AdContentRespon
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public AdCollectionResponseDto getAdCollectionResponseDto() {
+        return adCollectionResponseDto;
+    }
+
+    public void setAdCollectionResponseDto(AdCollectionResponseDto adCollectionResponseDto) {
+        this.adCollectionResponseDto = adCollectionResponseDto;
     }
 
     public LocalDateTime getCreatedAt() {
