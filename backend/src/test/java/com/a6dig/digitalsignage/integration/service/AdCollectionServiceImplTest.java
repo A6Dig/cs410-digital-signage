@@ -59,6 +59,8 @@ public class AdCollectionServiceImplTest {
     private AdCollectionMapper adCollectionMapper;
 
 
+    @Autowired
+    private AdContentMapper adContentMapper;
 
 
     @BeforeEach
@@ -465,7 +467,7 @@ public class AdCollectionServiceImplTest {
         Optional<AdContent> responseAdContent = this.adContentRepository.findById(adContent.getId());
         assertFalse(responseAdCollection.isPresent());
         assertTrue(responseAdContent.isPresent());
-        assertAdContent(AdContentMapper.toAdContentResponseDto(responseAdContent.get()), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
+        assertAdContent(this.adContentMapper.toAdContentResponseDto(responseAdContent.get()), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
 
     }
 

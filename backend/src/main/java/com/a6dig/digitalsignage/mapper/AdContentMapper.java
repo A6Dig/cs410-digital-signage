@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class AdContentMapper {
-    public static AdContentResponseDto toAdContentResponseDto(AdContent adContent) {
+    public AdContentResponseDto toAdContentResponseDto(AdContent adContent) {
         AdContentResponseDto dto = new AdContentResponseDto();
         dto.setId(adContent.getId());
         dto.setName(adContent.getName());

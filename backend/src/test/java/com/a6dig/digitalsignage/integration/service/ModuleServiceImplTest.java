@@ -56,6 +56,8 @@ public class ModuleServiceImplTest {
 
 
 
+    @Autowired
+    private AdContentMapper adContentMapper;
 
     @BeforeEach
     void cleanUp() {
@@ -458,7 +460,7 @@ public class ModuleServiceImplTest {
         assertTrue(responseAdCollection.isPresent());
         assertTrue(responseAdContent.isPresent());
         assertAdCollection(this.adCollectionMapper.toAdCollectionResponseDto(responseAdCollection.get()) , "New Collection", "http://localhost/collection");
-        assertAdContent(AdContentMapper.toAdContentResponseDto(responseAdContent.get()), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
+        assertAdContent(this.adContentMapper.toAdContentResponseDto(responseAdContent.get()), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
 
     }
 
