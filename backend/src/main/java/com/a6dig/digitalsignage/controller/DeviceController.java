@@ -5,7 +5,6 @@ import com.a6dig.digitalsignage.repository.DeviceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -21,7 +20,7 @@ public class DeviceController {
     }
 
     @GetMapping("/{id}")
-    public Device getDeviceById(@PathVariable Integer id) {
+    public Device getDeviceById(@PathVariable Long id) {
         return deviceRepository.findById(id).orElse(null);
     }
 

@@ -36,7 +36,6 @@ public class GlobalExceptionHandler {
         );
     }
 
-
     @ExceptionHandler(Exception.class)
     public ResponseEntity<APIResponse<Void>> handleInternalServerErr(Exception exception) {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(

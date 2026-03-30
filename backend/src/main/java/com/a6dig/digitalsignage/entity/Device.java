@@ -1,6 +1,8 @@
 package com.a6dig.digitalsignage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -9,31 +11,45 @@ public class Device {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
-    @OneToOne
-    @JoinColumn(name = "layout_id", insertable = false, updatable = false)
+    @Column(name = "layoutId", nullable = false)
+    private Long layoutId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "layoutId", insertable = false, updatable = false)
     private Layout layout;
 
+    @Column(length = 50, nullable = false)
     private String name;
 
-    private String ipAddress;;
+    @Column(nullable = false)
+    private String ipAddress;
 
-    @ManyToOne
-    @JoinColumn(name = "device_group_id", insertable = false, updatable = false)
+    @Column(name = "deviceGroupId")
+    private Long deviceGroupId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "deviceGroupId", insertable = false, updatable = false)
+    @JsonIgnoreProperties({"devices"})
     private DeviceGroup deviceGroup;
 
-    private boolean status;
-
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    public Integer getId() {
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = LocalDateTime.now();
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -61,20 +77,20 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
+    public Long getDeviceGroupId() {
+        return deviceGroupId;
+    }
+
+    public void setDeviceGroupId(Long deviceGroupId) {
+        this.deviceGroupId = deviceGroupId;
+    }
+
     public DeviceGroup getDeviceGroup() {
         return deviceGroup;
     }
 
     public void setDeviceGroup(DeviceGroup deviceGroup) {
         this.deviceGroup = deviceGroup;
-    }
-
-    public boolean isStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -92,9 +108,4 @@ public class Device {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
-
-    
-    
-    
-
 }

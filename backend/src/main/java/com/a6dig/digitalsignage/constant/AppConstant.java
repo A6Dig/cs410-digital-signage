@@ -43,6 +43,14 @@ public final class AppConstant {
             }
         }
 
+        public static final class User {
+            public static final String NOT_FOUND = "User not found";
+            public static final String INVALID_DATA_PROVIDED = "Invalid user data";
+            public static String idDoesNotExist(Long id) {
+                return "User with id " + id + " doesn't exist";
+            }
+        }
+
 
 
         public static String layoutIdDoesNotExist(Long id) {
@@ -86,6 +94,13 @@ public final class AppConstant {
             public static final String DELETED = "Ad content deleted successfully";
             public static final String DELETED_ALL = "Ad contents deleted successfully";
 
+        }
+
+        public static final class User {
+            public static final String CREATED = "User created successfully";
+            public static final String UPDATED = "User updated successfully";
+            public static final String DELETED = "User deleted successfully";
+            public static final String DELETED_ALL = "Users deleted successfully";
         }
 
 
