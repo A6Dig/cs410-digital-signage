@@ -51,6 +51,9 @@ public class ModuleServiceImplTest {
     @Autowired
     private DomainCache domainCache;
 
+    @Autowired
+    private AdCollectionMapper adCollectionMapper;
+
 
 
 
@@ -454,7 +457,7 @@ public class ModuleServiceImplTest {
         Optional<AdContent> responseAdContent = this.adContentRepository.findById(adContent.getId());
         assertTrue(responseAdCollection.isPresent());
         assertTrue(responseAdContent.isPresent());
-        assertAdCollection(AdCollectionMapper.toAdCollectionResponseDto(responseAdCollection.get()) , "New Collection", "http://localhost/collection");
+        assertAdCollection(this.adCollectionMapper.toAdCollectionResponseDto(responseAdCollection.get()) , "New Collection", "http://localhost/collection");
         assertAdContent(AdContentMapper.toAdContentResponseDto(responseAdContent.get()), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
 
     }

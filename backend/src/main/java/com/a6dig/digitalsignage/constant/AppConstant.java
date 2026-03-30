@@ -19,12 +19,16 @@ public final class AppConstant {
 
         public static final class Module {
             public static final String NOT_FOUND = "Module not found";
+            public static final String ID_NOT_PROVIDED = "Null or empty id provided";
+            public static final String INVALID_DATA_PROVIDED = "Invalid data";
             public static String idDoesNotExist(Long id) {
                 return "Module with id " + id + " doesn't exist";
             }
         }
         public static final class AdCollection {
             public static final String NOT_FOUND = "Ad collection not found";
+            public static final String ID_NOT_PROVIDED = "Null or empty id provided";
+            public static final String INVALID_DATA_PROVIDED = "Invalid data";
             public static String idDoesNotExist(Long id) {
                 return "Ad collection with id " + id + " doesn't exist";
             }
@@ -32,6 +36,8 @@ public final class AppConstant {
 
         public static final class AdContent {
             public static final String NOT_FOUND = "Ad content not found";
+            public static final String ID_NOT_PROVIDED = "Null or empty id provided";
+            public static final String INVALID_DATA_PROVIDED = "Invalid data";
             public static String idDoesNotExist(Long id) {
                 return "Ad content with id " + id + " doesn't exist";
             }
