@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/modules/")
+@RequestMapping("/api/modules")
 public class ModuleController {
     @Autowired
     private ModuleService moduleService;
@@ -25,12 +25,13 @@ public class ModuleController {
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<APIResponse<List<ModuleResponseDto>>> getAllModules() {
         return ResponseEntity.ok(APIResponse.success(this.moduleService.getAllModules()));
     }
 
     // post
+    @PostMapping("")
     public ResponseEntity<APIResponse<ModuleResponseDto>>
         createModule(@RequestBody ModuleRequestDto moduleRequestDto) {
         ModuleResponseDto moduleResponseDto = this.moduleService.createModule(moduleRequestDto);
@@ -52,7 +53,7 @@ public class ModuleController {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.Module.DELETED));
     }
 
-    @DeleteMapping
+    @DeleteMapping("")
     public ResponseEntity<APIResponse<Void>> deleteModules() {
         this.moduleService.deleteAllModules();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.Module.DELETED_ALL));

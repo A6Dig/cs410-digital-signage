@@ -29,12 +29,13 @@ public class AdCollectionController {
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<APIResponse<List<AdCollectionResponseDto>>> getAllAdCollections() {
         return ResponseEntity.ok(APIResponse.success(this.adCollectionService.getAllAdCollections()));
     }
 
     // post
+    @PostMapping("")
     public ResponseEntity<APIResponse<AdCollectionResponseDto>>
     createAdCollection(@RequestBody AdCollectionRequestDto adCollectionRequestDto) {
         AdCollectionResponseDto adCollectionResponseDto = this.adCollectionService.createAdCollection(adCollectionRequestDto);
@@ -56,7 +57,7 @@ public class AdCollectionController {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.AdCollection.DELETED));
     }
 
-    @DeleteMapping
+    @DeleteMapping("")
     public ResponseEntity<APIResponse<Void>> deleteAdCollections() {
         this.adCollectionService.deleteAllAdCollections();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.AdCollection.DELETED_ALL));

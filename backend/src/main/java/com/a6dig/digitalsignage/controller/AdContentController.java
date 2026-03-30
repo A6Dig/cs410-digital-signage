@@ -28,12 +28,13 @@ public class AdContentController {
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
-    @GetMapping
+    @GetMapping("")
     public ResponseEntity<APIResponse<List<AdContentResponseDto>>> getAllAdContents() {
         return ResponseEntity.ok(APIResponse.success(this.adContentService.getAllAdContents()));
     }
 
     // post
+    @PostMapping("")
     public ResponseEntity<APIResponse<AdContentResponseDto>> createAdContent(@RequestBody AdContentRequestDto AdContentRequestDto) {
         AdContentResponseDto AdContentResponseDto = this.adContentService.createAdContent(AdContentRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(APIResponse.created(AdContentResponseDto));
@@ -54,7 +55,7 @@ public class AdContentController {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.AdContent.DELETED));
     }
 
-    @DeleteMapping
+    @DeleteMapping("")
     public ResponseEntity<APIResponse<Void>> deleteAdContents() {
         this.adContentService.deleteAllContents();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.AdContent.DELETED_ALL));
