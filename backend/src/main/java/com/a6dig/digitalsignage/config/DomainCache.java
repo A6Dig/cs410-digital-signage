@@ -3,13 +3,17 @@ package com.a6dig.digitalsignage.config;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.entity.Domain;
+import com.a6dig.digitalsignage.exception.InvalidDomainException;
 import com.a6dig.digitalsignage.repository.DomainRepository;
+import com.a6dig.digitalsignage.util.ErrorMessage;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @Component
 public class DomainCache {
@@ -30,5 +34,25 @@ public class DomainCache {
 
     public <T extends Enum<T>>Domain buildDomain(T enumValue) {
         return cache.get(enumValue.name());
+    }
+
+
+    public void validate(String code, String type) {
+        Domain domain = this.cache.get(code);
+
+        if (domain == null) {
+            throw new InvalidDomainException(
+                    AppConstant.ExceptionMessage.Domain.NOT_FOUND,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Domain.domainCodeDoesNotExist(code)))
+            );
+        }
+
+        if (!Objects.equals(domain.getType(), type)) {
+
+            throw new InvalidDomainException(
+                    AppConstant.ExceptionMessage.Domain.NOT_FOUND,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Domain.domainCodeDoesNotBelongToTheType(code, type)))
+            );
+        }
     }
 }

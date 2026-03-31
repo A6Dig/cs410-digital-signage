@@ -8,6 +8,7 @@ import com.a6dig.digitalsignage.entity.AdCollection;
 import com.a6dig.digitalsignage.entity.AdContent;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.AdCollectionNotFoundException;
+import com.a6dig.digitalsignage.exception.InvalidDomainException;
 import com.a6dig.digitalsignage.exception.InvalidJSONException;
 import com.a6dig.digitalsignage.exception.ModuleNotFoundException;
 import com.a6dig.digitalsignage.mapper.ModuleMapper;
@@ -70,6 +71,17 @@ public class ModuleServiceImpl implements ModuleService {
     @Override
     @Transactional
     public ModuleResponseDto createModule(ModuleRequestDto module) {
+
+        if (module.getType() == null) {
+            throw new InvalidDomainException(
+                    AppConstant.ExceptionMessage.Domain.TYPE_NOT_PROVIDED,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Domain.TYPE_CANNOT_BE_EMPTY))
+            );
+        }
+
+        this.domainCache.validate(module.getType().name(), AppConstant.SystemConstant.DOMAIN_TYPE_MODULE);
+
+
         Module newModule = new Module();
         newModule.setName(module.getName());
 
