@@ -1,14 +1,16 @@
 package com.a6dig.digitalsignage.unit.service;
 
+import com.a6dig.digitalsignage.config.DomainCache;
 import com.a6dig.digitalsignage.dto.*;
-import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.entity.*;
+import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
+import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.LayoutServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,6 +41,35 @@ class LayoutServiceImplTest {
 
     @InjectMocks
     private LayoutServiceImpl layoutServiceImpl;
+
+    @Mock
+    private DomainCache domainCache;
+
+    @Mock
+    private ModuleRepository moduleRepository;
+
+
+    // helper
+    private Domain mockDomain(String alphaNumCode, String name) {
+        Domain domain = mock(Domain.class);
+//        when(domain.getAlphaNumCode()).thenReturn(alphaNumCode);
+//        when(domain.getName()).thenReturn(name);
+//        when(domain.getDescription()).thenReturn("");
+//        when(domain.getDisplayOrder()).thenReturn(1);
+        return domain;
+    }
+
+    private Module buildModule(Long id, String name, String config, Domain domain, AdCollection adCollection) {
+        Module module = new Module();
+        module.setId(id);
+        module.setName(name);
+        module.setConfig(config);
+        module.setDomain(domain);
+        module.setAdCollection(adCollection);
+        module.setUpdatedAt(LocalDateTime.now());
+        module.setCreatedAt(LocalDateTime.now());
+        return module;
+    }
 
 
     // helper methods
@@ -90,9 +121,9 @@ class LayoutServiceImplTest {
     }
 
 
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
+    private LayoutSlot buildLayoutSlot(Layout layout, Module module, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
         LayoutSlot slot = new LayoutSlot(layout);
-        slot.setModuleId(moduleId);
+        slot.setModule(module);
         slot.setColPos(colPos);
         slot.setRowPos(rowPos);
         slot.setColSpan(colSpan);
@@ -206,12 +237,16 @@ class LayoutServiceImplTest {
     // Create
     @Test
     void shouldCreateLayoutWithoutSlots(){
+        Domain mockDomain = this.mockDomain("WEATHER", "Weather");
+        Module savedModule = this.buildModule(1L, "Default Module", "{}", mockDomain, null);
+
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 1);
         request.setSlots(null);
 
         Layout layout = this.buildLayout(1L, "Main Layout", 3, 1);
         LayoutResponseDto<LayoutSlotResponseDto> layoutResponse = this.buildLayoutResponseDto(1L, "Main Layout", 3, 1, new ArrayList<>());
 
+        when(this.moduleRepository.findAllById(anyCollection())).thenReturn(List.of(savedModule));
         when(layoutRepository.save(any(Layout.class))).thenReturn(layout);
         when(layoutMapper.toLayoutResponseDto(layout)).thenReturn(layoutResponse);
 
@@ -237,12 +272,16 @@ class LayoutServiceImplTest {
 
     @Test
     void shouldUpdateLayout() {
+        Domain mockDomain = this.mockDomain("WEATHER", "Weather");
+        Module savedModule = this.buildModule(1L, "Default Module", "{}", mockDomain, null);
+
         Layout existing = this.buildLayout(1L, "Main Layout", 3, 3);
         Layout updated = this.buildLayout(1L, "Updated Main Layout", 4, 2);
         LayoutResponseDto<LayoutSlotResponseDto> responseDto = this.buildLayoutResponseDto(1L, "Updated Main Layout", 4, 2, new ArrayList<>());
 
         LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Main Layout", 4, 2);
 
+        when(this.moduleRepository.findAllById(anyCollection())).thenReturn(List.of(savedModule));
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(existing));
         when(layoutRepository.saveAndFlush(any(Layout.class))).thenReturn(updated);
         when(layoutMapper.toLayoutResponseDto(updated)).thenReturn(responseDto);
@@ -313,12 +352,15 @@ class LayoutServiceImplTest {
     // Relation
     @Test
     void shouldAddSlotToLayout() {
+        Domain mockDomain = this.mockDomain("WEATHER", "Weather");
+        Module savedModule = this.buildModule(1L, "Default Module", "{}", mockDomain, null);
 
         LayoutSlotRequestDto request = this.buildLayoutSlotRequestDto(1L, 2,2,1,1,0);
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
         LayoutSlotResponseDto slot = this.buildLayoutSlotResponseDto(1L,1L,1L, 2,2,1,1,0);
         LayoutResponseDto<LayoutSlotResponseDto> responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 2, 2, List.of(slot));
 
+        when(this.moduleRepository.findById(1L)).thenReturn(Optional.of(savedModule));
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
         when(layoutRepository.save(any(Layout.class))).thenReturn(layout);
         when(layoutMapper.toLayoutResponseDto(layout)).thenReturn(responseDto);
@@ -344,8 +386,11 @@ class LayoutServiceImplTest {
 
     @Test
     void shouldRemoveSlotFromLayout() {
+        Domain domain = this.mockDomain("ROTATING_AD", "Rotating Ad");
+        Module module = this.buildModule(1L, "Default Module", "{}", domain,null);
+
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
-        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,1L, 2,2,1,1,0);
+        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,module, 2,2,1,1,0);
         layoutSlot.setId(1L);
 
         layout.addLayoutSlot(layoutSlot);
@@ -391,8 +436,11 @@ class LayoutServiceImplTest {
 
     @Test
     void shouldThrowErrorWhenRemovingFromLayoutWithInvalidLayoutId() {
+        Domain domain = this.mockDomain("ROTATING_AD", "Rotating Ad");
+        Module module = this.buildModule(1L, "Default Module", "{}", domain,null);
+
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
-        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,1L, 2,2,1,1,0);
+        LayoutSlot layoutSlot = this.buildLayoutSlot(layout,module, 2,2,1,1,0);
         layoutSlot.setId(1L);
         layout.setId(2L);
 
@@ -416,9 +464,12 @@ class LayoutServiceImplTest {
     // Layout slots
     @Test
     void shouldGetAllLayoutSlotByLayoutId() {
+        Domain domain = this.mockDomain("ROTATING_AD", "Rotating Ad");
+        Module module = this.buildModule(1L, "Default Module", "{}", domain,null);
+
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
-        LayoutSlot ls1 = this.buildLayoutSlot(layout, 1L, 2, 2, 1, 1, 0);
-        LayoutSlot ls2 = this.buildLayoutSlot(layout, 2L, 1, 1, 1, 1, 0);
+        LayoutSlot ls1 = this.buildLayoutSlot(layout, module, 2, 2, 1, 1, 0);
+        LayoutSlot ls2 = this.buildLayoutSlot(layout, module, 1, 1, 1, 1, 0);
         List<LayoutSlot> layoutSlots = List.of(ls1,ls2);
 
         layout.addLayoutSlots(layoutSlots);

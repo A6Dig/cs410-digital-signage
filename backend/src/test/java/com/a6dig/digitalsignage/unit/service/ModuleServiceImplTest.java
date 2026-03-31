@@ -15,6 +15,8 @@ import com.a6dig.digitalsignage.repository.AdCollectionRepository;
 import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.ModuleServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,6 +43,11 @@ public class ModuleServiceImplTest {
 
     @InjectMocks
     private ModuleServiceImpl moduleService;
+
+    @Mock
+    private ObjectMapper mockObjectMapper;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // helper
     private Domain mockDomain(String alphaNumCode, String name) {
@@ -78,7 +85,11 @@ public class ModuleServiceImplTest {
         Module module = new Module();
         module.setId(id);
         module.setName(name);
-        module.setConfig(config);
+        try {
+            module.setConfig(this.objectMapper.writeValueAsString(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         module.setDomain(domain);
         module.setAdCollection(adCollection);
         module.setUpdatedAt(LocalDateTime.now());
@@ -112,7 +123,11 @@ public class ModuleServiceImplTest {
         ModuleResponseDto dto = new ModuleResponseDto();
         dto.setId(id);
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionResponseDto(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
@@ -123,7 +138,11 @@ public class ModuleServiceImplTest {
     private ModuleRequestDto buildModuleRequestDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestDto dto = new ModuleRequestDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
@@ -132,7 +151,11 @@ public class ModuleServiceImplTest {
     private ModuleRequestUpdateDto buildModuleRequestUpdateDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestUpdateDto dto = new ModuleRequestUpdateDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
@@ -197,7 +220,11 @@ public class ModuleServiceImplTest {
         assertNotNull(module.getCreatedAt());
         assertNotNull(module.getUpdatedAt());
         assertEquals(module.getName(), expectedName);
-        assertEquals(module.getConfig(), expectedConfig);
+        try {
+            assertEquals(module.getConfig(), this.objectMapper.readTree(expectedConfig));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         assertEquals(module.getType().name(), moduleTypeEnum.name());
     }
 
@@ -332,7 +359,11 @@ public class ModuleServiceImplTest {
 //        when(this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)).thenReturn(contentDomain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-
+        try {
+            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -360,7 +391,11 @@ public class ModuleServiceImplTest {
         when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-
+        try {
+            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -393,7 +428,11 @@ public class ModuleServiceImplTest {
         when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-
+        try {
+            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -437,6 +476,11 @@ public class ModuleServiceImplTest {
 //        when(this.domainCache.buildDomain(AdContentTypeEnum.VIDEO)).thenReturn(videoDomain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
+        try {
+            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
 
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);

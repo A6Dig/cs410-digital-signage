@@ -17,6 +17,10 @@ public final class AppConstant {
         public static final String INTERNAL_SERVER_ERROR = "Internal server error";
         public static final String UNEXPECTED_ERROR = "Unexpected error occurred.";
 
+        public static final String INVALID_JSON = "Invalid JSON format";
+        public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING = "Unable to convert to string.";
+        public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_JSON = "Unable to convert to JSON.";
+
         public static final class Module {
             public static final String NOT_FOUND = "Module not found";
             public static final String ID_NOT_PROVIDED = "Null or empty id provided";

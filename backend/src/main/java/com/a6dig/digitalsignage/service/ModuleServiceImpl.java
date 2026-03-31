@@ -8,11 +8,14 @@ import com.a6dig.digitalsignage.entity.AdCollection;
 import com.a6dig.digitalsignage.entity.AdContent;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.AdCollectionNotFoundException;
+import com.a6dig.digitalsignage.exception.InvalidJSONException;
 import com.a6dig.digitalsignage.exception.ModuleNotFoundException;
 import com.a6dig.digitalsignage.mapper.ModuleMapper;
 import com.a6dig.digitalsignage.repository.AdCollectionRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.util.ErrorMessage;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +38,9 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Autowired
     private AdCollectionRepository adCollectionRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
 
     @Override
@@ -66,7 +72,16 @@ public class ModuleServiceImpl implements ModuleService {
     public ModuleResponseDto createModule(ModuleRequestDto module) {
         Module newModule = new Module();
         newModule.setName(module.getName());
-        newModule.setConfig(module.getConfig());
+
+        try {
+            newModule.setConfig(module.getConfig() == null ? null : objectMapper.writeValueAsString(module.getConfig()));
+        } catch (JsonProcessingException ex) {
+            throw new InvalidJSONException(
+                    AppConstant.ExceptionMessage.INVALID_JSON,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING))
+            );
+        }
+
         newModule.setDomain(this.domainCache.buildDomain(module.getType()));
 
         // only let assign existing ad collection
@@ -100,7 +115,16 @@ public class ModuleServiceImpl implements ModuleService {
                         List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Module.idDoesNotExist(id)))
                 ));
         module.setName(dto.getName() == null ? module.getName() : dto.getName());
-        module.setConfig(dto.getConfig() == null ? module.getConfig() : dto.getConfig());
+
+        try {
+            module.setConfig(dto.getConfig() == null ? module.getConfig() : objectMapper.writeValueAsString(dto.getConfig()));
+        } catch (JsonProcessingException ex) {
+            throw new InvalidJSONException(
+                    AppConstant.ExceptionMessage.INVALID_JSON,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING))
+            );
+        }
+
         module.setDomain(dto.getType() == null ? module.getDomain() : this.domainCache.buildDomain(dto.getType()));
 
 
