@@ -21,6 +21,24 @@ public final class AppConstant {
         public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING = "Unable to convert to string.";
         public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_JSON = "Unable to convert to JSON.";
 
+        public static final class Domain {
+            public static final String NOT_FOUND = "Type doesn't exist";
+            public static final String TYPE_NOT_PROVIDED = "Type not provided";
+            public static final String TYPE_CANNOT_BE_EMPTY = "Type cannot be empty or null.";
+
+            public static String domainCodeDoesNotExist(String code) {
+                return String.format("%s doesn't exist.", code);
+            }
+
+
+
+            public static String domainCodeDoesNotBelongToTheType(String code, String type) {
+                return String.format("%s doesn't belong to %s.", code, type);
+            }
+
+        }
+
+
         public static final class Module {
             public static final String NOT_FOUND = "Module not found";
             public static final String ID_NOT_PROVIDED = "Null or empty id provided";

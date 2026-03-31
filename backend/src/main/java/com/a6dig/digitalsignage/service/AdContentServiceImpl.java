@@ -7,6 +7,7 @@ import com.a6dig.digitalsignage.dto.AdContentRequestUpdateDto;
 import com.a6dig.digitalsignage.dto.AdContentResponseDto;
 import com.a6dig.digitalsignage.entity.AdContent;
 import com.a6dig.digitalsignage.exception.AdContentNotFoundException;
+import com.a6dig.digitalsignage.exception.InvalidDomainException;
 import com.a6dig.digitalsignage.mapper.AdContentMapper;
 import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.util.ErrorMessage;
@@ -65,6 +66,17 @@ public class AdContentServiceImpl implements AdContentService{
 
     @Override
     public AdContentResponseDto updateAdContentById(Long id, AdContentRequestUpdateDto adContent) {
+
+
+        if (adContent.getType() == null) {
+            throw new InvalidDomainException(
+                    AppConstant.ExceptionMessage.Domain.TYPE_NOT_PROVIDED,
+                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Domain.TYPE_CANNOT_BE_EMPTY))
+            );
+        }
+
+        this.domainCache.validate(adContent.getType().name(), AppConstant.SystemConstant.DOMAIN_TYPE_AD_CONTENT);
+
         AdContent existing = this.adContentRepository
                 .findById(id)
                 .orElseThrow(() -> new AdContentNotFoundException(
