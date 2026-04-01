@@ -1,6 +1,7 @@
 package com.a6dig.digitalsignage.dto;
 
 import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import java.util.Optional;
 
@@ -10,7 +11,7 @@ public class ModuleDtoBase {
 
     private ModuleTypeEnum type;
 
-    private String config;
+    private JsonNode config;
 
     public String getName() {
         return name;
@@ -28,11 +29,11 @@ public class ModuleDtoBase {
         this.type = type;
     }
 
-    public String getConfig() {
+    public JsonNode getConfig() {
         return config;
     }
 
-    public void setConfig(String config) {
+    public void setConfig(JsonNode config) {
         this.config = config;
     }
 }

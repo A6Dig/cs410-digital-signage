@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.integration.service;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.InvalidLayoutException;
 import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
@@ -152,7 +153,7 @@ public class LayoutServiceImplTest {
 
         requestDto.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null, 1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1 , 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1 , 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> result = this.layoutServiceImpl.createLayout(requestDto);
@@ -165,7 +166,7 @@ public class LayoutServiceImplTest {
         assertLayout(result, "Main Layout", 2, 2);
         assertEquals(2, result.getSlots().size());
         assertLayoutSlot(savedSlot1, result.getId(), null,1, 1, 1, 1, 0);
-        assertLayoutSlot(savedSlot2, result.getId(), 1L,1, 2, 1, 1, 0);
+        assertLayoutSlot(savedSlot2, result.getId(), null,1, 2, 1, 1, 0);
 
     }
 
@@ -269,7 +270,7 @@ public class LayoutServiceImplTest {
 
         request.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null,1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1, 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1, 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
@@ -280,7 +281,7 @@ public class LayoutServiceImplTest {
 
         assertLayout(result, "Main Layout", 2, 2);
         assertLayoutSlot(savedSlots.get(0), result.getId(),null,1, 1, 1, 1, 0);
-        assertLayoutSlot(savedSlots.get(1), result.getId(),1L,1, 2, 1, 1, 0);
+        assertLayoutSlot(savedSlots.get(1), result.getId(),null,1, 2, 1, 1, 0);
 
     }
 
@@ -397,18 +398,18 @@ public class LayoutServiceImplTest {
 
     @Test void shouldThrowErrorWhenUpdateLayoutWithLayoutSlotsThatDontBelongToTheLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Main Layout", 1, 1);
-        layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)));
+        layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
-        layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(2L, 1,1,1,1,0)));
+        layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout2 = this.layoutServiceImpl.createLayout(layout2);
 
 
         LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Layout", 1, 1);
         List<LayoutSlotRequestUpdateDto> slots = new ArrayList<>();
-        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
-        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), null, 1,1,1,1,0));
+        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), null, 1,1,1,1,0));
         request.setSlots(slots);
 
         assertThrows(InvalidLayoutSlotException.class, () -> this.layoutServiceImpl.updateLayout(savedLayout2.getId(), request));
@@ -434,7 +435,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 2, 2);
         request.setSlots(List.of(
                 this.buildLayoutSlotRequestDto(null,1, 1, 1, 1, 0),
-                this.buildLayoutSlotRequestDto(1L,1, 2, 1, 1, 0)
+                this.buildLayoutSlotRequestDto(null,1, 2, 1, 1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
@@ -464,11 +465,11 @@ public class LayoutServiceImplTest {
 
         LayoutResponseDto<LayoutSlotResponseDto> result = this.layoutServiceImpl.addLayoutSlotToLayout(
                 created.getId(),
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)
         );
 
         assertEquals(1, result.getSlots().size());
-        assertLayoutSlot(result.getSlots().get(0), result.getId(), 1L, 1,1,1,1,0);
+        assertLayoutSlot(result.getSlots().get(0), result.getId(), null, 1,1,1,1,0);
     }
 
     @Test
@@ -476,8 +477,8 @@ public class LayoutServiceImplTest {
     void shouldRemoveSlotFromLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 3);
         request.setSlots(List.of(
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0),
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0)
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0),
+                this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0)
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);
@@ -515,14 +516,14 @@ public class LayoutServiceImplTest {
     void shouldOnlyUpdateNonNullableLayoutSlotsProperties() {
 
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1, 1);
-        layout.setSlots(List.of(this.buildLayoutSlotRequestDto(1L, 2,3,4,1,0)));
+        layout.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 2,3,4,1,0)));
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout = this.layoutServiceImpl.createLayout(layout);
         LayoutSlotResponseDto savedSlot = savedLayout.getSlots().get(0);
 
         LayoutRequestDto<LayoutSlotRequestUpdateDto> updatedRequest = this.buildLayoutRequestDto("Updated Layout", 1, 1);
         updatedRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(savedSlot.getId(),1L,null,1,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(savedSlot.getId(),null,null,1,1,1,1)
                 )
         );
 
@@ -530,7 +531,7 @@ public class LayoutServiceImplTest {
         LayoutSlotResponseDto updatedLayoutSlot = updated.getSlots().get(0);
 
         assertLayout(updated, "Updated Layout", 1, 1);
-        assertLayoutSlot(updatedLayoutSlot, updated.getId(), 1L,2,1,1,1,1);
+        assertLayoutSlot(updatedLayoutSlot, updated.getId(), null,2,1,1,1,1);
 
 
     }
@@ -548,7 +549,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,null,1,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,null,1,1,1,1)
                 )
         );
 
@@ -566,7 +567,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,-1,1,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,-1,1,1,1,1)
                 )
         );
 
@@ -584,7 +585,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,0,1,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,0,1,1,1,1)
                 )
         );
 
@@ -604,7 +605,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,null,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,null,1,1,1)
                 )
         );
 
@@ -622,7 +623,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,-1,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,-1,1,1,1)
                 )
         );
 
@@ -640,7 +641,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,0,1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,0,1,1,1)
                 )
         );
 
@@ -662,7 +663,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,null,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,null,1,1)
                 )
         );
 
@@ -680,7 +681,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,-1,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,-1,1,1)
                 )
         );
 
@@ -698,7 +699,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,0,1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,0,1,1)
                 )
         );
 
@@ -718,7 +719,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,1,null,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,null,1)
                 )
         );
 
@@ -736,7 +737,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,1,-1,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,-1,1)
                 )
         );
 
@@ -754,7 +755,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,1,0,1)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,0,1)
                 )
         );
 
@@ -775,7 +776,7 @@ public class LayoutServiceImplTest {
 
         updateRequest.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestUpdateDto(null,1L,1,1,1,1,null)
+                        this.buildLayoutSlotRequestUpdateDto(null,null,1,1,1,1,null)
                 )
         );
 
@@ -795,7 +796,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,null,1,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,null,1,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -807,7 +808,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,-1,1,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,-1,1,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -819,7 +820,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,0,1,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,0,1,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -833,7 +834,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,null,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,null,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -845,7 +846,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,-1,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,-1,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -857,7 +858,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,0,1,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,0,1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -873,7 +874,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,null,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,null,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -885,7 +886,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,-1,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,-1,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -897,7 +898,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,0,1,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,0,1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -911,7 +912,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,1,null,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,1,null,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -923,7 +924,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,1,-1,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,1,-1,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -935,7 +936,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,1,0,1)
+                        this.buildLayoutSlotRequestDto(null,1,1,1,0,1)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));
@@ -950,7 +951,7 @@ public class LayoutServiceImplTest {
         LayoutRequestDto<LayoutSlotRequestDto> layout = this.buildLayoutRequestDto("Main Layout", 1,1);
         layout.setSlots(
                 List.of(
-                        this.buildLayoutSlotRequestDto(1L,1,1,1,1,null)
+                        this.buildLayoutSlotRequestDto(null,1,1,1,1,null)
                 )
         );
         assertThrows(InvalidLayoutSlotException.class, () -> layoutServiceImpl.createLayout(layout));

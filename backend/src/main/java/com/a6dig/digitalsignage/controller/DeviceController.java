@@ -1,8 +1,12 @@
 package com.a6dig.digitalsignage.controller;
 
+import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.entity.Device;
-import com.a6dig.digitalsignage.repository.DeviceRepository;
+import com.a6dig.digitalsignage.service.DeviceService;
+import com.a6dig.digitalsignage.util.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,17 +16,51 @@ import java.util.List;
 public class DeviceController {
 
     @Autowired
-    private DeviceRepository deviceRepository;
+    private DeviceService deviceService;
 
-    @GetMapping
-    public List<Device> getAllDevices() {
-        return deviceRepository.findAll();
+    // Reads
+    
+    @GetMapping("")
+    public ResponseEntity<APIResponse<List<Device>>> getAllDevices() {
+        return ResponseEntity.ok(APIResponse.success(deviceService.getAllDevices()));
     }
 
     @GetMapping("/{id}")
-    public Device getDeviceById(@PathVariable Long id) {
-        return deviceRepository.findById(id).orElse(null);
+    public ResponseEntity<APIResponse<Device>> getDeviceById(@PathVariable Long id) {
+        return ResponseEntity.ok(APIResponse.success(deviceService.getDeviceById(id)));
     }
 
-    
+    @GetMapping("/group/{deviceGroupId}")
+    public ResponseEntity<APIResponse<List<Device>>> getDevicesByDeviceGroupId(@PathVariable Long deviceGroupId) {
+        return ResponseEntity.ok(APIResponse.success(deviceService.getDevicesByDeviceGroupId(deviceGroupId)));
+    }
+
+    // Creates
+
+    @PostMapping("")
+    public ResponseEntity<APIResponse<Device>> createDevice(@RequestBody Device device) {
+        Device createdDevice = deviceService.createDevice(device);
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .body(APIResponse.created(AppConstant.SuccessMessage.Device.CREATED, createdDevice));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<APIResponse<Device>> updateDevice(@PathVariable Long id, @RequestBody Device device) {
+        Device updatedDevice = deviceService.updateDevice(id, device);
+        return ResponseEntity.ok(APIResponse.success(AppConstant.SuccessMessage.Device.UPDATED, updatedDevice));
+    }
+
+    // Deletes
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<APIResponse<Void>> deleteDevice(@PathVariable Long id) {
+        deviceService.deleteDevice(id);
+        return ResponseEntity.ok(APIResponse.success(AppConstant.SuccessMessage.Device.DELETED));
+    }
+
+    @DeleteMapping("")
+    public ResponseEntity<APIResponse<Void>> deleteAllDevices() {
+        deviceService.deleteAllDevices();
+        return ResponseEntity.ok(APIResponse.success(AppConstant.SuccessMessage.Device.DELETED_ALL));
+    }
 }

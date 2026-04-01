@@ -40,6 +40,12 @@ public class Device {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    protected void onCreate() {
+        createdAt = LocalDateTime.now();
+        updatedAt = LocalDateTime.now();
+    }
+
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
@@ -51,6 +57,14 @@ public class Device {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getLayoutId() {
+        return layoutId;
+    }
+
+    public void setLayoutId(Long layoutId) {
+        this.layoutId = layoutId;
     }
 
     public Layout getLayout() {

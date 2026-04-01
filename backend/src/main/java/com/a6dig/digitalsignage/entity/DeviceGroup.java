@@ -1,5 +1,6 @@
 package com.a6dig.digitalsignage.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -39,6 +40,7 @@ public class DeviceGroup {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "deviceGroup")
+    @JsonIgnore
     private List<Device> devices;
 
     public Long getId() {
@@ -63,6 +65,14 @@ public class DeviceGroup {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public Layout getLayout() {
+        return layout;
+    }
+
+    public void setLayout(Layout layout) {
+        this.layout = layout;
     }
 
     public LocalDateTime getCreatedAt() {
