@@ -157,12 +157,8 @@ Every time someone does a pull request, run all the tests! Even though some test
 ```mermaid
 erDiagram
     Device ||--|| Layout : "uses Layout" 
-%%                        if DeviceGroup.layoutId <> NULL 
-%%                        THEN show this layout
-%%                        ELSE override with layout from DeviceGroup"
-%%    Device ||--o| Pairing : has
+
     DeviceGroup ||--o{ Device : has
-%%    DeviceGroup }|--o| Layout : uses
     Layout ||--o{ LayoutSlot : contains
     LayoutSlot }o--|| Module : displays
     AdCollection ||--|{ AdCollectionContentLink : has
@@ -171,105 +167,98 @@ erDiagram
 
 
 Domain {
-BIGINT id pk
-VARCHAR(50) type "Module | Ad Content"
-VARCHAR(50) name
-VARCHAR(255) description
-INT displayOrder
-VARCHAR(50) alphaNumCode "WEATHER | CLOCK | ROTATING_AD | IMAGE | VIDEO"
+    BIGINT id PK
+    VARCHAR(50) type "Module | Ad Content"
+    VARCHAR(50) name
+    VARCHAR(255) description
+    INT displayOrder
+    VARCHAR(50) alphaNumCode "WEATHER | CLOCK | ROTATING_AD | IMAGE | VIDEO"
 }
 
-    User {
-BIGINT id pk
-VARCHAR(50) username
-VARCHAR(50) email
-VARCHAR(255) password
-ENUM role "ADMIN"
-DATETIME createdAt
-DATETIME updatedAt
+User {
+    BIGINT id PK
+    VARCHAR(50) username
+    VARCHAR(50) email
+    VARCHAR(255) password
+    VARCHAR(50) role "ADMIN"
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 DeviceGroup {
-BIGINT id pk
-%%BIGINT layoutId fk
-VARCHAR(50) name
-VARCHAR(255) description
-DATETIME createdAt
-DATETIME updatedAt
-    }
+    BIGINT id PK
+    VARCHAR(50) name
+    VARCHAR(255) description
+    DATETIME createdAt
+    DATETIME updatedAt
+}
 
 Device {
-BIGINT id pk
-BIGINT layoutId fk
-VARCHAR(50) name
-%%VARCHAR(50) pairingId
-VARCHAR ipAddress
-ENUM status "ONLINE | OFFLINE"
-BIGINT DeviceGroupId fk
-DATETIME createdAt
-DATETIME updatedAt
-    }
-%%Pairing {
-%%BIGINT id pk
-%%BOOLEAN paired
-%%DATETIME createdAt
-%%DATETIME updatedAt
-%%}
+    BIGINT id PK
+    BIGINT layoutId FK
+    VARCHAR(50) name
+    VARCHAR ipAddress
+    VARCHAR(50) status "ONLINE | OFFLINE"
+    BIGINT DeviceGroupId FK
+    DATETIME createdAt
+    DATETIME updatedAt
+}
+
 
 Layout {
-BIGINT id pk
-VARCHAR(50) name
-INT cols
-INT rows
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(50) name
+    INT cols
+    INT rows
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 LayoutSlot {
-BIGINT id pk
-BIGINT layoutId fk
-BIGINT moduleId fk
-INT colPos
-INT rowPos
-INT colSpan
-INT rowSpan
-INT zIndex
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    BIGINT layoutId FK
+    BIGINT moduleId FK
+    INT colPos
+    INT rowPos
+    INT colSpan
+    INT rowSpan
+    INT zIndex
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 Module {
-BIGINT id pk
-BIGINT adCollectionId fk
-VARCHAR(50) name
-ENUM type "CLOCK | WEATHER | ROTATING_AD"
-JSON config "Front end client is responsible for this JSON data. Backend will only store whatever front end client provides."
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    BIGINT adCollectionId FK
+    VARCHAR(50) name
+    VARCHAR(50) type "CLOCK | WEATHER | ROTATING_AD"
+    TEXT config "Front end client is responsible for this JSON data. Backend will only store whatever front end client provides."
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdCollection {
-BIGINT id pk
-VARCHAR(50) name
-VARCHAR(255) url
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(50) name
+    VARCHAR(255) url
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdContent {
-BIGINT id pk
-VARCHAR(5) name
-VARCHAR url(255)
-ENUM type "IMAGE | VIDEO"
-DATETIME createdAt
-DATETIME updatedAt
+    BIGINT id PK
+    VARCHAR(5) name
+    VARCHAR url(255)
+    VARCHAR(50) type "IMAGE | VIDEO"
+    DATETIME createdAt
+    DATETIME updatedAt
 }
 
 AdCollectionContentLink {
-BIGINT AdCollectionId fk
-BIGINT AdContentId fk
-INT displayOrder
-INT durationSeconds
+    BIGINT AdCollectionId FK
+    BIGINT AdContentId FK
+    INT displayOrder
+    INT durationSeconds
 }
 
 ```
@@ -2938,7 +2927,7 @@ REQUEST
 {
     "id": 2,
     "name": "Ad Collection Stored in Cloud",
-    "url": "https://cdn.somecloudjson.com/march-events.json" // updated
+    "url": "https://cdn.somecloudjson.com/march-events.json"
 }
 ```
 
@@ -3282,7 +3271,7 @@ REQUEST
     "name": "March Event Image",
     "url": "/localstorage/marchevent.jpg",
     "type": "IMAGE",
-    "adCollection": [{                // updated . assigned to an ad collection
+    "adCollection": [{                
                         "id": 1,
                         "name": "Custom Ad Collection",
                         "url": null,
