@@ -1,3 +1,5 @@
+// written by Nhu Vo 04/01/2026
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Content from './pages/Content'
 import Dashboard from './pages/Dashboard'
@@ -22,7 +24,5 @@ function App() {
         </BrowserRouter>
     );
 }
-
-
 
 export default App
