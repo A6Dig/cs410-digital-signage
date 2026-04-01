@@ -134,5 +134,5 @@ By default the backend system is running on port 8080 (defined in the applicatio
 You can use the following URL to get all the layouts.
 
 ```bash
-curl https://localhost:8000/api/layouts
+curl https://localhost:8080/api/layouts
 ```
