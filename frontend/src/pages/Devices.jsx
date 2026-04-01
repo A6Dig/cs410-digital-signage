@@ -1,5 +1,3 @@
-// Nhu Vo
-
 function Devices() {
     return (
         <div>

@@ -21,12 +21,17 @@ public class LayoutSlot {
 
 
 
+<<<<<<< HEAD
+    private int colPos;
+
+=======
     @ManyToOne
     @JoinColumn(name = "moduleId")
     private Module module;
 
     private int colPos;
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     private int rowPos;
 
     private int colSpan;
@@ -76,15 +81,23 @@ public class LayoutSlot {
 //        this.layout = layout;
 //    }
 
+<<<<<<< HEAD
+=======
 
     public Module getModule() {
         return module;
     }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     public void setModule(Module module) {
         this.module = module;
     }
 
+    public int getColPos() {
+        return colPos;
+    }
+
+<<<<<<< HEAD
     public int getColPos() {
         return colPos;
     }
@@ -97,6 +110,16 @@ public class LayoutSlot {
         return rowPos;
     }
 
+=======
+    public void setColPos(int colPos) {
+        this.colPos = colPos;
+    }
+
+    public int getRowPos() {
+        return rowPos;
+    }
+
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     public void setRowPos(int rowPos) {
         this.rowPos = rowPos;
     }

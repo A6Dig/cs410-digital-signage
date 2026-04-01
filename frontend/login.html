@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login - Digital Signage</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- Login container centered on the page -->
+  <main class="login-container">
+    <h1>Welcome</h1>
+
+    <form id="login-form" novalidate>
+      <!-- Username field -->
+      <label for="username">Username</label>
+      <input
+        type="text"
+        id="username"
+        name="username"
+        placeholder="Enter your username"
+        autocomplete="username"
+        required
+      />
+
+      <!-- Password field -->
+      <label for="password">Password</label>
+      <input
+        type="password"
+        id="password"
+        name="password"
+        placeholder="Enter your password"
+        autocomplete="current-password"
+        required
+      />
+
+      <!-- Error message display -->
+      <div id="error-message" role="alert"></div>
+
+      <!-- Submit button -->
+      <button type="submit" id="login-btn">Login</button>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
