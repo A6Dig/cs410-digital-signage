@@ -102,4 +102,70 @@ public class Module {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+
+    public static ModuleBuilder builder() {
+        return new ModuleBuilder();
+    }
+
+    public static class ModuleBuilder {
+        private Long id;
+        private AdCollection adCollection;
+        private String name;
+        private Domain domain;
+        private String config;
+
+        private LocalDateTime createdAt;
+        private LocalDateTime updatedAt;
+
+
+        public ModuleBuilder Id(Long id) {
+            this.id = id;
+            return this;
+        }
+
+        public ModuleBuilder adCollection(AdCollection adCollection) {
+            this.adCollection = adCollection;
+            return this;
+        }
+
+        public ModuleBuilder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ModuleBuilder domain(Domain domain) {
+            this.domain = domain;
+            return this;
+        }
+
+        public ModuleBuilder config(String config) {
+            this.config = config;
+            return this;
+        }
+
+        public ModuleBuilder createdAt(LocalDateTime createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public ModuleBuilder updatedAt(LocalDateTime updatedAt) {
+            this.updatedAt = updatedAt;
+            return this;
+        }
+
+
+        public Module build() {
+            Module module = new Module();
+            module.setId(this.id);
+            module.setAdCollection(this.adCollection);
+            module.setName(this.name);
+            module.setDomain(this.domain);
+            module.setConfig(this.config);
+            module.setCreatedAt(this.createdAt);
+            module.setUpdatedAt(this.updatedAt);
+            return module;
+        }
+    }
+
+
 }

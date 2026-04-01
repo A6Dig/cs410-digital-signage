@@ -2,6 +2,7 @@ package com.a6dig.digitalsignage.controller;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.dto.*;
+import com.a6dig.digitalsignage.service.ModuleFacade;
 import com.a6dig.digitalsignage.service.ModuleService;
 import com.a6dig.digitalsignage.util.APIResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,26 +16,26 @@ import java.util.List;
 @RequestMapping("/api/modules")
 public class ModuleController {
     @Autowired
-    private ModuleService moduleService;
+    private ModuleFacade moduleFacade;
 
     // get
     @GetMapping("/{id}")
     public ResponseEntity<APIResponse<ModuleResponseDto>>
         getAllModuleById(@PathVariable Long id) {
-        ModuleResponseDto dto = this.moduleService.getModuleById(id);
+        ModuleResponseDto dto = this.moduleFacade.getModuleById(id);
         return ResponseEntity.ok(APIResponse.success(dto));
     }
 
     @GetMapping("")
     public ResponseEntity<APIResponse<List<ModuleResponseDto>>> getAllModules() {
-        return ResponseEntity.ok(APIResponse.success(this.moduleService.getAllModules()));
+        return ResponseEntity.ok(APIResponse.success(this.moduleFacade.getAllModules()));
     }
 
     // post
     @PostMapping("")
     public ResponseEntity<APIResponse<ModuleResponseDto>>
         createModule(@RequestBody ModuleRequestDto moduleRequestDto) {
-        ModuleResponseDto moduleResponseDto = this.moduleService.createModule(moduleRequestDto);
+        ModuleResponseDto moduleResponseDto = this.moduleFacade.createModule(moduleRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(APIResponse.created(moduleResponseDto));
     }
 
@@ -42,20 +43,20 @@ public class ModuleController {
 
     @PutMapping("/{id}")
     public ResponseEntity<APIResponse<ModuleResponseDto>> updatedLayout(@PathVariable Long id, @RequestBody ModuleRequestUpdateDto dto) {
-        ModuleResponseDto responseDto = this.moduleService.updateModuleById(id, dto);
+        ModuleResponseDto responseDto = this.moduleFacade.updateModuleById(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.Module.UPDATED, responseDto));
     }
 
     // delete
     @DeleteMapping("/{id}")
     public ResponseEntity<APIResponse<Void>> deleteModule(@PathVariable Long id) {
-        this.moduleService.deleteModuleById(id);
+        this.moduleFacade.deleteModuleById(id);
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.Module.DELETED));
     }
 
     @DeleteMapping("")
     public ResponseEntity<APIResponse<Void>> deleteModules() {
-        this.moduleService.deleteAllModules();
+        this.moduleFacade.deleteAllModules();
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.Module.DELETED_ALL));
     }
 

@@ -14,6 +14,7 @@ import com.a6dig.digitalsignage.mapper.ModuleMapper;
 import com.a6dig.digitalsignage.repository.AdCollectionRepository;
 import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
+import com.a6dig.digitalsignage.service.ModuleFactory;
 import com.a6dig.digitalsignage.service.ModuleServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -46,6 +47,9 @@ public class ModuleServiceImplTest {
 
     @Mock
     private ObjectMapper mockObjectMapper;
+
+    @Mock
+    private ModuleFactory moduleFactory;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -355,15 +359,16 @@ public class ModuleServiceImplTest {
         ModuleResponseDto moduleDto = this.buildModuleResponseDto(1L, "New Module", "{}", ModuleTypeEnum.WEATHER, adCollectionDto);
 
 
-        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
+//        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
 //        when(this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)).thenReturn(contentDomain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-        try {
-            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+        when(this.moduleFactory.createModuleFromDto(moduleRequest, null)).thenReturn(module);
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -371,10 +376,11 @@ public class ModuleServiceImplTest {
         assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(0), "New Content", "http://localhost/content");
 
 
-        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
+//        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
 //        verify(this.domainCache, times(1)).buildDomain(AdContentTypeEnum.IMAGE);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
+        verify(this.moduleFactory, times(1)).createModuleFromDto(moduleRequest, null);
     }
 
 
@@ -388,22 +394,24 @@ public class ModuleServiceImplTest {
         ModuleResponseDto moduleDto = this.buildModuleResponseDto(1L, "New Module", "{}", ModuleTypeEnum.WEATHER, null);
 
 
-        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
+//        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-        try {
-            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+        when(this.moduleFactory.createModuleFromDto(moduleRequest, null)).thenReturn(module);
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
         assertNull(response.getAdCollectionResponseDto());
 
-        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
+//        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
+        verify(this.moduleFactory, times(1)).createModuleFromDto(moduleRequest, null);
     }
 
 
@@ -425,14 +433,15 @@ public class ModuleServiceImplTest {
         ModuleResponseDto moduleDto = this.buildModuleResponseDto(1L, "New Module", "{}", ModuleTypeEnum.WEATHER, adCollectionDto);
 
 
-        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
+//        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-        try {
-            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
+        when(this.moduleFactory.createModuleFromDto(moduleRequest, null)).thenReturn(module);
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -440,9 +449,10 @@ public class ModuleServiceImplTest {
         assertNull(response.getAdCollectionResponseDto().getAdContents());
 
 
-        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
+//        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
+        verify(this.moduleFactory, times(1)).createModuleFromDto(moduleRequest, null);
     }
 
 
@@ -471,17 +481,18 @@ public class ModuleServiceImplTest {
         ModuleResponseDto moduleDto = this.buildModuleResponseDto(1L, "New Module", "{}", ModuleTypeEnum.WEATHER, adCollectionDto);
 
 
-        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
+//        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
 //        when(this.domainCache.buildDomain(AdContentTypeEnum.IMAGE)).thenReturn(contentDomain);
 //        when(this.domainCache.buildDomain(AdContentTypeEnum.VIDEO)).thenReturn(videoDomain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(module);
         when(this.moduleMapper.toModuleResponseDto(module)).thenReturn(moduleDto);
-        try {
-            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
+//        try {
+//            when(mockObjectMapper.writeValueAsString(any())).thenReturn("{}");
+//        } catch (JsonProcessingException e) {
+//            throw new RuntimeException(e);
+//        }
 
+        when(this.moduleFactory.createModuleFromDto(moduleRequest, null)).thenReturn(module);
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
@@ -490,11 +501,12 @@ public class ModuleServiceImplTest {
         assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(1), "New Content 2", "http://localhost/content");
 
 
-        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
+//        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
 //        verify(this.domainCache, times(1)).buildDomain(AdContentTypeEnum.IMAGE);
 //        verify(this.domainCache, times(1)).buildDomain(AdContentTypeEnum.VIDEO);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
+        verify(this.moduleFactory, times(1)).createModuleFromDto(moduleRequest, null);
 
     }
 
@@ -513,16 +525,18 @@ public class ModuleServiceImplTest {
 
 
         when(this.moduleRepository.findById(1L)).thenReturn(Optional.of(existing));
-        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
+//        when(this.domainCache.buildDomain(ModuleTypeEnum.WEATHER)).thenReturn(domain);
         when(this.moduleRepository.saveAndFlush(any(Module.class))).thenReturn(updated);
         when(this.moduleMapper.toModuleResponseDto(updated)).thenReturn(responseDto);
+        when(this.moduleFactory.createModuleFromDto(moduleRequest, existing)).thenReturn(updated);
 
         ModuleResponseDto response = this.moduleService.updateModuleById(1L, moduleRequest);
 
-        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
+//        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
         verify(this.moduleRepository, times(1)).findById(1L);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
         verify(this.moduleMapper, times(1)).toModuleResponseDto(updated);
+        verify(this.moduleFactory, times(1)).createModuleFromDto(moduleRequest, existing);
 
 
 

@@ -35,13 +35,8 @@ public class ModuleServiceImpl implements ModuleService {
     private ModuleMapper moduleMapper;
 
     @Autowired
-    private DomainCache domainCache;
+    private ModuleFactory moduleFactory;
 
-    @Autowired
-    private AdCollectionRepository adCollectionRepository;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
 
     @Override
@@ -72,47 +67,8 @@ public class ModuleServiceImpl implements ModuleService {
     @Transactional
     public ModuleResponseDto createModule(ModuleRequestDto module) {
 
-        if (module.getType() == null) {
-            throw new InvalidDomainException(
-                    AppConstant.ExceptionMessage.Domain.TYPE_NOT_PROVIDED,
-                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Domain.TYPE_CANNOT_BE_EMPTY))
-            );
-        }
 
-        this.domainCache.validate(module.getType().name(), AppConstant.SystemConstant.DOMAIN_TYPE_MODULE);
-
-
-        Module newModule = new Module();
-        newModule.setName(module.getName());
-
-        try {
-            newModule.setConfig(module.getConfig() == null ? null : objectMapper.writeValueAsString(module.getConfig()));
-        } catch (JsonProcessingException ex) {
-            throw new InvalidJSONException(
-                    AppConstant.ExceptionMessage.INVALID_JSON,
-                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING))
-            );
-        }
-
-        newModule.setDomain(this.domainCache.buildDomain(module.getType()));
-
-        // only let assign existing ad collection
-        // no new creation through this method
-        if(module.getAdCollectionRequestUpdateDto() != null && module.getAdCollectionRequestUpdateDto().getId() != null) {
-            AdCollection adCollection = this.adCollectionRepository.findById(
-                    module.getAdCollectionRequestUpdateDto().getId()
-            ).orElseThrow(() -> new AdCollectionNotFoundException(
-                    AppConstant.ExceptionMessage.AdCollection.NOT_FOUND
-                    ,List.of(
-                            ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.AdCollection.idDoesNotExist(
-                                    module.getAdCollectionRequestUpdateDto().getId())))
-            ));
-
-
-            newModule.setAdCollection(adCollection);
-        }
-
-        Module saved = this.moduleRepository.saveAndFlush(newModule);
+        Module saved = this.moduleRepository.saveAndFlush(this.moduleFactory.createModuleFromDto(module, null));
 
         return this.moduleMapper.toModuleResponseDto(saved);
     }
@@ -126,39 +82,8 @@ public class ModuleServiceImpl implements ModuleService {
                         AppConstant.ExceptionMessage.Module.NOT_FOUND,
                         List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.Module.idDoesNotExist(id)))
                 ));
-        module.setName(dto.getName() == null ? module.getName() : dto.getName());
 
-        try {
-            module.setConfig(dto.getConfig() == null ? module.getConfig() : objectMapper.writeValueAsString(dto.getConfig()));
-        } catch (JsonProcessingException ex) {
-            throw new InvalidJSONException(
-                    AppConstant.ExceptionMessage.INVALID_JSON,
-                    List.of(ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING))
-            );
-        }
-
-        module.setDomain(dto.getType() == null ? module.getDomain() : this.domainCache.buildDomain(dto.getType()));
-
-
-
-
-        // only let assign existing ad collection
-        // no new creation through this method
-        if(dto.getAdCollectionRequestUpdateDto() != null && dto.getAdCollectionRequestUpdateDto().getId() != null) {
-            AdCollection adCollection = this.adCollectionRepository.findById(
-                    dto.getAdCollectionRequestUpdateDto().getId()
-            ).orElseThrow(() -> new AdCollectionNotFoundException(
-                    AppConstant.ExceptionMessage.AdCollection.NOT_FOUND
-                    ,List.of(
-                    ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.AdCollection.idDoesNotExist(
-                            dto.getAdCollectionRequestUpdateDto().getId())))
-            ));
-
-
-            module.setAdCollection(adCollection);
-        }
-
-        Module updated = this.moduleRepository.saveAndFlush(module);
+        Module updated = this.moduleRepository.saveAndFlush(this.moduleFactory.createModuleFromDto(dto, module));
 
         return this.moduleMapper.toModuleResponseDto(updated);
     }
