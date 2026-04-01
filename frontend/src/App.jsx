@@ -21,7 +21,7 @@ function App() {
   );
 }
 
-// export default App;
+export default App;
 // import { BrowserRouter, Routes, Route } from 'react-router-dom'
 // import Content from './pages/Content'
 // import Dashboard from './pages/Dashboard'
