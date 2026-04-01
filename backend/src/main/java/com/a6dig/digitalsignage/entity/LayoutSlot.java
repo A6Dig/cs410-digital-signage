@@ -20,7 +20,10 @@ public class LayoutSlot {
     private Layout layout;
 
 
-    private Long moduleId;
+
+    @ManyToOne
+    @JoinColumn(name = "moduleId")
+    private Module module;
 
     private int colPos;
 
@@ -74,13 +77,12 @@ public class LayoutSlot {
 //    }
 
 
-
-    public Long getModuleId() {
-        return moduleId;
+    public Module getModule() {
+        return module;
     }
 
-    public void setModuleId(Long moduleId) {
-        this.moduleId = moduleId;
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     public int getColPos() {

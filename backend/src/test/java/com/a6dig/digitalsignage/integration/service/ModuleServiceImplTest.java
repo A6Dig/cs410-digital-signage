@@ -18,6 +18,8 @@ import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.repository.DomainRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.ModuleService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,6 +61,8 @@ public class ModuleServiceImplTest {
     @Autowired
     private AdContentMapper adContentMapper;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
+
     @BeforeEach
     void cleanUp() {
         this.moduleRepository.deleteAll();
@@ -96,7 +100,11 @@ public class ModuleServiceImplTest {
         Module module = new Module();
         module.setId(id);
         module.setName(name);
-        module.setConfig(config);
+        try {
+            module.setConfig(config == null ? null : this.objectMapper.writeValueAsString(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         module.setDomain(domain);
         module.setAdCollection(adCollection);
         module.setUpdatedAt(LocalDateTime.now());
@@ -130,7 +138,11 @@ public class ModuleServiceImplTest {
         ModuleResponseDto dto = new ModuleResponseDto();
         dto.setId(id);
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(config == null ? null : this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionResponseDto(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
@@ -141,7 +153,11 @@ public class ModuleServiceImplTest {
     private ModuleRequestDto buildModuleRequestDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestDto dto = new ModuleRequestDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(config == null ? null : this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
@@ -150,7 +166,11 @@ public class ModuleServiceImplTest {
     private ModuleRequestUpdateDto buildModuleRequestUpdateDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestUpdateDto dto = new ModuleRequestUpdateDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(config == null ? null : this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
@@ -207,7 +227,11 @@ public class ModuleServiceImplTest {
         assertTrue(moduleRepository.existsById(module.getId()));
 
         assertEquals(module.getName(), expectedName);
-        assertEquals(module.getConfig(), expectedConfig);
+        try {
+            assertEquals(module.getConfig(), this.objectMapper.readTree(expectedConfig));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         assertEquals(module.getType().name(), moduleTypeEnum.name());
 
         assertEquals(module.getType(), moduleTypeEnum);
@@ -382,10 +406,10 @@ public class ModuleServiceImplTest {
                 {
                     "name": "Some Content",
                     "contents": [
+                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
+                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
+                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
                         {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12}
-                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
-                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
-                        {"name": "Content 1", "url": "https://localhost:3000/content1", "duration": 12},
                     ]
                 }
                 

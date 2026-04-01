@@ -18,6 +18,8 @@ import com.a6dig.digitalsignage.repository.DomainRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.AdCollectionService;
 import com.a6dig.digitalsignage.service.AdContentService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +62,8 @@ public class AdContentServiceImplTest {
 
     @Autowired
     private AdContentMapper adContentMapper;
+
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     @BeforeEach
@@ -129,11 +133,11 @@ public class AdContentServiceImplTest {
         return dto;
     }
 
-    private ModuleResponseDto buildModuleResponseDto(Long id, String name, String config, ModuleTypeEnum type, AdCollectionResponseDto adCollection) {
+    private ModuleResponseDto buildModuleResponseDto(Long id, String name, String config, ModuleTypeEnum type, AdCollectionResponseDto adCollection) throws JsonProcessingException {
         ModuleResponseDto dto = new ModuleResponseDto();
         dto.setId(id);
         dto.setName(name);
-        dto.setConfig(config);
+        dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
         dto.setAdCollectionResponseDto(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
@@ -141,19 +145,19 @@ public class AdContentServiceImplTest {
         return dto;
     }
 
-    private ModuleRequestDto buildModuleRequestDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
+    private ModuleRequestDto buildModuleRequestDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) throws JsonProcessingException {
         ModuleRequestDto dto = new ModuleRequestDto();
         dto.setName(name);
-        dto.setConfig(config);
+        dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
     }
 
-    private ModuleRequestUpdateDto buildModuleRequestUpdateDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
+    private ModuleRequestUpdateDto buildModuleRequestUpdateDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) throws JsonProcessingException {
         ModuleRequestUpdateDto dto = new ModuleRequestUpdateDto();
         dto.setName(name);
-        dto.setConfig(config);
+        dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;

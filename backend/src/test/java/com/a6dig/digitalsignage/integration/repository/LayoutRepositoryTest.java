@@ -1,15 +1,21 @@
 package com.a6dig.digitalsignage.integration.repository;
 
-import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.entity.LayoutSlot;
+import com.a6dig.digitalsignage.config.DatabaseInit;
+import com.a6dig.digitalsignage.config.DomainCache;
+import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
+import com.a6dig.digitalsignage.entity.*;
+import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
+import com.a6dig.digitalsignage.repository.ModuleRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
+import org.testcontainers.shaded.org.bouncycastle.math.raw.Mod;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -19,6 +25,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@Import({DomainCache.class, DatabaseInit.class})
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.AUTO_CONFIGURED)
 class LayoutRepositoryTest {
@@ -27,6 +34,23 @@ class LayoutRepositoryTest {
 
     @Autowired
     private LayoutSlotRepository layoutSlotRepository;
+
+    @Autowired
+    private DomainCache domainCache;
+
+    @Autowired
+    private ModuleRepository moduleRepository;
+
+
+    private Module buildModule(String name, String config, ModuleTypeEnum type, AdCollection adCollection) {
+        Module module = new Module();
+        module.setDomain(domainCache.buildDomain(type));
+        module.setAdCollection(adCollection);
+        module.setName(name);
+        module.setConfig(config);
+        return module;
+    }
+
 
     private Layout build(String name, int col, int row){
         Layout layout = new Layout();
@@ -38,10 +62,10 @@ class LayoutRepositoryTest {
 
 
 
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
+    private LayoutSlot buildLayoutSlot(Layout layout, Module module, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
         LayoutSlot slot = new LayoutSlot(layout);
 
-        slot.setModuleId(moduleId);
+        slot.setModule(module);
         slot.setColPos(colPos);
         slot.setRowPos(rowPos);
         slot.setColSpan(colSpan);
@@ -74,7 +98,7 @@ class LayoutRepositoryTest {
         assertNotNull(slot.getId());
         assertNotNull(slot.getLayout());
         assertEquals(expectedLayoutId, slot.getLayout().getId());
-        assertEquals(expectedModuleId, slot.getModuleId());
+        assertEquals(expectedModuleId, slot.getModule() == null ? null : slot.getModule().getId());
         assertEquals(expectedColPos, slot.getColPos());
         assertEquals(expectedRowPos, slot.getRowPos());
         assertEquals(expectedColSpan, slot.getColSpan());
@@ -212,9 +236,15 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldSaveLayoutWithLayoutSlots(){
+        Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
+        Module savedModule1 = this.moduleRepository.save(module1);
+
+        Module module2 = this.buildModule("Default Module 2", "{}", ModuleTypeEnum.WEATHER, null);
+        Module savedModule2 = this.moduleRepository.save(module2);
+
         Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
@@ -222,21 +252,28 @@ class LayoutRepositoryTest {
         assertEquals(2, saved.getSlots().size());
 
         List<LayoutSlot> savedSlots = new ArrayList<>(saved.getSlots());
-        savedSlots.sort(Comparator.comparing(LayoutSlot::getModuleId));
+        savedSlots.sort(Comparator.comparing(LayoutSlot::getRowPos));
         LayoutSlot savedLayoutSlot1 = savedSlots.get(0);
         LayoutSlot savedLayoutSlot2 = savedSlots.get(1);
 
-        assertLayoutSlot(savedLayoutSlot1,saved.getId(),1L, 1,1,2,1,0);
-        assertLayoutSlot(savedLayoutSlot2,saved.getId(),2L, 1,2,2,1,0);
+        assertLayoutSlot(savedLayoutSlot1,saved.getId(),savedModule1.getId(), 1,1,2,1,0);
+        assertLayoutSlot(savedLayoutSlot2,saved.getId(),savedModule2.getId(), 1,2,2,1,0);
 
 
     }
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldCascadeDeleteLayoutSlotsWithLayout(){
+        Domain domain  = this.domainCache.buildDomain(ModuleTypeEnum.WEATHER);
+        Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.WEATHER, null);
+        Module savedModule1 = this.moduleRepository.save(module1);
+
+        Module module2 = this.buildModule("Default Module 2", "{}", ModuleTypeEnum.WEATHER, null);
+        Module savedModule2 = this.moduleRepository.save(module2);
+
         Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
@@ -256,22 +293,29 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldCascadeMergeLayoutSlotsWithLayout(){
+        Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
+        Module savedModule1 = this.moduleRepository.save(module1);
+
+        Module module2 = this.buildModule("Default Module 2", "{}", ModuleTypeEnum.ROTATING_AD, null);
+        Module savedModule2 = this.moduleRepository.save(module2);
+
+
         Layout layout = this.build("Default Layout", 2, 2);
         Layout saved = layoutRepository.save(layout);
 
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
 
         List<LayoutSlot> savedLayoutSlots = layoutSlotRepository.saveAll(List.of(layoutSlot1, layoutSlot2));
 
 
-        savedLayoutSlots.sort(Comparator.comparing(LayoutSlot::getModuleId));
+        savedLayoutSlots.sort(Comparator.comparing(LayoutSlot::getRowPos));
 
         LayoutSlot savedLayoutSlot1 = savedLayoutSlots.get(0);
         LayoutSlot savedLayoutSlot2 = savedLayoutSlots.get(1);
 
-        assertLayoutSlot(savedLayoutSlot1, saved.getId(),1L, 1,1,2,1,0);
-        assertLayoutSlot(savedLayoutSlot2, saved.getId(),2L, 1,2,2,1,0);
+        assertLayoutSlot(savedLayoutSlot1, saved.getId(),savedModule1.getId(), 1,1,2,1,0);
+        assertLayoutSlot(savedLayoutSlot2, saved.getId(),savedModule2.getId(), 1,2,2,1,0);
 
 
     }
@@ -280,21 +324,28 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldGetAllLayoutSlotsByLayoutId(){
+
+        Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
+        Module savedModule1 = this.moduleRepository.save(module1);
+
+        Module module2 = this.buildModule("Default Module 2", "{}", ModuleTypeEnum.ROTATING_AD, null);
+        Module savedModule2 = this.moduleRepository.save(module2);
+
         Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
+        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
+        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
         Layout saved = layoutRepository.save(layout);
 
 
         List<LayoutSlot> result = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(saved.getId());
-        result.sort(Comparator.comparing(LayoutSlot::getModuleId));
+        result.sort(Comparator.comparing(LayoutSlot::getRowPos));
 
         LayoutSlot savedSlot1 = result.get(0);
         LayoutSlot savedSlot2 = result.get(1);
         assertEquals(2, result.size());
-        assertLayoutSlot(savedSlot1, saved.getId(), 1L, 1,1,2,1,0);
-        assertLayoutSlot(savedSlot2, saved.getId(), 2L, 1,2,2,1,0);
+        assertLayoutSlot(savedSlot1, saved.getId(), savedModule1.getId(), 1,1,2,1,0);
+        assertLayoutSlot(savedSlot2, saved.getId(), savedModule2.getId(), 1,2,2,1,0);
 
     }
 

@@ -7,7 +7,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface DeviceRepository extends JpaRepository<Device, String> {
+public interface DeviceRepository extends JpaRepository<Device, Long> {
 
-    List<Device> findByGroup(String deviceGroup);
+    List<Device> findByDeviceGroupId(Long deviceGroupId);
+
 }

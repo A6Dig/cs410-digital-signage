@@ -4,13 +4,12 @@ import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.dto.*;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
-import com.a6dig.digitalsignage.exception.InvalidLayoutException;
-import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
-import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
-import com.a6dig.digitalsignage.exception.LayoutSlotNotFoundException;
+import com.a6dig.digitalsignage.entity.Module;
+import com.a6dig.digitalsignage.exception.*;
 import com.a6dig.digitalsignage.mapper.LayoutMapper;
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
+import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.util.ErrorMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +29,9 @@ public class LayoutServiceImpl implements LayoutService{
 
     @Autowired
     private LayoutMapper layoutMapper;
+
+    @Autowired
+    private ModuleRepository moduleRepository;
 
     // GET
     @Override
@@ -62,6 +64,33 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setSlots(new ArrayList<>());
 
 
+        Map<Long, Module> existingModule = new HashMap<>();
+
+        List<Long> moduleIds = new ArrayList<>(Optional.ofNullable(dto.getSlots())
+                .orElse(List.of())
+                .stream()
+                .map(LayoutSlotDtoBase::getModuleId)
+                .filter(Objects::nonNull)
+                .toList());
+
+
+        this.moduleRepository.findAllById(moduleIds).forEach(module -> existingModule.put(module.getId(), module));
+
+        moduleIds.removeAll(existingModule.keySet());
+
+
+        if (!moduleIds.isEmpty()) {
+            List<Map<String, String>> errors = moduleIds.stream()
+                    .map(moduleId -> ErrorMessage.createErrorMessage(
+                            AppConstant.ExceptionMessage.Module.idDoesNotExist(moduleId)))
+                    .toList();
+
+            throw new ModuleNotFoundException(
+                    AppConstant.ExceptionMessage.Module.NOT_FOUND,
+                    errors
+            );
+        }
+
 
         if(dto.getSlots() != null) {
             for(LayoutSlotRequestDto s : dto.getSlots()) {
@@ -69,7 +98,7 @@ public class LayoutServiceImpl implements LayoutService{
                 validateLayoutSlot(true, s);
 
                 LayoutSlot slot = new LayoutSlot(layout);
-                slot.setModuleId(s.getModuleId());
+                slot.setModule(existingModule.get(s.getModuleId()));
                 slot.setColPos(s.getColPos());
                 slot.setRowPos(s.getRowPos());
                 slot.setColSpan(s.getColSpan());
@@ -100,6 +129,33 @@ public class LayoutServiceImpl implements LayoutService{
         layout.setRows(dto.getRows() == null ? layout.getRows() : dto.getRows());
 
 
+        Map<Long, Module> existingModule = new HashMap<>();
+
+        List<Long> moduleIds = new ArrayList<>(Optional.ofNullable(dto.getSlots())
+                .orElse(List.of())
+                .stream()
+                .map(LayoutSlotDtoBase::getModuleId)
+                .filter(Objects::nonNull)
+                .toList());
+
+
+        this.moduleRepository.findAllById(moduleIds).forEach(module -> existingModule.put(module.getId(), module));
+
+        moduleIds.removeAll(existingModule.keySet());
+
+
+        if (!moduleIds.isEmpty()) {
+            List<Map<String, String>> errors = moduleIds.stream()
+                    .map(moduleId -> ErrorMessage.createErrorMessage(
+                            AppConstant.ExceptionMessage.Module.idDoesNotExist(moduleId)))
+                    .toList();
+
+            throw new ModuleNotFoundException(
+                    AppConstant.ExceptionMessage.Module.NOT_FOUND,
+                    errors
+            );
+        }
+
         Map<Long, LayoutSlot> slots = new HashMap<>();
 
         layout.getSlots().forEach(layoutSlot -> {
@@ -124,7 +180,8 @@ public class LayoutServiceImpl implements LayoutService{
                 if (s.getId() == null) {
 
                     LayoutSlot slot = new LayoutSlot(layout);
-                    slot.setModuleId(s.getModuleId());
+                    slot.setModule(existingModule.get(s.getModuleId()));
+//                    slot.setModuleId(s.getModuleId());
                     slot.setColPos(s.getColPos());
                     slot.setRowPos(s.getRowPos());
                     slot.setColSpan(s.getColSpan());
@@ -135,7 +192,8 @@ public class LayoutServiceImpl implements LayoutService{
                 } else {
                     LayoutSlot existing = slots.get(s.getId());
                     existing.setId(s.getId());
-                    existing.setModuleId(s.getModuleId());
+                    existing.setModule(existingModule.get(s.getModuleId()));
+//                    existing.setModuleId(s.getModuleId());
                     existing.setColPos(s.getColPos() == null ? existing.getColPos() : s.getColPos());
                     existing.setRowPos(s.getRowPos() == null ? existing.getRowPos() : s.getRowPos());
                     existing.setColSpan(s.getColSpan() == null ? existing.getColSpan() : s.getColSpan());
@@ -161,6 +219,35 @@ public class LayoutServiceImpl implements LayoutService{
 
 
 
+
+    Map<Long, Module> existingModule = new HashMap<>();
+
+    List<Long> moduleIds = new ArrayList<>(Optional.ofNullable(slots)
+            .orElse(List.of())
+            .stream()
+            .map(LayoutSlotDtoBase::getModuleId)
+            .filter(Objects::nonNull)
+            .toList());
+
+
+    this.moduleRepository.findAllById(moduleIds).forEach(module -> existingModule.put(module.getId(), module));
+
+    moduleIds.removeAll(existingModule.keySet());
+
+
+    if (!moduleIds.isEmpty()) {
+        List<Map<String, String>> errors = moduleIds.stream()
+                .map(moduleId -> ErrorMessage.createErrorMessage(
+                        AppConstant.ExceptionMessage.Module.idDoesNotExist(moduleId)))
+                .toList();
+
+        throw new ModuleNotFoundException(
+                AppConstant.ExceptionMessage.Module.NOT_FOUND,
+                errors
+        );
+    }
+
+
     Map<Long, LayoutSlot> existingSlots = new HashMap<>();
     this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(id).forEach(layoutSlot -> existingSlots.put(layoutSlot.getId(), layoutSlot));
 
@@ -178,7 +265,8 @@ public class LayoutServiceImpl implements LayoutService{
 
             LayoutSlot slot = new LayoutSlot(layout);
             slot.setId(s.getId());
-            slot.setModuleId(s.getModuleId());
+            slot.setModule(existingModule.get(s.getModuleId()));
+//            slot.setModuleId(s.getModuleId());
             slot.setColPos(s.getColPos() == null ? existing.getColPos() : s.getColPos());
             slot.setRowPos(s.getRowPos() == null ? existing.getRowPos() : s.getRowPos());
             slot.setColSpan(s.getColSpan() == null ? existing.getColSpan() : s.getColSpan());
@@ -220,8 +308,22 @@ public class LayoutServiceImpl implements LayoutService{
                 ));
 
 
+        Optional<Module> existingModule = Optional.empty();
+
+        if (dto.getModuleId() != null) {
+            existingModule =
+                    this.moduleRepository.findById(dto.getModuleId());
+            if (existingModule.isEmpty()) {
+                throw new ModuleNotFoundException(
+                        AppConstant.ExceptionMessage.Module.NOT_FOUND,
+                        List.of(ErrorMessage.createErrorMessage(
+                                AppConstant.ExceptionMessage.Module.idDoesNotExist(dto.getModuleId())))
+                );
+            }
+        }
+
         LayoutSlot slot = new LayoutSlot(layout);
-        slot.setModuleId(dto.getModuleId());
+        slot.setModule(existingModule.orElse(null));
         slot.setColPos(dto.getColPos());
         slot.setRowPos(dto.getRowPos());
         slot.setColSpan(dto.getColSpan());

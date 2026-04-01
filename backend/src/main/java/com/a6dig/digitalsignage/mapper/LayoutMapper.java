@@ -4,6 +4,7 @@ import com.a6dig.digitalsignage.dto.LayoutResponseDto;
 import com.a6dig.digitalsignage.dto.LayoutSlotResponseDto;
 import com.a6dig.digitalsignage.entity.Layout;
 import com.a6dig.digitalsignage.entity.LayoutSlot;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -11,6 +12,11 @@ import java.util.stream.Collectors;
 
 @Component
 public class LayoutMapper {
+
+    @Autowired
+    private ModuleMapper moduleMapper;
+
+
     public LayoutResponseDto<LayoutSlotResponseDto> toLayoutResponseDto(Layout layout) {
         LayoutResponseDto<LayoutSlotResponseDto> dto = new LayoutResponseDto<>();
         dto.setId(layout.getId());
@@ -35,7 +41,8 @@ public class LayoutMapper {
         LayoutSlotResponseDto dto = new LayoutSlotResponseDto();
         dto.setId(slot.getId());
         dto.setLayoutId(slot.getLayout().getId());
-        dto.setModuleId(slot.getModuleId());
+        dto.setModuleId(slot.getModule() == null ? null : slot.getModule().getId());
+        dto.setModuleResponseDto(slot.getModule() == null ? null : this.moduleMapper.toModuleResponseDto(slot.getModule()));
         dto.setColPos(slot.getColPos());
         dto.setRowPos(slot.getRowPos());
         dto.setColSpan(slot.getColSpan());

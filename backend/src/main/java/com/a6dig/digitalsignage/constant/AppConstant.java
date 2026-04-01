@@ -17,6 +17,28 @@ public final class AppConstant {
         public static final String INTERNAL_SERVER_ERROR = "Internal server error";
         public static final String UNEXPECTED_ERROR = "Unexpected error occurred.";
 
+        public static final String INVALID_JSON = "Invalid JSON format";
+        public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_STRING = "Unable to convert to string.";
+        public static final String INVALID_JSON_UNABLE_TO_CONVERT_TO_JSON = "Unable to convert to JSON.";
+
+        public static final class Domain {
+            public static final String NOT_FOUND = "Type doesn't exist";
+            public static final String TYPE_NOT_PROVIDED = "Type not provided";
+            public static final String TYPE_CANNOT_BE_EMPTY = "Type cannot be empty or null.";
+
+            public static String domainCodeDoesNotExist(String code) {
+                return String.format("%s doesn't exist.", code);
+            }
+
+
+
+            public static String domainCodeDoesNotBelongToTheType(String code, String type) {
+                return String.format("%s doesn't belong to %s.", code, type);
+            }
+
+        }
+
+
         public static final class Module {
             public static final String NOT_FOUND = "Module not found";
             public static final String ID_NOT_PROVIDED = "Null or empty id provided";
@@ -40,6 +62,27 @@ public final class AppConstant {
             public static final String INVALID_DATA_PROVIDED = "Invalid data";
             public static String idDoesNotExist(Long id) {
                 return "Ad content with id " + id + " doesn't exist";
+            }
+        }
+
+        public static final class Device {
+            public static final String NOT_FOUND = "Device not found";
+            public static final String ID_NOT_PROVIDED = "Null or empty id provided";
+            public static final String INVALID_DATA_PROVIDED = "Invalid data";
+            public static String idDoesNotExist(Long id) {
+                return "Device with id " + id + " doesn't exist";
+            }
+        }
+
+        public static final class DeviceGroup {
+            public static final String NOT_FOUND = "Device group not found";
+        }
+
+        public static final class User {
+            public static final String NOT_FOUND = "User not found";
+            public static final String INVALID_DATA_PROVIDED = "Invalid user data";
+            public static String idDoesNotExist(Long id) {
+                return "User with id " + id + " doesn't exist";
             }
         }
 
@@ -86,6 +129,27 @@ public final class AppConstant {
             public static final String DELETED = "Ad content deleted successfully";
             public static final String DELETED_ALL = "Ad contents deleted successfully";
 
+        }
+
+        public static final class User {
+            public static final String CREATED = "User created successfully";
+            public static final String UPDATED = "User updated successfully";
+            public static final String DELETED = "User deleted successfully";
+            public static final String DELETED_ALL = "Users deleted successfully";
+        }
+
+        public static final class Device {
+            public static final String CREATED = "Device created successfully";
+            public static final String UPDATED = "Device updated successfully";
+            public static final String DELETED = "Device deleted successfully";
+            public static final String DELETED_ALL = "Devices deleted successfully";
+        }
+
+        public static final class DeviceGroup {
+            public static final String CREATED = "Device group created successfully";
+            public static final String UPDATED = "Device group updated successfully";
+            public static final String DELETED = "Device group deleted successfully";
+            public static final String DELETED_ALL = "Device groups deleted successfully";
         }
 
 

@@ -13,6 +13,8 @@ import com.a6dig.digitalsignage.mapper.AdCollectionMapper;
 import com.a6dig.digitalsignage.repository.AdCollectionRepository;
 import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.service.AdCollectionServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -41,6 +43,7 @@ public class AdCollectionServiceImplTest {
     @InjectMocks
     private AdCollectionServiceImpl adCollectionService;
 
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     // helper
     private Domain mockDomain(String alphaNumCode, String name) {
@@ -78,7 +81,11 @@ public class AdCollectionServiceImplTest {
         Module module = new Module();
         module.setId(id);
         module.setName(name);
-        module.setConfig(config);
+        try {
+            module.setConfig(this.objectMapper.writeValueAsString(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         module.setDomain(domain);
         module.setAdCollection(adCollection);
         module.setUpdatedAt(LocalDateTime.now());
@@ -112,7 +119,11 @@ public class AdCollectionServiceImplTest {
         ModuleResponseDto dto = new ModuleResponseDto();
         dto.setId(id);
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionResponseDto(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
@@ -123,7 +134,11 @@ public class AdCollectionServiceImplTest {
     private ModuleRequestDto buildModuleRequestDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestDto dto = new ModuleRequestDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;
@@ -132,7 +147,11 @@ public class AdCollectionServiceImplTest {
     private ModuleRequestUpdateDto buildModuleRequestUpdateDto(String name, String config, ModuleTypeEnum type, AdCollectionRequestUpdateDto adCollection) {
         ModuleRequestUpdateDto dto = new ModuleRequestUpdateDto();
         dto.setName(name);
-        dto.setConfig(config);
+        try {
+            dto.setConfig(this.objectMapper.readTree(config));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         dto.setType(type);
         dto.setAdCollectionRequestUpdateDto(adCollection);
         return dto;

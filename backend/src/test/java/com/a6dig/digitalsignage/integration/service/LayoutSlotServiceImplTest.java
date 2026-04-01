@@ -141,8 +141,8 @@ public class LayoutSlotServiceImplTest {
 
         // layout 1
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Default Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(null, 22, 22, 2,1,0);
 
         layout1.setSlots(List.of(layoutSlot11, layoutSlot12));
 
@@ -152,15 +152,15 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved1, "Default Layout", 2,2);
         assertEquals(2, saved1.getSlots().size());
-        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), null, 22, 22, 2,1,0);
 
 
         // layout 2
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( 1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( 1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( null, 22, 22, 2,1,0);
 
 
 
@@ -172,8 +172,8 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved2, "Secondary Layout", 2,2);
         assertEquals(2, saved2.getSlots().size());
-        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), null, 22, 22, 2,1,0);
 
 
 
@@ -208,8 +208,8 @@ public class LayoutSlotServiceImplTest {
 
         // layout 1
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Default Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(null, 22, 22, 2,1,0);
 
         layout1.setSlots(List.of(layoutSlot11, layoutSlot12));
 
@@ -219,15 +219,15 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved1, "Default Layout", 2,2);
         assertEquals(2, saved1.getSlots().size());
-        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), null, 22, 22, 2,1,0);
 
 
         // layout 2
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( 1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( 1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( null, 22, 22, 2,1,0);
 
 
 
@@ -239,8 +239,8 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved2, "Secondary Layout", 2,2);
         assertEquals(2, saved2.getSlots().size());
-        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), null, 22, 22, 2,1,0);
 
 
 
@@ -300,8 +300,8 @@ public class LayoutSlotServiceImplTest {
 
         // layout 1
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Default Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot11 = this.buildLayoutSlotRequestDto(null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot12 = this.buildLayoutSlotRequestDto(null, 22, 22, 2,1,0);
 
         layout1.setSlots(List.of(layoutSlot11, layoutSlot12));
 
@@ -311,15 +311,15 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved1, "Default Layout", 2,2);
         assertEquals(2, saved1.getSlots().size());
-        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots1.get(0), saved1.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots1.get(1), saved1.getId(), null, 22, 22, 2,1,0);
 
 
         // layout 2
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 2,2);
-        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( 1L, 2, 2, 2,1,0);
-        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( 1L, 22, 22, 2,1,0);
+        LayoutSlotRequestDto layoutSlot21 = this.buildLayoutSlotRequestDto( null, 2, 2, 2,1,0);
+        LayoutSlotRequestDto layoutSlot22 = this.buildLayoutSlotRequestDto( null, 22, 22, 2,1,0);
 
 
 
@@ -331,8 +331,8 @@ public class LayoutSlotServiceImplTest {
 
         assertLayout(saved2, "Secondary Layout", 2,2);
         assertEquals(2, saved2.getSlots().size());
-        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), 1L, 2, 2, 2,1, 0);
-        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), 1L, 22, 22, 2,1,0);
+        assertLayoutSlot(savedSlots2.get(0), saved2.getId(), null, 2, 2, 2,1, 0);
+        assertLayoutSlot(savedSlots2.get(1), saved2.getId(), null, 22, 22, 2,1,0);
 
 
 

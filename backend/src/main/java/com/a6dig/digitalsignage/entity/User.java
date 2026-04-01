@@ -1,5 +1,6 @@
 package com.a6dig.digitalsignage.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,13 +11,14 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(length = 255, nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     public Long getId() { return id; }
