@@ -121,9 +121,15 @@ class LayoutServiceImplTest {
     }
 
 
+<<<<<<< HEAD
+    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
+        LayoutSlot slot = new LayoutSlot(layout);
+        slot.setModuleId(moduleId);
+=======
     private LayoutSlot buildLayoutSlot(Layout layout, Module module, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
         LayoutSlot slot = new LayoutSlot(layout);
         slot.setModule(module);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         slot.setColPos(colPos);
         slot.setRowPos(rowPos);
         slot.setColSpan(colSpan);
@@ -237,9 +243,12 @@ class LayoutServiceImplTest {
     // Create
     @Test
     void shouldCreateLayoutWithoutSlots(){
+<<<<<<< HEAD
+=======
         Domain mockDomain = this.mockDomain("WEATHER", "Weather");
         Module savedModule = this.buildModule(1L, "Default Module", "{}", mockDomain, null);
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 1);
         request.setSlots(null);
 
@@ -352,15 +361,21 @@ class LayoutServiceImplTest {
     // Relation
     @Test
     void shouldAddSlotToLayout() {
+<<<<<<< HEAD
+=======
         Domain mockDomain = this.mockDomain("WEATHER", "Weather");
         Module savedModule = this.buildModule(1L, "Default Module", "{}", mockDomain, null);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
         LayoutSlotRequestDto request = this.buildLayoutSlotRequestDto(1L, 2,2,1,1,0);
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
         LayoutSlotResponseDto slot = this.buildLayoutSlotResponseDto(1L,1L,1L, 2,2,1,1,0);
         LayoutResponseDto<LayoutSlotResponseDto> responseDto = this.buildLayoutResponseDto(1L, "Main Layout", 2, 2, List.of(slot));
 
+<<<<<<< HEAD
+=======
         when(this.moduleRepository.findById(1L)).thenReturn(Optional.of(savedModule));
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         when(layoutRepository.findById(1L)).thenReturn(Optional.of(layout));
         when(layoutRepository.save(any(Layout.class))).thenReturn(layout);
         when(layoutMapper.toLayoutResponseDto(layout)).thenReturn(responseDto);
@@ -464,12 +479,18 @@ class LayoutServiceImplTest {
     // Layout slots
     @Test
     void shouldGetAllLayoutSlotByLayoutId() {
+<<<<<<< HEAD
+        Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
+        LayoutSlot ls1 = this.buildLayoutSlot(layout, 1L, 2, 2, 1, 1, 0);
+        LayoutSlot ls2 = this.buildLayoutSlot(layout, 2L, 1, 1, 1, 1, 0);
+=======
         Domain domain = this.mockDomain("ROTATING_AD", "Rotating Ad");
         Module module = this.buildModule(1L, "Default Module", "{}", domain,null);
 
         Layout layout = this.buildLayout(1L, "Main Layout", 2, 2);
         LayoutSlot ls1 = this.buildLayoutSlot(layout, module, 2, 2, 1, 1, 0);
         LayoutSlot ls2 = this.buildLayoutSlot(layout, module, 1, 1, 1, 1, 0);
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         List<LayoutSlot> layoutSlots = List.of(ls1,ls2);
 
         layout.addLayoutSlots(layoutSlots);
@@ -495,6 +516,9 @@ class LayoutServiceImplTest {
 
 
     }
+<<<<<<< HEAD
+=======
 
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 }

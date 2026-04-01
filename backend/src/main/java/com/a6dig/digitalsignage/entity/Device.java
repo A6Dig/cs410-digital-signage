@@ -1,5 +1,38 @@
 package com.a6dig.digitalsignage.entity;
 
+<<<<<<< HEAD
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+public class Device {
+
+    private String id;
+    private String name;
+    private String ipAddress;
+    private Integer deviceGroupId;
+    private LocalDateTime lastConnected;
+    
+    public Device() {
+    }
+
+    public Device(String id, String name, String ipAddress, Integer deviceGroupId, LocalDateTime lastConnected) {
+        this.id = id;
+        this.name = name;
+        this.ipAddress = ipAddress;
+        this.deviceGroupId = deviceGroupId;
+        this.lastConnected = lastConnected;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+=======
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
@@ -75,6 +108,7 @@ public class Device {
         this.layout = layout;
     }
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     public String getName() {
         return name;
     }
@@ -91,6 +125,26 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
+<<<<<<< HEAD
+    public Integer getDeviceGroupId() {
+        return deviceGroupId;
+    }
+
+    public void setDeviceGroupId(Integer deviceGroupId) {
+        this.deviceGroupId = deviceGroupId;
+    }
+
+    public LocalDateTime getLastConnected() {
+        return lastConnected;
+    }
+
+    public void setLastConnected(LocalDateTime lastConnected) {
+        this.lastConnected = lastConnected;
+    }
+
+    
+
+=======
     public Long getDeviceGroupId() {
         return deviceGroupId;
     }
@@ -122,4 +176,5 @@ public class Device {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 }
