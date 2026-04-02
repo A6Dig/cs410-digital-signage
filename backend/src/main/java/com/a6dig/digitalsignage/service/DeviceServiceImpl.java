@@ -2,6 +2,7 @@ package com.a6dig.digitalsignage.service;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.entity.Device;
+import com.a6dig.digitalsignage.exception.InvalidDeviceException;
 import com.a6dig.digitalsignage.exception.DeviceNotFoundException;
 import com.a6dig.digitalsignage.repository.DeviceGroupRepository;
 import com.a6dig.digitalsignage.repository.DeviceRepository;
@@ -40,6 +41,19 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional
     public Device createDevice(Device device) {
+        if (device == null) {
+            throw new InvalidDeviceException(
+                    AppConstant.ExceptionMessage.Device.INVALID_DATA_PROVIDED,
+                    List.of(ErrorMessage.createErrorMessage("Device cannot be null"))
+            );
+        }
+
+        if (device.getId() != null) {
+            throw new InvalidDeviceException(
+                    AppConstant.ExceptionMessage.Device.INVALID_DATA_PROVIDED,
+                    List.of(ErrorMessage.createErrorMessage("Id cannot be null"))
+            );
+        }
         return deviceRepository.save(device);
     }
 

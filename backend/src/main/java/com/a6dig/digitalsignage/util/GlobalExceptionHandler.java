@@ -37,6 +37,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(InvalidDeviceException.class)
+    public ResponseEntity<APIResponse<Void>> handleInvalidDevice(InvalidDeviceException exception){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                APIResponse.badRequest(exception.getMessage(), exception.getErrors())
+        );
+    }
+
     @ExceptionHandler(LayoutNotFoundException.class)
     public ResponseEntity<APIResponse<Void>> handleLayoutNotFound(LayoutNotFoundException exception){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(

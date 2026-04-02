@@ -13,11 +13,11 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "layoutId", nullable = false)
+    @Column(name = "layoutId")
     private Long layoutId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "layoutId", insertable = false, updatable = false)
+    @JoinColumn(name = "layoutId")
     private Layout layout;
 
     @Column(length = 50, nullable = false)
@@ -30,11 +30,11 @@ public class Device {
     private Long deviceGroupId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deviceGroupId", insertable = false, updatable = false)
+    @JoinColumn(name = "deviceGroupId")
     @JsonIgnoreProperties({"devices"})
     private DeviceGroup deviceGroup;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
