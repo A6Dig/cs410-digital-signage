@@ -27,7 +27,6 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -139,7 +138,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -150,7 +149,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -159,7 +158,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 

@@ -10,7 +10,6 @@ import com.a6dig.digitalsignage.entity.Domain;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.AdCollectionNotFoundException;
 import com.a6dig.digitalsignage.exception.AdContentNotFoundException;
-import com.a6dig.digitalsignage.exception.ModuleNotFoundException;
 import com.a6dig.digitalsignage.mapper.AdCollectionMapper;
 import com.a6dig.digitalsignage.mapper.AdContentMapper;
 import com.a6dig.digitalsignage.repository.AdCollectionRepository;
@@ -19,7 +18,6 @@ import com.a6dig.digitalsignage.repository.DomainRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.AdCollectionService;
 import com.a6dig.digitalsignage.service.AdContentService;
-import com.a6dig.digitalsignage.service.ModuleService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -140,7 +138,7 @@ public class AdCollectionServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -151,7 +149,7 @@ public class AdCollectionServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -160,7 +158,7 @@ public class AdCollectionServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 

@@ -1,6 +1,5 @@
 package com.a6dig.digitalsignage.unit.service;
 
-import ch.qos.logback.core.model.ImplicitModel;
 import com.a6dig.digitalsignage.config.DomainCache;
 import com.a6dig.digitalsignage.constant.AdContentTypeEnum;
 import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
@@ -11,8 +10,6 @@ import com.a6dig.digitalsignage.entity.Domain;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.ModuleNotFoundException;
 import com.a6dig.digitalsignage.mapper.ModuleMapper;
-import com.a6dig.digitalsignage.repository.AdCollectionRepository;
-import com.a6dig.digitalsignage.repository.AdContentRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
 import com.a6dig.digitalsignage.service.ModuleFactory;
 import com.a6dig.digitalsignage.service.ModuleServiceImpl;
@@ -23,7 +20,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.testcontainers.shaded.org.bouncycastle.math.raw.Mod;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -133,7 +129,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -148,7 +144,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -161,7 +157,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -293,8 +289,8 @@ public class ModuleServiceImplTest {
         ModuleResponseDto response = this.moduleService.getModuleById(1L);
 
         assertModule(response, "Default Module", ModuleTypeEnum.WEATHER, "{}");
-        assertAdCollection(response.getAdCollectionResponseDto(), "Ad Collection", "http://localhost/collection");
-        assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(0), "Ad Content", "http://localhost/content");
+        assertAdCollection(response.getAdCollection(), "Ad Collection", "http://localhost/collection");
+        assertAdContent(response.getAdCollection().getAdContents().get(0), "Ad Content", "http://localhost/content");
 
         verify(this.moduleRepository, times(1)).findById(1L);
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
@@ -328,7 +324,7 @@ public class ModuleServiceImplTest {
         ModuleResponseDto response = this.moduleService.getModuleById(1L);
 
         assertModule(response, "Default Module", ModuleTypeEnum.WEATHER, "{}");
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
 
         verify(this.moduleRepository, times(1)).findById(1L);
         verify(this.moduleMapper, times(1)).toModuleResponseDto(module);
@@ -372,8 +368,8 @@ public class ModuleServiceImplTest {
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
-        assertAdCollection(response.getAdCollectionResponseDto(), "New Collection", "http://localhost/collection");
-        assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(0), "New Content", "http://localhost/content");
+        assertAdCollection(response.getAdCollection(), "New Collection", "http://localhost/collection");
+        assertAdContent(response.getAdCollection().getAdContents().get(0), "New Content", "http://localhost/content");
 
 
 //        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
@@ -406,7 +402,7 @@ public class ModuleServiceImplTest {
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
 
 //        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
         verify(this.moduleRepository, times(1)).saveAndFlush(any(Module.class));
@@ -445,8 +441,8 @@ public class ModuleServiceImplTest {
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
-        assertAdCollection(response.getAdCollectionResponseDto(), "New Collection", "http://localhost/collection");
-        assertNull(response.getAdCollectionResponseDto().getAdContents());
+        assertAdCollection(response.getAdCollection(), "New Collection", "http://localhost/collection");
+        assertNull(response.getAdCollection().getAdContents());
 
 
 //        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);
@@ -496,9 +492,9 @@ public class ModuleServiceImplTest {
 
         ModuleResponseDto response = this.moduleService.createModule(moduleRequest);
         assertModule(moduleDto, "New Module", ModuleTypeEnum.WEATHER, "{}");
-        assertAdCollection(response.getAdCollectionResponseDto(), "New Collection", "http://localhost/collection");
-        assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(0), "New Content 1", "http://localhost/content");
-        assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(1), "New Content 2", "http://localhost/content");
+        assertAdCollection(response.getAdCollection(), "New Collection", "http://localhost/collection");
+        assertAdContent(response.getAdCollection().getAdContents().get(0), "New Content 1", "http://localhost/content");
+        assertAdContent(response.getAdCollection().getAdContents().get(1), "New Content 2", "http://localhost/content");
 
 
 //        verify(this.domainCache, times(1)).buildDomain(ModuleTypeEnum.WEATHER);

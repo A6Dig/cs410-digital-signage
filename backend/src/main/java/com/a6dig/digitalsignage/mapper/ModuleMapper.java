@@ -2,10 +2,7 @@ package com.a6dig.digitalsignage.mapper;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
-import com.a6dig.digitalsignage.dto.AdCollectionResponseDto;
-import com.a6dig.digitalsignage.dto.AdContentResponseDto;
 import com.a6dig.digitalsignage.dto.ModuleResponseDto;
-import com.a6dig.digitalsignage.entity.AdCollection;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.InvalidJSONException;
 import com.a6dig.digitalsignage.util.ErrorMessage;
@@ -29,7 +26,7 @@ public class ModuleMapper {
 
         moduleResponseDto.setId(module.getId());
         moduleResponseDto.setType(ModuleTypeEnum.valueOf(module.getDomain().getAlphaNumCode()));
-        moduleResponseDto.setAdCollectionResponseDto(module.getAdCollection() == null ? null : this.adCollectionMapper.toAdCollectionResponseDto(module.getAdCollection()));
+        moduleResponseDto.setAdCollection(module.getAdCollection() == null ? null : this.adCollectionMapper.toAdCollectionResponseDto(module.getAdCollection()));
         moduleResponseDto.setName(module.getName());
 
 

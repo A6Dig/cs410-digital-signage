@@ -124,7 +124,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -135,7 +135,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -144,7 +144,7 @@ public class AdContentServiceImplTest {
         dto.setName(name);
         dto.setConfig(this.objectMapper.readTree(config));
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
