@@ -83,25 +83,17 @@ public class DeviceServiceImplTest {
 
     @Test
     void shouldCreateDevice() {
-
-        Layout layout = new Layout();
-        layout.setName("New Layout");
-        layout.setCols(1);
-        layout.setRows(1);
-
-//        Layout savedLayout = this.layoutRepository.save(layout);
-
         Device request = this.buildDevice(null,
-                layout.getId()
-                ,layout
+                null
+                ,null
                 ,"New Device"
                 ,"101.0.0.1"
                 , null
                 , null);
 
 
-//        Device saved = this.deviceService.createDevice(request);
-//        assertDevice(saved,1L, Optional.of(layout), "New Device", "101.0.0.1", null, Optional.empty());
+        Device saved = this.deviceService.createDevice(request);
+        assertDevice(saved,null, Optional.empty(), "New Device", "101.0.0.1", null, Optional.empty());
 
     }
 
