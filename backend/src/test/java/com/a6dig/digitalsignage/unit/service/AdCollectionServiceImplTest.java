@@ -125,7 +125,7 @@ public class AdCollectionServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -140,7 +140,7 @@ public class AdCollectionServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -153,7 +153,7 @@ public class AdCollectionServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 

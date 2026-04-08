@@ -42,7 +42,7 @@ public class LayoutMapper {
         dto.setId(slot.getId());
         dto.setLayoutId(slot.getLayout().getId());
         dto.setModuleId(slot.getModule() == null ? null : slot.getModule().getId());
-        dto.setModuleResponseDto(slot.getModule() == null ? null : this.moduleMapper.toModuleResponseDto(slot.getModule()));
+        dto.setModule(slot.getModule() == null ? null : this.moduleMapper.toModuleResponseDto(slot.getModule()));
         dto.setColPos(slot.getColPos());
         dto.setRowPos(slot.getRowPos());
         dto.setColSpan(slot.getColSpan());

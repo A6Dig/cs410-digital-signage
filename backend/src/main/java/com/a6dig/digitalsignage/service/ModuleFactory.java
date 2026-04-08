@@ -47,14 +47,14 @@ public class ModuleFactory {
 
         // only let assign existing ad collection
         // no new creation through this method
-        if(dto.getAdCollectionRequestUpdateDto() != null && dto.getAdCollectionRequestUpdateDto().getId() != null) {
+        if(dto.getAdCollection() != null && dto.getAdCollection().getId() != null) {
             adCollection = this.adCollectionRepository.findById(
-                    dto.getAdCollectionRequestUpdateDto().getId()
+                    dto.getAdCollection().getId()
             ).orElseThrow(() -> new AdCollectionNotFoundException(
                     AppConstant.ExceptionMessage.AdCollection.NOT_FOUND
                     ,List.of(
                     ErrorMessage.createErrorMessage(AppConstant.ExceptionMessage.AdCollection.idDoesNotExist(
-                            dto.getAdCollectionRequestUpdateDto().getId())))
+                            dto.getAdCollection().getId())))
             ));
         }
         Long id = existing != null ? existing.getId() : null;

@@ -3,11 +3,11 @@ package com.a6dig.digitalsignage.dto;
 public class ModuleRequestDto extends ModuleDtoBase{
     private AdCollectionRequestUpdateDto adCollection;
 
-    public AdCollectionRequestUpdateDto getAdCollectionRequestUpdateDto() {
+    public AdCollectionRequestUpdateDto getAdCollection() {
         return adCollection;
     }
 
-    public void setAdCollectionRequestUpdateDto(AdCollectionRequestUpdateDto adCollectionRequestUpdateDto) {
-        this.adCollection = adCollectionRequestUpdateDto;
+    public void setAdCollection(AdCollectionRequestUpdateDto adCollection) {
+        this.adCollection = adCollection;
     }
 }

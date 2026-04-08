@@ -28,7 +28,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -144,7 +143,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionResponseDto(adCollection);
+        dto.setAdCollection(adCollection);
         dto.setCreatedAt(LocalDateTime.now());
         dto.setUpdatedAt(LocalDateTime.now());
         return dto;
@@ -159,7 +158,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -172,7 +171,7 @@ public class ModuleServiceImplTest {
             throw new RuntimeException(e);
         }
         dto.setType(type);
-        dto.setAdCollectionRequestUpdateDto(adCollection);
+        dto.setAdCollection(adCollection);
         return dto;
     }
 
@@ -321,8 +320,8 @@ public class ModuleServiceImplTest {
         ModuleResponseDto response = this.moduleService.getModuleById(created.getId());
 
         assertModule(response, "New Module", "{}", ModuleTypeEnum.WEATHER);
-        assertAdCollection(response.getAdCollectionResponseDto(), "New Collection", "http://localhost/collection");
-        assertAdContent(response.getAdCollectionResponseDto().getAdContents().get(0), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
+        assertAdCollection(response.getAdCollection(), "New Collection", "http://localhost/collection");
+        assertAdContent(response.getAdCollection().getAdContents().get(0), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
     }
 
     @Test
@@ -338,7 +337,7 @@ public class ModuleServiceImplTest {
         ModuleRequestDto request = this.buildModuleRequestDto("New Module", "{}", ModuleTypeEnum.WEATHER, null);
         ModuleResponseDto response = this.moduleService.createModule(request);
         assertModule(response, "New Module", "{}", ModuleTypeEnum.WEATHER);
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
     }
 
 
@@ -357,8 +356,8 @@ public class ModuleServiceImplTest {
         ModuleResponseDto created = this.moduleService.createModule(moduleRequest);
 
         assertModule(created, "New Module", "{}", ModuleTypeEnum.WEATHER);
-        assertAdCollection(created.getAdCollectionResponseDto(), "New Collection", "http://localhost/collection");
-        assertAdContent(created.getAdCollectionResponseDto().getAdContents().get(0), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
+        assertAdCollection(created.getAdCollection(), "New Collection", "http://localhost/collection");
+        assertAdContent(created.getAdCollection().getAdContents().get(0), "New Content", "http://localhost/content", AdContentTypeEnum.IMAGE);
     }
 
 
@@ -373,7 +372,7 @@ public class ModuleServiceImplTest {
         ModuleResponseDto created = this.moduleService.createModule(moduleRequest);
 
         assertModule(created, "New Module", "{}", ModuleTypeEnum.WEATHER);
-        assertNull(created.getAdCollectionResponseDto());
+        assertNull(created.getAdCollection());
     }
 
     @Test
@@ -396,7 +395,7 @@ public class ModuleServiceImplTest {
         ModuleRequestUpdateDto request = this.buildModuleRequestUpdateDto("Updated Module", null, null, null);
         ModuleResponseDto response = this.moduleService.updateModuleById(created.getId(), request);
         assertModule(response, "Updated Module", "{}", ModuleTypeEnum.WEATHER);
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
     }
 
     @Test
@@ -419,7 +418,7 @@ public class ModuleServiceImplTest {
         ModuleRequestUpdateDto request = this.buildModuleRequestUpdateDto(null, config, null, null);
         ModuleResponseDto response = this.moduleService.updateModuleById(created.getId(), request);
         assertModule(response, "New Module", config, ModuleTypeEnum.WEATHER);
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
     }
 
 
@@ -429,7 +428,7 @@ public class ModuleServiceImplTest {
         ModuleRequestUpdateDto request = this.buildModuleRequestUpdateDto("Updated Module", null, ModuleTypeEnum.CLOCK, null);
         ModuleResponseDto response = this.moduleService.updateModuleById(created.getId(), request);
         assertModule(response, "Updated Module", "{}", ModuleTypeEnum.CLOCK);
-        assertNull(response.getAdCollectionResponseDto());
+        assertNull(response.getAdCollection());
     }
 
     @Test

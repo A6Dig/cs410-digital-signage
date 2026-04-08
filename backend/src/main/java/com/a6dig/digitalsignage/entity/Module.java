@@ -13,7 +13,7 @@ public class Module {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name="adCollectionId")
     private AdCollection adCollection;
 

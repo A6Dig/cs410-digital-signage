@@ -8,7 +8,7 @@ public class LayoutSlotResponseDto extends LayoutSlotDtoBase{
 
     private Long layoutId;
 
-    private ModuleResponseDto moduleResponseDto;
+    private ModuleResponseDto module;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -29,12 +29,12 @@ public class LayoutSlotResponseDto extends LayoutSlotDtoBase{
         this.layoutId = layoutId;
     }
 
-    public ModuleResponseDto getModuleResponseDto() {
-        return moduleResponseDto;
+    public ModuleResponseDto getModule() {
+        return module;
     }
 
-    public void setModuleResponseDto(ModuleResponseDto moduleResponseDto) {
-        this.moduleResponseDto = moduleResponseDto;
+    public void setModule(ModuleResponseDto moduleResponseDto) {
+        this.module = moduleResponseDto;
     }
 
     public LocalDateTime getCreatedAt() {

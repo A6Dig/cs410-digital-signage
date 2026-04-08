@@ -5,7 +5,7 @@ import java.time.LocalDateTime;
 public class ModuleResponseDto extends ModuleDtoBase{
     private Long id;
 
-    private AdCollectionResponseDto adCollectionResponseDto;
+    private AdCollectionResponseDto adCollection;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
@@ -17,12 +17,12 @@ public class ModuleResponseDto extends ModuleDtoBase{
         this.id = id;
     }
 
-    public AdCollectionResponseDto getAdCollectionResponseDto() {
-        return adCollectionResponseDto;
+    public AdCollectionResponseDto getAdCollection() {
+        return adCollection;
     }
 
-    public void setAdCollectionResponseDto(AdCollectionResponseDto adCollectionResponseDto) {
-        this.adCollectionResponseDto = adCollectionResponseDto;
+    public void setAdCollection(AdCollectionResponseDto adCollectionResponseDto) {
+        this.adCollection = adCollectionResponseDto;
     }
 
     public LocalDateTime getCreatedAt() {
