@@ -62,8 +62,8 @@ public class DeviceServiceImpl implements DeviceService {
     public Device updateDevice(Long id, Device device) {
         Device existing = findExistingDevice(id);
 
-        if (device.getLayoutId() != null) {
-            existing.setLayoutId(device.getLayoutId());
+        if (device.getLayout() != null) {
+            existing.setLayout(device.getLayout());
         }
         if (device.getName() != null) {
             existing.setName(device.getName().trim());
@@ -71,8 +71,8 @@ public class DeviceServiceImpl implements DeviceService {
         if (device.getIpAddress() != null) {
             existing.setIpAddress(device.getIpAddress().trim());
         }
-        if (device.getDeviceGroupId() != null) {
-            existing.setDeviceGroupId(device.getDeviceGroupId());
+        if (device.getDeviceGroup() != null) {
+            existing.setDeviceGroup(device.getDeviceGroup());
         }
 
         return deviceRepository.save(existing);

@@ -47,11 +47,9 @@ public class DeviceServiceImplTest {
             , DeviceGroup deviceGroup) {
 
         Device device = new Device();
-        device.setLayoutId(layoutId);
         device.setLayout(layout);
         device.setName(name);
         device.setIpAddress(ipAddress);
-        device.setDeviceGroupId(deviceGroupId);
         device.setDeviceGroup(deviceGroup);
 
         return device;
@@ -67,15 +65,15 @@ public class DeviceServiceImplTest {
                               , Optional<DeviceGroup> expectedDeviceGroup
                               ) {
         assertNotNull(device.getId());
-        assertEquals(expectedLayoutId, device.getLayoutId());
+        assertEquals(expectedLayoutId, device.getLayout());
         assertEquals(expectedLayout.map(Layout::getId).orElse(null)
                 , device.getLayout() != null ? device.getLayout().getId() : null);
         assertEquals(expectedName, device.getName());
         assertEquals(expectedIpAddress, device.getIpAddress());
-        assertEquals(expectedDeviceGroupId, device.getDeviceGroupId());
+        assertEquals(expectedDeviceGroupId, device.getDeviceGroup());
         assertEquals(expectedDeviceGroup.map(DeviceGroup::getId).orElse(null),
                 device.getDeviceGroup() != null ?
-                device.getDeviceGroupId() : null);
+                device.getDeviceGroup() : null);
         assertNotNull(device.getCreatedAt());
         assertNotNull(device.getUpdatedAt());
     }
