@@ -48,12 +48,6 @@ public class DeviceServiceImpl implements DeviceService {
             );
         }
 
-        if (device.getId() != null) {
-            throw new InvalidDeviceException(
-                    AppConstant.ExceptionMessage.Device.INVALID_DATA_PROVIDED,
-                    List.of(ErrorMessage.createErrorMessage("Id cannot be null"))
-            );
-        }
         return deviceRepository.save(device);
     }
 
