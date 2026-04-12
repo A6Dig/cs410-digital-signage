@@ -51,11 +51,7 @@ public class LayoutServiceImplTest {
     }
 
 
-<<<<<<< HEAD
-    private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, int col, int row) {
-=======
     private <T extends LayoutSlotRequestDto>LayoutRequestDto<T> buildLayoutRequestDto(String name, Integer col, Integer row) {
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutRequestDto<T> dto = new LayoutRequestDto<>();
         dto.setName(name);
         dto.setCols(col);
@@ -65,11 +61,7 @@ public class LayoutServiceImplTest {
     }
 
 
-<<<<<<< HEAD
-    private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex){
-=======
     private LayoutSlotRequestDto buildLayoutSlotRequestDto(Long moduleId, Integer colPos, Integer rowPos, Integer colSpan, Integer rowSpan, Integer zIndex){
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutSlotRequestDto slot = new LayoutSlotRequestDto();
 
         slot.setModuleId(moduleId);
@@ -83,11 +75,7 @@ public class LayoutServiceImplTest {
     }
 
 
-<<<<<<< HEAD
-    private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long id, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex){
-=======
     private LayoutSlotRequestUpdateDto buildLayoutSlotRequestUpdateDto(Long id, Long moduleId, Integer colPos, Integer rowPos, Integer colSpan, Integer rowSpan, Integer zIndex){
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutSlotRequestUpdateDto slot = new LayoutSlotRequestUpdateDto();
 
         slot.setId(id);
@@ -101,17 +89,11 @@ public class LayoutServiceImplTest {
         return slot;
     }
 
-<<<<<<< HEAD
-    private void assertLayout(LayoutResponseDto<LayoutSlotResponseDto> layout, String expectedName, int expectedCols, int expectedRows) {
-        assertNotNull(layout.getId());
-        assertNotNull(layout.getName());
-=======
     private void assertLayout(LayoutResponseDto<LayoutSlotResponseDto> layout, String expectedName, Integer expectedCols, Integer expectedRows) {
         assertNotNull(layout.getId());
         assertNotNull(layout.getName());
         assertNotNull(layout.getCols());
         assertNotNull(layout.getRows());
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         assertEquals(expectedName, layout.getName());
         assertEquals(expectedCols, layout.getCols());
         assertEquals(expectedRows, layout.getRows());
@@ -124,15 +106,6 @@ public class LayoutServiceImplTest {
     private void assertLayoutSlot(LayoutSlotResponseDto slot
             , Long expectedLayoutId
             , Long expectedModuleId
-<<<<<<< HEAD
-            , int expectedColPos
-            , int expectedRowPos
-            , int expectedColSpan
-            , int expectedRowSpan
-            , int expectedzIndex) {
-        assertNotNull(slot.getId());
-        assertNotNull(slot.getLayoutId());
-=======
             , Integer expectedColPos
             , Integer expectedRowPos
             , Integer expectedColSpan
@@ -145,7 +118,6 @@ public class LayoutServiceImplTest {
         assertNotNull(expectedColSpan);
         assertNotNull(expectedRowSpan);
         assertNotNull(expectedzIndex);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         assertEquals(expectedLayoutId, slot.getLayoutId());
         assertEquals(expectedModuleId, slot.getModuleId());
         assertEquals(expectedColPos, slot.getColPos());
@@ -194,13 +166,9 @@ public class LayoutServiceImplTest {
         assertLayout(result, "Main Layout", 2, 2);
         assertEquals(2, result.getSlots().size());
         assertLayoutSlot(savedSlot1, result.getId(), null,1, 1, 1, 1, 0);
-<<<<<<< HEAD
-        assertLayoutSlot(savedSlot2, result.getId(), 1L,1, 2, 1, 1, 0);
-=======
         assertLayoutSlot(savedSlot2, result.getId(), null,1, 2, 1, 1, 0);
 
     }
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
     @Test
@@ -313,11 +281,7 @@ public class LayoutServiceImplTest {
 
         assertLayout(result, "Main Layout", 2, 2);
         assertLayoutSlot(savedSlots.get(0), result.getId(),null,1, 1, 1, 1, 0);
-<<<<<<< HEAD
-        assertLayoutSlot(savedSlots.get(1), result.getId(),1L,1, 2, 1, 1, 0);
-=======
         assertLayoutSlot(savedSlots.get(1), result.getId(),null,1, 2, 1, 1, 0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     }
 
@@ -452,31 +416,18 @@ public class LayoutServiceImplTest {
 
     @Test void shouldThrowErrorWhenUpdateLayoutWithLayoutSlotsThatDontBelongToTheLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> layout1 = this.buildLayoutRequestDto("Main Layout", 1, 1);
-<<<<<<< HEAD
-        layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(1L, 1,1,1,1,0)));
-        LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
-
-        LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
-        layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(2L, 1,1,1,1,0)));
-=======
         layout1.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout1 = this.layoutServiceImpl.createLayout(layout1);
 
         LayoutRequestDto<LayoutSlotRequestDto> layout2 = this.buildLayoutRequestDto("Secondary Layout", 1, 1);
         layout2.setSlots(List.of(this.buildLayoutSlotRequestDto(null, 1,1,1,1,0)));
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         LayoutResponseDto<LayoutSlotResponseDto> savedLayout2 = this.layoutServiceImpl.createLayout(layout2);
 
 
         LayoutRequestDto<LayoutSlotRequestUpdateDto> request = this.buildLayoutRequestDto("Updated Layout", 1, 1);
         List<LayoutSlotRequestUpdateDto> slots = new ArrayList<>();
-<<<<<<< HEAD
-        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
-        slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), 1L, 1,1,1,1,0));
-=======
         slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout1.getSlots().get(0).getId(), null, 1,1,1,1,0));
         slots.add(this.buildLayoutSlotRequestUpdateDto(savedLayout2.getSlots().get(0).getId(), null, 1,1,1,1,0));
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         request.setSlots(slots);
 
         assertThrows(InvalidLayoutSlotException.class, () -> this.layoutServiceImpl.updateLayout(savedLayout2.getId(), request));
@@ -536,11 +487,7 @@ public class LayoutServiceImplTest {
         );
 
         assertEquals(1, result.getSlots().size());
-<<<<<<< HEAD
-        assertLayoutSlot(result.getSlots().get(0), result.getId(), 1L, 1,1,1,1,0);
-=======
         assertLayoutSlot(result.getSlots().get(0), result.getId(), null, 1,1,1,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     }
 
     @Test
@@ -548,13 +495,8 @@ public class LayoutServiceImplTest {
     void shouldRemoveSlotFromLayout() {
         LayoutRequestDto<LayoutSlotRequestDto> request = this.buildLayoutRequestDto("Main Layout", 3, 3);
         request.setSlots(List.of(
-<<<<<<< HEAD
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0),
-                this.buildLayoutSlotRequestDto(1L, 1,1,1,1, 0)
-=======
                 this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0),
                 this.buildLayoutSlotRequestDto(null, 1,1,1,1, 0)
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         ));
 
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(request);

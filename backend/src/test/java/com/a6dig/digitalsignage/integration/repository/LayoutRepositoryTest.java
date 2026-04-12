@@ -1,15 +1,10 @@
 package com.a6dig.digitalsignage.integration.repository;
 
-<<<<<<< HEAD
-import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.entity.LayoutSlot;
-=======
 import com.a6dig.digitalsignage.config.DatabaseInit;
 import com.a6dig.digitalsignage.config.DomainCache;
 import com.a6dig.digitalsignage.constant.ModuleTypeEnum;
 import com.a6dig.digitalsignage.entity.*;
 import com.a6dig.digitalsignage.entity.Module;
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.repository.LayoutSlotRepository;
 import com.a6dig.digitalsignage.repository.ModuleRepository;
@@ -67,17 +62,10 @@ class LayoutRepositoryTest {
 
 
 
-<<<<<<< HEAD
-    private LayoutSlot buildLayoutSlot(Layout layout, Long moduleId, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
-        LayoutSlot slot = new LayoutSlot(layout);
-
-        slot.setModuleId(moduleId);
-=======
     private LayoutSlot buildLayoutSlot(Layout layout, Module module, int colPos, int rowPos, int colSpan, int rowSpan, int zIndex) {
         LayoutSlot slot = new LayoutSlot(layout);
 
         slot.setModule(module);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         slot.setColPos(colPos);
         slot.setRowPos(rowPos);
         slot.setColSpan(colSpan);
@@ -110,11 +98,7 @@ class LayoutRepositoryTest {
         assertNotNull(slot.getId());
         assertNotNull(slot.getLayout());
         assertEquals(expectedLayoutId, slot.getLayout().getId());
-<<<<<<< HEAD
-        assertEquals(expectedModuleId, slot.getModuleId());
-=======
         assertEquals(expectedModuleId, slot.getModule() == null ? null : slot.getModule().getId());
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         assertEquals(expectedColPos, slot.getColPos());
         assertEquals(expectedRowPos, slot.getRowPos());
         assertEquals(expectedColSpan, slot.getColSpan());
@@ -252,11 +236,6 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldSaveLayoutWithLayoutSlots(){
-<<<<<<< HEAD
-        Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
-=======
         Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
         Module savedModule1 = this.moduleRepository.save(module1);
 
@@ -266,7 +245,6 @@ class LayoutRepositoryTest {
         Layout layout = this.build("Default Layout", 2, 2);
         LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
         LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
@@ -274,32 +252,18 @@ class LayoutRepositoryTest {
         assertEquals(2, saved.getSlots().size());
 
         List<LayoutSlot> savedSlots = new ArrayList<>(saved.getSlots());
-<<<<<<< HEAD
-        savedSlots.sort(Comparator.comparing(LayoutSlot::getModuleId));
-        LayoutSlot savedLayoutSlot1 = savedSlots.get(0);
-        LayoutSlot savedLayoutSlot2 = savedSlots.get(1);
-
-        assertLayoutSlot(savedLayoutSlot1,saved.getId(),1L, 1,1,2,1,0);
-        assertLayoutSlot(savedLayoutSlot2,saved.getId(),2L, 1,2,2,1,0);
-=======
         savedSlots.sort(Comparator.comparing(LayoutSlot::getRowPos));
         LayoutSlot savedLayoutSlot1 = savedSlots.get(0);
         LayoutSlot savedLayoutSlot2 = savedSlots.get(1);
 
         assertLayoutSlot(savedLayoutSlot1,saved.getId(),savedModule1.getId(), 1,1,2,1,0);
         assertLayoutSlot(savedLayoutSlot2,saved.getId(),savedModule2.getId(), 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
     }
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldCascadeDeleteLayoutSlotsWithLayout(){
-<<<<<<< HEAD
-        Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
-=======
         Domain domain  = this.domainCache.buildDomain(ModuleTypeEnum.WEATHER);
         Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.WEATHER, null);
         Module savedModule1 = this.moduleRepository.save(module1);
@@ -310,7 +274,6 @@ class LayoutRepositoryTest {
         Layout layout = this.build("Default Layout", 2, 2);
         LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
         LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
 
         Layout saved = layoutRepository.save(layout);
@@ -330,13 +293,6 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldCascadeMergeLayoutSlotsWithLayout(){
-<<<<<<< HEAD
-        Layout layout = this.build("Default Layout", 2, 2);
-        Layout saved = layoutRepository.save(layout);
-
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
-=======
         Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
         Module savedModule1 = this.moduleRepository.save(module1);
 
@@ -349,27 +305,17 @@ class LayoutRepositoryTest {
 
         LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
         LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
         List<LayoutSlot> savedLayoutSlots = layoutSlotRepository.saveAll(List.of(layoutSlot1, layoutSlot2));
 
 
-<<<<<<< HEAD
-        savedLayoutSlots.sort(Comparator.comparing(LayoutSlot::getModuleId));
-=======
         savedLayoutSlots.sort(Comparator.comparing(LayoutSlot::getRowPos));
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
         LayoutSlot savedLayoutSlot1 = savedLayoutSlots.get(0);
         LayoutSlot savedLayoutSlot2 = savedLayoutSlots.get(1);
 
-<<<<<<< HEAD
-        assertLayoutSlot(savedLayoutSlot1, saved.getId(),1L, 1,1,2,1,0);
-        assertLayoutSlot(savedLayoutSlot2, saved.getId(),2L, 1,2,2,1,0);
-=======
         assertLayoutSlot(savedLayoutSlot1, saved.getId(),savedModule1.getId(), 1,1,2,1,0);
         assertLayoutSlot(savedLayoutSlot2, saved.getId(),savedModule2.getId(), 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
     }
@@ -378,11 +324,6 @@ class LayoutRepositoryTest {
     @Test
     @Sql(scripts = "/cleanup.sql", executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
     void shouldGetAllLayoutSlotsByLayoutId(){
-<<<<<<< HEAD
-        Layout layout = this.build("Default Layout", 2, 2);
-        LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,1L, 1,1,2,1,0);
-        LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,2L, 1,2,2,1,0);
-=======
 
         Module module1 = this.buildModule("Default Module 1", "{}", ModuleTypeEnum.ROTATING_AD, null);
         Module savedModule1 = this.moduleRepository.save(module1);
@@ -393,28 +334,18 @@ class LayoutRepositoryTest {
         Layout layout = this.build("Default Layout", 2, 2);
         LayoutSlot layoutSlot1 = this.buildLayoutSlot(layout,savedModule1, 1,1,2,1,0);
         LayoutSlot layoutSlot2 = this.buildLayoutSlot(layout,savedModule2, 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         layout.setSlots(List.of(layoutSlot1, layoutSlot2));
         Layout saved = layoutRepository.save(layout);
 
 
         List<LayoutSlot> result = this.layoutSlotRepository.getAllLayoutSlotsByLayoutId(saved.getId());
-<<<<<<< HEAD
-        result.sort(Comparator.comparing(LayoutSlot::getModuleId));
-=======
         result.sort(Comparator.comparing(LayoutSlot::getRowPos));
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
         LayoutSlot savedSlot1 = result.get(0);
         LayoutSlot savedSlot2 = result.get(1);
         assertEquals(2, result.size());
-<<<<<<< HEAD
-        assertLayoutSlot(savedSlot1, saved.getId(), 1L, 1,1,2,1,0);
-        assertLayoutSlot(savedSlot2, saved.getId(), 2L, 1,2,2,1,0);
-=======
         assertLayoutSlot(savedSlot1, saved.getId(), savedModule1.getId(), 1,1,2,1,0);
         assertLayoutSlot(savedSlot2, saved.getId(), savedModule2.getId(), 1,2,2,1,0);
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     }
 

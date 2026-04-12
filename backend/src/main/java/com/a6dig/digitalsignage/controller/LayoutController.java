@@ -19,11 +19,7 @@ public class LayoutController {
     private LayoutService layoutService;
 
     // get
-<<<<<<< HEAD
-    @GetMapping("/{id}")
-=======
     @GetMapping({"/{id}", "/{id}/slots"})
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> getLayoutById(@PathVariable Long id) {
         LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.getLayoutById(id);
         return ResponseEntity.ok(APIResponse.success(dto));
@@ -46,12 +42,8 @@ public class LayoutController {
 
     // update
 
-<<<<<<< HEAD
-    @PutMapping("/{id}")
-=======
     @PutMapping({"/{id}", "/{id}/slots"})
     @PostMapping("/{id}/slots")
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
         LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(

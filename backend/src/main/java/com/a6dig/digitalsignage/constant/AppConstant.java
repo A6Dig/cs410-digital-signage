@@ -14,7 +14,6 @@ public final class AppConstant {
 
         public static final String LAYOUT_SLOT_INVALID_LAYOUT_SLOT = "Invalid layout slot provided.";
 
-        public static final String LAYOUT_SLOT_INVALID_LAYOUT_SLOT = "Invalid layout slot provided.";
 
         public static final String INTERNAL_SERVER_ERROR = "Internal server error";
         public static final String UNEXPECTED_ERROR = "Unexpected error occurred.";
