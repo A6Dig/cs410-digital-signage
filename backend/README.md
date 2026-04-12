@@ -682,6 +682,132 @@ classDiagram
 
 ```
 
+### AdCollection Management System : Layered Architecture UML
+```mermaid
+
+classDiagram
+    class AdCollectionController{
+        <<controller>>
+        +getAllAdCollectionById(Long)
+        +getAllAdCollections()
+        +createAdCollection(AdCollectionRequestDto)
+        +updateAdCollection(Long, AdCollectionRequestUpdateDto)
+        +deleteAdCollection(Long id)
+        +deleteAdCollections()
+    }
+    
+    class AdCollectionService{
+        <<interface>>
+        +getAllAdCollections() List
+        +getAdCollectionById(Long) AdCollectionResponseDto
+        +createAdCollection(AdCollectionRequestDto) AdCollectionResponseDto
+        +updateAdCollectionById(Long, AdCollectionRequestUpdateDto) AdCollectionResponseDto
+        +deleteAdCollectionById(Long)
+        +deleteAllAdCollections()
+    }
+    
+    AdCollectionController --> AdCollectionService  : uses
+
+
+
+    class AdCollectionServiceImpl{
+        +getAllAdCollections() List
+        +getAdCollectionById(Long) AdCollectionResponseDto
+        +createAdCollection(AdCollectionRequestDto) AdCollectionResponseDto
+        +updateAdCollectionById(Long, AdCollectionRequestUpdateDto) AdCollectionResponseDto
+        +deleteAdCollectionById(Long)
+        +deleteAllAdCollections()
+    }
+    
+    AdCollectionService <|.. AdCollectionServiceImpl : implements
+    
+    class AdCollectionMapper{ }
+    
+    AdCollectionServiceImpl --> AdCollectionMapper : mapping
+    
+    class AdContentRepository{
+        <<interface>>
+    }
+    class AdCollectionRepository{
+        <<interface>>
+    }
+
+    AdCollectionServiceImpl --> AdContentRepository : access data(AdContent)
+    AdCollectionServiceImpl --> AdCollectionRepository : access data(AdCollection)
+
+
+    class AdCollectionNotFoundException{ }
+    class AdContentNotFoundException{ }
+
+    AdContentServiceImpl ..> AdCollectionNotFoundException : throws
+    AdContentServiceImpl ..> AdContentNotFoundException : throws
+    
+
+```
+
+### AdContent Management System : Layered Architecture UML
+```mermaid
+
+classDiagram
+    class AdContentController{
+        <<controller>>
+        +getAdContentById(Long)
+        +getAllAdContents()
+        +createAdContent(AdContentRequestDto)
+        +updateAdContent(Long, AdContentRequestUpdateDto)
+        +deleteAdContent(Long id)
+        +deleteAdContents()
+    }
+    
+    class AdContentService{
+        <<interface>>
+        +getAllAdContents() List
+        +getAdContentById(Long) AdContentResponseDto
+        +createAdContent(AdCootentnRequestDto) AdContentResponseDto
+        +updateAdContentById(Long, AdContentRequestUpdateDto) AdContentResponseDto
+        +deleteAdContentById(Long)
+        +deleteAllAdContents()
+    }
+
+    AdContentController --> AdContentService  : uses
+
+
+
+    class AdContentServiceImpl{
+        +getAllAdContents() List
+        +getAdContentById(Long) AdContentResponseDto
+        +createAdContent(AdCootentnRequestDto) AdContentResponseDto
+        +updateAdContentById(Long, AdContentRequestUpdateDto) AdContentResponseDto
+        +deleteAdContentById(Long)
+        +deleteAllAdContents()
+    }
+
+    AdContentService <|.. AdContentServiceImpl : implements
+    
+    class AdContentMapper{ }
+
+    AdContentServiceImpl --> AdContentMapper : mapping
+    
+    class AdContentRepository{
+        <<interface>>
+    }
+    class DomainCache{ }
+
+    AdContentServiceImpl --> AdContentRepository : access data(AdContent)
+    AdContentServiceImpl --> DomainCache : validates
+    
+    
+    class InvalidDomainException{ }
+    class AdContentNotFoundException{ }
+    
+    AdContentServiceImpl ..> InvalidDomainException : throws
+    AdContentServiceImpl ..> AdContentNotFoundException : throws
+    
+    
+
+```
+
+
 
 
 ## API Endpoints
