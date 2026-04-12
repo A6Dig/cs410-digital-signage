@@ -266,10 +266,9 @@ AdCollectionContentLink {
 
 ## UML Diagrams
 
+### Entity UML
+
 ```mermaid
----
-title: Entity UML
----
 
 classDiagram
 
@@ -374,10 +373,9 @@ AdContent "1..*" --> "1" Domain : uses
 
 ```
 
+### DTO UML
+
 ```mermaid
----
-title: DTO UML
----
 
 classDiagram
     
@@ -524,10 +522,9 @@ classDiagram
     
 ```
 
+### Mapper UML
+
 ```mermaid
----
-title: Mapper UML
----
 
 classDiagram
     class AdContent{ }
@@ -573,6 +570,115 @@ classDiagram
     LayoutMapper ..> ModuleMapper : delegates to
     LayoutMapper ..> LayoutSlot : uses(input)
     LayoutMapper ..> LayoutSlotResponseDto : creates(output)
+
+```
+
+### Module Management System - Layered Architecture UML
+```mermaid
+
+classDiagram
+    class DomainRepository{
+        <<interface>>
+    }
+    class DomainCache{
+        -cache : HashMap
+        +init void
+        +refresh(String) void
+        +buildDomain(Enum) Domain
+        +validate(String, String) void
+    }
+
+    class Domain {
+        -id : Long
+        -type : String
+        -name : String
+        -alphaNumCode : String
+        -displayOrder : int
+    }
+    class InvalidDomainException {
+    }
+
+    DomainCache --> Domain : caches
+    DomainCache --> DomainRepository : access data (Domain)
+    DomainCache ..> InvalidDomainException : throws
+    
+    class ModuleController{
+        <<controller>>
+        
+        +getAllModuleById(Long)
+        +getAllModules()
+        +createModule(ModuleRequestDto)
+        +updateLayout(Long, ModuleRequestUpdate)
+        +deleteModule(Long id)
+        +deleteModules()
+    }
+    
+    class ModuleFacade{
+        +getAllModules() List
+        +getModuleById(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleController --> ModuleFacade : uses
+    
+    class ModuleService{
+        <<interface>>
+        +getAllModules List
+        +getModuleById(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleFacade --> ModuleService : delegates to
+    
+    class ModuleServiceImpl{
+        +getAllModules() List
+        +getModuleId(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleServiceImpl ..|> ModuleService : implements
+    
+    
+    class ModuleRepository{
+        <<interface>>
+    }
+    class ModuleMapper{ }
+    class ModuleFactory{
+        +createModuleFromDto(ModuleRequestDto, Module) Module
+    }
+    
+    class AdCollectionRepository{
+        <<interface>>
+    }
+    class ObjectMapper{ }
+    
+    class ModuleValidator{
+        +validateType(ModuleRequestDto) void
+    }
+    
+    ModuleValidator --> DomainCache : validates using
+    ModuleValidator ..> InvalidDomainException : throws
+    
+    ModuleServiceImpl --> ModuleRepository : access data(Module)
+    ModuleServiceImpl --> ModuleFactory : creates module using
+    ModuleServiceImpl --> ModuleMapper : mapping
+    
+    ModuleFactory --> DomainCache : resolves domain
+    ModuleFactory --> ObjectMapper : converts to JSON
+    ModuleFactory --> AdCollectionRepository : access data(AdCollection)
+    
+    ModuleMapper --> ObjectMapper : parses config (to String)
+    
+    ModuleFacade --> ModuleValidator : validates
 
 ```
 

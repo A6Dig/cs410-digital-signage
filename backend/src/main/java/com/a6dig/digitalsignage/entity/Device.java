@@ -77,6 +77,7 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
+
     public DeviceGroup getDeviceGroup() {
         return deviceGroup;
     }
