@@ -263,6 +263,321 @@ AdCollectionContentLink {
 
 ```
 
+
+## UML Diagrams
+
+```mermaid
+---
+title: Entity UML
+---
+
+classDiagram
+
+class Device{
+    -Long id
+    -String name
+    -String ipAddress
+    -LolcaDatetime createdAt
+    -LocalDateTime updatedAt
+}
+
+class DeviceGroup{
+    -Long id
+    -String name
+    -String description
+    -LolcaDatetime createdAt
+    -LocalDateTime updatedAt
+}
+
+class Layout{
+    -Long id
+    -String name
+    -int cols
+    -int rows
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+    
+    +addLayoutSlot(LayoutSlot) void
+    +addLayoutSlots(List<LayoutSlot>) void
+}
+
+class LayoutSlot{
+    -Long id
+    -int colPos
+    -int rowPos
+    -int colSpan
+    -int rowSpan
+    -int zIndex
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+    
+    +LayoutSlot(Layout)
+}
+
+class Module{
+    -Long id
+    -String name
+    -String config
+    -LocalDateTime createdAt
+    -LocalDateTime cupdatedAt
+    
+    +builder() ModuleBuilder
+}
+
+
+class AdCollection{
+    -Long id
+    -String name
+    -String url
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+class AdContent{
+    -Long id
+    -String name
+    -String url
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+class Domain{
+    -Long id
+    -String type
+    -String name
+    -String description
+    -String alphaNumCode
+    -int displayOrder
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+DeviceGroup "1..*"-->"0..*" Layout : uses
+DeviceGroup "1" --> "0..*" Device : uses
+
+Device "1..*"-->"0..1" Layout : uses
+
+
+
+Layout "1"*--"0..*" LayoutSlot : has
+LayoutSlot "0..*" --> "1" Layout
+LayoutSlot "0..*" --> "0..1" Module : uses
+
+
+Module "0..*" --> "0..1" AdCollection : has
+AdCollection "0..*" --> "0..*" AdContent : uses
+
+
+Module "1..*" --> "1" Domain : uses
+AdContent "1..*" --> "1" Domain : uses
+
+
+```
+
+```mermaid
+---
+title: DTO UML
+---
+
+classDiagram
+    
+    class LayoutDtoBase~T~{
+        <<abstract>>
+        -name : String
+        -cols : Integer
+        -rows : Integer
+        -slots : List<T>
+    }
+    
+    class LayoutRequestDto~T~{
+    }
+    class LayoutResponseDto~T~{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+
+    class LayoutSlotDtoBase{
+        <<abstract>>
+        -moduleId : Long
+        -colPos : Integer
+        -rowPos : Integer
+        -colSpan : Integer
+        -rowSpan : Integer
+        -zIndex : Integer
+    }
+    class LayoutSlotRequestDto{
+    }
+    
+    class LayoutSlotRequestUpdateDto{
+        -id : Long
+    }
+    class LayoutSlotResponseDto{
+        -id : Long
+        -layoutId : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    
+    LayoutDtoBase <|-- LayoutRequestDto
+    LayoutDtoBase <|-- LayoutResponseDto
+    
+    LayoutDtoBase "1" --> "0..*" LayoutSlotDtoBase : uses
+    
+    LayoutSlotDtoBase <|-- LayoutSlotRequestDto
+    LayoutSlotRequestDto <|-- LayoutSlotRequestUpdateDto
+    
+    LayoutSlotDtoBase <|-- LayoutSlotResponseDto
+    
+    
+    
+    class ModuleDtoBase{
+        <<abstract>>
+        -name : String
+        -config : JsonNode
+    }
+    class ModuleRequestDto{
+    }
+    
+    class ModuleRequestUpdateDto{
+        -id : Long
+    }
+    class ModuleResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    ModuleDtoBase <|-- ModuleRequestDto
+    ModuleRequestDto <|-- ModuleRequestUpdateDto
+    ModuleDtoBase <|-- ModuleResponseDto
+    
+    LayoutSlotResponseDto "0..*" --> "0..1" ModuleResponseDto : uses
+    
+    
+    class AdContentDtoBase{
+        <<abstract>>
+        -name : String
+        -url : String
+    }
+    class AdContentRequestDto{
+    }
+    class AdContentRequestUpdateDto{
+        -id : Long
+    }
+    class AdContentResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    AdContentDtoBase <|-- AdContentRequestDto
+    AdContentRequestDto <|-- AdContentRequestUpdateDto
+    AdContentDtoBase <|-- AdContentResponseDto
+    
+    
+    class AdCollectionDtoBase~T~{
+        <<abstract>>
+        -name : String
+        -url : String
+        -adContents : List<T>
+    }
+    class AdCollectionRequestDto~T~{
+    }
+    class AdCollectionRequestUpdateDto{
+        -id : Long
+    }
+    class AdCollectionResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    AdCollectionDtoBase <|-- AdCollectionRequestDto
+    AdCollectionRequestDto <|-- AdCollectionRequestUpdateDto
+    AdCollectionDtoBase <|-- AdCollectionResponseDto
+    
+    AdCollectionDtoBase "0..*" --> "0..*" AdContentDtoBase : uses
+    
+    AdCollectionRequestUpdateDto "0..1"<--"0..*" ModuleRequestUpdateDto : uses
+    AdCollectionResponseDto "0..1"<--"0..*" ModuleResponseDto : uses
+    
+    
+    class AdContentTypeEnum{
+        <<enumeration>>
+        IMAGE
+        VIDEO
+    }
+    
+    AdContentTypeEnum "1" <-- "1..*" AdContentDtoBase : uses
+    
+    class ModuleTypeEnum{
+        WEATHER
+        CLOCK
+        ROTATING_AD
+    }
+    
+    ModuleTypeEnum "1" <-- "1..*" ModuleDtoBase : uses
+    
+    
+    
+```
+
+```mermaid
+---
+title: Mapper UML
+---
+
+classDiagram
+    class AdContent{ }
+    class AdContentResponseDto { }
+    class AdContentMapper{
+        +toAdContentResponseDto(AdContent) AdContentResponseDto
+    }
+    
+    AdContentMapper ..> AdContent : uses(input)
+    AdContentMapper ..> AdContentResponseDto : creates(output)
+    
+    class AdCollection { }
+    class AdCollectionMapper{
+        +toAdCollectionResponseDto(AdCollection) AdCollectionResponseDto
+    }
+    
+    AdCollectionMapper ..> AdCollection : uses(input)
+    AdCollectionMapper ..> AdContentMapper : delegates to
+    AdCollectionMapper ..> AdCollectionResponseDto : creates(output)
+    
+    class Module { }
+    class ModuleResponseDto { }
+    class ModuleMapper{
+        -objectMapper : ObjectMapper
+        +toModuleResponseDto(Module) ModuleResponseDto
+    }
+    
+    ModuleMapper ..> Module : uses(input)
+    ModuleMapper ..> AdCollectionMapper : delegates to
+    ModuleMapper ..> ModuleResponseDto : creates(output)
+    
+    class LayoutResponseDto { }
+    class Layout { }
+    class LayoutSlot { }
+    class LayoutSlotResponseDto { }
+    class LayoutMapper{
+        +toLayoutResponseDto(Layout) LayoutResponseDto
+        +toLayoutSlotResponseDto(LayoutSlot)
+    }
+    
+    LayoutMapper ..> Layout : uses(input)
+    LayoutMapper ..> LayoutResponseDto : creates(output)
+    LayoutMapper ..> ModuleMapper : delegates to
+    LayoutMapper ..> LayoutSlot : uses(input)
+    LayoutMapper ..> LayoutSlotResponseDto : creates(output)
+
+```
+
+
+
 ## API Endpoints
 
 ### Authentication
