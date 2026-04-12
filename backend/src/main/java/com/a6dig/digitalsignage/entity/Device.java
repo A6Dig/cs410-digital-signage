@@ -77,6 +77,14 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
+    public Long getDeviceGroupId() {
+        return deviceGroupId;
+    }
+
+    public void setDeviceGroupId(Long deviceGroupId) {
+        this.deviceGroupId = deviceGroupId;
+    }
+
     public DeviceGroup getDeviceGroup() {
         return deviceGroup;
     }

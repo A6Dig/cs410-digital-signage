@@ -1,5 +1,13 @@
 package com.a6dig.digitalsignage.controller;
 
+<<<<<<< HEAD
+import com.a6dig.digitalsignage.entity.Device;
+import com.a6dig.digitalsignage.repository.DeviceRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+=======
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.entity.Device;
 import com.a6dig.digitalsignage.service.DeviceService;
@@ -9,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 import java.util.List;
 
 @RestController
@@ -16,6 +25,19 @@ import java.util.List;
 public class DeviceController {
 
     @Autowired
+<<<<<<< HEAD
+    private DeviceRepository deviceRepository;
+
+    // Endpoint for receivers to check-in/register [cite: 52]
+    @PostMapping("/register")
+    public Device registerDevice(@RequestBody Device device) {
+        device.setLastConnected(LocalDateTime.now());
+        // Simple registration: assume all receivers are legitimate 
+        return deviceRepository.save(device);
+    }
+    
+}
+=======
     private DeviceService deviceService;
 
     // Reads
@@ -64,3 +86,4 @@ public class DeviceController {
         return ResponseEntity.ok(APIResponse.success(AppConstant.SuccessMessage.Device.DELETED_ALL));
     }
 }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92

@@ -206,6 +206,27 @@ Device {
 
 
 Layout {
+<<<<<<< HEAD
+BIGINT id pk
+VARCHAR(50) name
+INT cols
+INT rows
+DATETIME createdAt
+DATETIME updatedAt
+}
+
+LayoutSlot {
+BIGINT id pk
+BIGINT layoutId fk
+BIGINT moduleId fk
+INT colPos
+INT rowPos
+INT colSpan
+INT rowSpan
+INT zIndex
+DATETIME createdAt
+DATETIME updatedAt
+=======
     BIGINT id PK
     VARCHAR(50) name
     INT cols
@@ -225,6 +246,7 @@ LayoutSlot {
     INT zIndex
     DATETIME createdAt
     DATETIME updatedAt
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 }
 
 Module {
@@ -965,6 +987,38 @@ RESPONSE 200
                                     "rows": 1,           
                                     "createdAt": "2026-03-15T02:13:45:00Z",
                                     "updatedAt": "2026-03-15T02:13:45:00Z",
+<<<<<<< HEAD
+                                    "layout": {
+                                        "id": 1,
+                                        "name": "Campus Center Default",
+                                        "cols": 2,           // total number of columns
+                                        "rows": 1,           // total number of rows
+                                        "createdAt": "2026-03-15T02:13:45:00Z",
+                                        "updatedAt": "2026-03-15T02:13:45:00Z",
+                                        "slots": [
+                                                            {
+                                                                "id": 1,
+                                                                "layoutId": 1,
+                                                                "moduleId": 1,
+                                                                "colPos": 1,
+                                                                "rowPos": 1,
+                                                                "colSpan": 1,
+                                                                "rowSpan": 1,
+                                                                "zIndex": 1
+                                                            },
+                                                            {
+                                                                "id": 2,
+                                                                "layoutId": 2,
+                                                                "moduleId": 2,
+                                                                "colPos": 2,
+                                                                "rowPos": 1,
+                                                                "colSpan": 1,
+                                                                "rowSpan": 1,
+                                                                "zIndex": 1
+                                                            }
+                                                        ]
+                                        }
+=======
                                     "slots": [
                                                         {
                                                             "id": 1,
@@ -988,6 +1042,7 @@ RESPONSE 200
                                                         }
                                                     ]
                                     }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
                             }
             },
@@ -1060,6 +1115,38 @@ RESPONSE 200
                                     "rows": 1,           
                                     "createdAt": "2026-03-15T02:13:45:00Z",
                                     "updatedAt": "2026-03-15T02:13:45:00Z",
+<<<<<<< HEAD
+                                    "layout": {
+                                        "id": 1,
+                                        "name": "Campus Center Default",
+                                        "cols": 2,           // total number of columns
+                                        "rows": 1,           // total number of rows
+                                        "createdAt": "2026-03-15T02:13:45:00Z",
+                                        "updatedAt": "2026-03-15T02:13:45:00Z",
+                                        "slots": [
+                                                            {
+                                                                "id": 1,
+                                                                "layoutId": 1,
+                                                                "moduleId": 1,
+                                                                "colPos": 1,
+                                                                "rowPos": 1,
+                                                                "colSpan": 1,
+                                                                "rowSpan": 1,
+                                                                "zIndex": 1
+                                                            },
+                                                            {
+                                                                "id": 2,
+                                                                "layoutId": 2,
+                                                                "moduleId": 2,
+                                                                "colPos": 2,
+                                                                "rowPos": 1,
+                                                                "colSpan": 1,
+                                                                "rowSpan": 1,
+                                                                "zIndex": 1
+                                                            }
+                                                        ]
+                                        }
+=======
                                     "slots": [
                                                         {
                                                             "id": 1,
@@ -1083,6 +1170,7 @@ RESPONSE 200
                                                         }
                                                     ]
                                     }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
                             }
             },
@@ -2212,8 +2300,44 @@ RESPONSE 500
   "data": null,
   "errors": [
     {
+<<<<<<< HEAD
+        "status": 200,
+        "message": "",
+        "data": [
+                    {
+                        "id": 1,
+                        "layoutId": 1,
+                        "moduleId": 1,
+                        "colPos": 1,
+                        "rowPos": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1,
+                        "createdAt": "2026-03-15T02:13:45:00Z",
+                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                    },
+                    {
+                        "id": 2,
+                        "layoutId": 2,
+                        "moduleId": 2,
+                        "colPos": 2,
+                        "rowPos": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1,
+                        "createdAt": "2026-03-15T02:13:45:00Z",
+                        "updatedAt": "2026-03-15T02:13:45:00Z"
+                    }
+                ],
+        "errors":[]
+    }
+    
+    RESPONSE 500
+
+=======
       "error": "Unexpected error occurred."
     },
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
     {
       "error": "No static resource api/layouts."
     },
@@ -2227,6 +2351,59 @@ RESPONSE 500
 </details>
 
 
+<<<<<<< HEAD
+<details>
+    <summary><b>GET</b> /api/layouts/1/slots/1</summary>
+
+
+    RESPONSE 200
+
+    {
+        "status": 200,
+        "message": "",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 2,
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1,
+                    "createdAt": "2026-03-15T02:13:45:00Z",
+                    "updatedAt": "2026-03-15T02:13:45:00Z"
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 404
+
+    {
+        "status": 404,
+        "message": "Layout slot not found",
+        "data": null,
+        "errors":[
+            {"error": "Layout slot with id 1 doesn't exist"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
+
+</details>
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
 <details>
@@ -2271,6 +2448,71 @@ RESPONSE 201
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
+<<<<<<< HEAD
+        "zIndex": 1
+
+    }
+
+    RESPONSE 201
+
+    {
+        "status": 201,
+        "message": "Layout slot created successfully",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 1,
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1,
+                    "createdAt": "2026-03-15T02:13:45:00Z",
+                    "updatedAt": "2026-03-15T02:13:45:00Z"
+                },
+        "errors":[]
+    }
+
+    
+    RESPONSE 400
+
+    {
+        "status": 400,
+        "message": "Validation failed",
+        "data": null,
+        "errors":[
+            {"error": "Grid column is not defined"},
+            {"error": "Grid rows is not defined"}
+        ]
+    }
+    
+
+    
+    RESPONSE 500
+
+    {
+        "status": 500,
+        "message": "Internal server error",
+        "data": null,
+        "errors":[
+            {"error": "Unexpected error occurred"}
+        ]
+    }
+
+
+</details>
+
+
+
+
+<details>
+    <summary><b>PUT</b> /api/layouts/1/slots/1</summary>
+
+    REQUEST
+    {
+        "layoutId": 1,
+        "moduleId": 2,      //updated
+=======
         "zIndex": 1,
         "id": 1,
         "layoutId": 1,
@@ -2279,10 +2521,36 @@ RESPONSE 201
       },
       {
         "moduleId": 1,
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
         "colPos": 1,
         "rowPos": 1,
         "colSpan": 1,
         "rowSpan": 1,
+<<<<<<< HEAD
+        "zIndex": 1
+    }
+
+
+    RESPONSE 200
+
+    {
+        "status": 200,
+        "message": "Layout slot updated successfully",
+        "data": {
+                    "id": 1,
+                    "layoutId": 1,
+                    "moduleId": 2,
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1,
+                    "createdAt": "2026-03-15T02:13:45:00Z",
+                    "updatedAt": "2026-03-15T02:13:45:00Z"
+                },
+        "errors":[]
+    }
+=======
         "zIndex": 1,
         "id": 3,
         "layoutId": 1,
@@ -2297,6 +2565,7 @@ RESPONSE 201
   "errors": []
 }
 ```
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
     
 RESPONSE 400
@@ -2642,7 +2911,61 @@ RESPONSE 500
 
 RESPONSE 200
 
+<<<<<<< HEAD
+    {
+        "status": 200,
+        "message": "",
+        "data": [
+                    {
+                        "id": 1,
+                        "type": "CLOCK",
+                        "config": {
+                                    "timezone": "America/New York",
+                                    "format": "HH:mm:ss",
+                                    "showDate": true,
+                                    "dateFormat": "dd/MM/yyyy",
+                                    "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                                },
+                        "colPos": 1,
+                        "rowPos": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1,
+                        "adCollectionId": null
+                    },
+                    {
+                        "id": 2,
+                        "type": "ROTATING_AD",
+                        "config": {
+                                    "transitionEffect": "fade",
+                                    "defaultDurationSeconds": 10,
+                                },
+                        "colPos": 1,
+                        "rowPos": 1,
+                        "colSpan": 1,
+                        "rowSpan": 1,
+                        "zIndex": 1,
+                        "adCollectionId": 1,
+                        "adCollection": {
+                                        "id": 1
+                                        "name": "Rotating Ad Collection Custom",
+                                        "url": null,
+                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                        "updatedAt": "2026-03-15T03:10:45:00Z",
+                                        "adContent": [
+                                                    {
+                                                        "id": 1,
+                                                        "adCollectionId": 1,
+                                                        "name": "Image One",
+                                                        "url": "/localstorage/1.jpg",
+                                                        "displayOrder": 1,
+                                                        "durationSeconds": 10,
+                                                        "createdAt": "2026-03-15T02:45:45:00Z",
+                                                        "updatedAt": "2026-03-15T03:10:45:00Z"
+                                                    }
+=======
 ```json
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 {
     "status": 200,
@@ -2727,9 +3050,54 @@ RESPONSE 500
 <details>
     <summary><b>GET</b> /api/modules/1</summary>
 
+<<<<<<< HEAD
+    REQUEST
+    {
+        "type": "CLOCK",
+        "config": {
+                    "timezone": "America/New York",
+                    "format": "HH:mm:ss",
+                    "showDate": true,
+                    "dateFormat": "dd/MM/yyyy",
+                    "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                },
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 1,
+        "adCollectionId": null
+    }
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
+<<<<<<< HEAD
+    {
+        "status": 201,
+        "message": "Module created successfully",
+        "data": {
+                    "id": 1,
+                    "type": "CLOCK",
+                    "config": {
+                                "timezone": "America/New York",
+                                "format": "HH:mm:ss",
+                                "showDate": true,
+                                "dateFormat": "dd/MM/yyyy",
+                                "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                            },
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 1,
+                    "adCollectionId": null
+                },
+        "errors":[]
+    }
+=======
 RESPONSE 200
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 ```json
 
@@ -2900,6 +3268,25 @@ RESPONSE 500
 <details>
     <summary><b>PUT</b> /api/modules/1</summary>
 
+<<<<<<< HEAD
+    REQUEST
+    {
+        "type": "CLOCK",
+        "config": {
+                    "timezone": "America/New York",
+                    "format": "HH:mm:ss",
+                    "showDate": true,
+                    "dateFormat": "dd/MM/yyyy",
+                    "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                },
+        "colPos": 1,
+        "rowPos": 1,
+        "colSpan": 1,
+        "rowSpan": 1,
+        "zIndex": 5,                    // updated
+        "adCollectionId": null
+    }
+=======
 REQUEST
 
 ```json
@@ -2920,10 +3307,36 @@ REQUEST
     "zIndex": 5,                    
     "adCollection": null
 }
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 
 ```
 
+<<<<<<< HEAD
+    {
+        "status": 200,
+        "message": "Module updated successfully",
+        "data": {
+                    "id": 1,
+                    "type": "CLOCK",
+                    "config": {
+                                "timezone": "America/New York",
+                                "format": "HH:mm:ss",
+                                "showDate": true,
+                                "dateFormat": "dd/MM/yyyy",
+                                "apiUrl": "https://timeapi.io/api/v1/time/current/unix"
+                            },
+                    "colPos": 1,
+                    "rowPos": 1,
+                    "colSpan": 1,
+                    "rowSpan": 1,
+                    "zIndex": 5,            // updated
+                    "adCollectionId": null
+                },
+        "errors":[]
+    }
+=======
+>>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
 
 RESPONSE 200
 ```json
