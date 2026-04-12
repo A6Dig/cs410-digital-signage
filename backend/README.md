@@ -739,8 +739,8 @@ classDiagram
     class AdCollectionNotFoundException{ }
     class AdContentNotFoundException{ }
 
-    AdContentServiceImpl ..> AdCollectionNotFoundException : throws
-    AdContentServiceImpl ..> AdContentNotFoundException : throws
+    AdCollectionServiceImpl ..> AdCollectionNotFoundException : throws
+    AdCollectionServiceImpl ..> AdContentNotFoundException : throws
     
 
 ```
@@ -808,7 +808,129 @@ classDiagram
 ```
 
 
+### Layout Management System : Layered Architecture UML
 
+```mermaid
+classDiagram
+    class LayoutController{
+        <<controller>>
+        +getLayoutById(Long)
+        +getAllLayouts()
+        +createLayout(LayoutRequestDto)
+        +updateLayout(Long, LayoutRequestDto)
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +getLayoutSlotsByLayoutId(Long)
+    }
+    
+    class LayoutService{
+        <<interface>>
+        +getLayoutById(Long) LayoutResponseDto
+        +getAllLayouts List
+        +createLayout(LayoutRequestDto) LayoutResponseDto
+        +updateLayout(Long, LayoutRequestDto) LayoutResponseDto
+        +updateLayoutSlots(Long, List) LayoutResponseDto
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +addLayoutSlotToLayout(Long, LayoutSlotRequestDto) LayoutResponseDto
+        +removeLayoutSlotFromLayout(Long, Long) LayoutResponseDto
+        +layoutExist(Long) boolean
+        +layoutCount() long
+        +getAllLayoutSlotsByLayoutId(Long) List
+    }
+    
+    LayoutController --> LayoutService : uses
+
+
+
+    class LayoutServiceImpl{
+        +getLayoutById(Long) LayoutResponseDto
+        +getAllLayouts List
+        +createLayout(LayoutRequestDto) LayoutResponseDto
+        +updateLayout(Long, LayoutRequestDto) LayoutResponseDto
+        +updateLayoutSlots(Long, List) LayoutResponseDto
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +addLayoutSlotToLayout(Long, LayoutSlotRequestDto) LayoutResponseDto
+        +removeLayoutSlotFromLayout(Long, Long) LayoutResponseDto
+        +layoutExist(Long) boolean
+        +layoutCount() long
+        +getAllLayoutSlotsByLayoutId(Long) List
+        
+        -validateLayoutSlot(boolean, LayoutSlotRequestDto) void
+        -validateLayout(boolean, LayoutRequestDto) void
+    }
+    
+    LayoutService <|.. LayoutServiceImpl  : implements
+
+
+    class LayoutRepository{
+        <<interface>>
+    }
+    class LayoutSlotRepository{
+        <<interface>>
+    }
+    
+    class LayoutMapper{ }
+    class ModuleRepository{
+        <<iterface>>
+    }
+
+    class LayoutNotFoundException{ }
+    class ModuleNotFoundException{ }
+    class InvalidLayoutSlotException{ }
+    
+    LayoutServiceImpl --> LayoutRepository : access data(Layout)
+    LayoutServiceImpl --> LayoutSlotRepository : access data(LayoutSlot)
+    LayoutServiceImpl --> ModuleRepository : access data(Module)
+    LayoutServiceImpl --> LayoutMapper : mapping
+    
+    LayoutServiceImpl ..> LayoutNotFoundException : throws
+    LayoutServiceImpl ..> ModuleNotFoundException : throws
+    LayoutServiceImpl ..> InvalidLayoutSlotException : throws
+    
+```
+
+### LayoutSlot Management System : Layered Architecture UML
+```mermaid
+classDiagram
+    class LayoutSlotController{
+        <<controller>>
+        +delete3SelectedLayouts(Long, LayoutRequestDto)
+        +deleteAllLayouts(Long)    
+    }  
+    
+    class LayoutSlotService{
+        <<interface>>
+        +deleteAllSlotsByLayoutId(Long) void
+        +deleteLayoutSlotsByLayoutId(Long layoutId, LayoutRequestDto) void
+    }
+    
+    LayoutSlotController --> LayoutSlotService : uses
+
+    class LayoutSlotServiceImpl{
+        +deleteAllSlotsByLayoutId(Long) void
+        +deleteLayoutSlotsByLayoutId(Long layoutId, LayoutRequestDto) void
+    }
+    
+    LayoutSlotService <|.. LayoutSlotServiceImpl  : implements
+    
+    class LayoutRepository{
+        <<interface>>
+    }
+    class LayoutSlotRepository{
+        <<interface>>
+    }
+    
+    class LayoutNotFoundException{ }
+    class InvalidLayoutSlotException{ }
+    
+    LayoutSlotServiceImpl --> LayoutRepository : access data(Layout)
+    LayoutSlotServiceImpl --> LayoutSlotRepository : access data(LayoutSlot)
+    LayoutSlotServiceImpl ..> LayoutNotFoundException : throws
+    LayoutSlotServiceImpl ..> InvalidLayoutSlotException : throws
+    
+```
 
 ## API Endpoints
 

@@ -68,7 +68,7 @@ public class LayoutController {
     // layout slots
 
     @GetMapping("/api/layouts/{id}/slots")
-    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getAllLayouts(@PathVariable(name = "id") Long layoutId) {
+    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getLayoutSlotsByLayoutId(@PathVariable(name = "id") Long layoutId) {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
     }
 }
