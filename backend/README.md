@@ -932,6 +932,113 @@ classDiagram
     
 ```
 
+
+### Device Management System : Layered Architecture UML
+
+
+```mermaid
+classDiagram
+    class DeviceController{
+        <<controller>>
+        +getAllDevices()
+        +getDeviceById(Long)
+        +getDevicesByDeviceGroupId(Long)
+        +createDevice(Device)
+        +updateDevice(Long, Device)
+        +deleteDevice(Long)
+        +deleteAllDevices()
+    }
+    
+    class DeviceService{
+        <<interface>>
+        +getAllDevices() List
+        +getDeviceById(Long) Device
+        +getDevicesByDeviceGroupId(Long) List
+        +createDevice(Device) Device
+        +updateDevice(Long, Device) Device
+        +deleteDevice(Long) void
+        +deleteAllDevices() void
+    }
+    
+    DeviceController --> DeviceService : uses
+
+
+
+    class DeviceServiceImpl{
+        +getAllDevices() List
+        +getDeviceById(Long) Device
+        +getDevicesByDeviceGroupId(Long) List
+        +createDevice(Device) Device
+        +updateDevice(Long, Device) Device
+        +deleteDevice(Long) void
+        +deleteAllDevices() void
+        +findExistingDevice(Long) Device
+    }
+    
+    DeviceService <|.. DeviceServiceImpl : implements
+    
+    class DeviceRepository{
+        <<interface>>
+    }
+    
+    DeviceServiceImpl --> DeviceRepository : uses
+    
+    
+    class InvalidDeviceException{ }
+    class DeviceNotFoundException{ }
+
+
+    DeviceServiceImpl ..> InvalidDeviceException : throws
+    DeviceServiceImpl ..> DeviceNotFoundException : throws
+    
+```
+
+### DeviceGroup Management System : Layered Architecture UML
+
+```mermaid
+classDiagram
+    class DeviceGroupController{
+        <<controller>>
+        +getAllDeviceGroups()
+        +getDeviceGroupById(Long)
+        +createDeviceGroup(DeviceGroup)
+        +updateDeviceGroup(Long, DeviceGroup)
+        +deleteDeviceGroup(Long)
+        +deleteAllDeviceGroups()
+    }
+    
+    class DeviceGroupService{
+        <<interface>>
+        +getAllDeviceGroups() List
+        +getDeviceGroupById(Long) DeviceGroup
+        +createDeviceGroup(DeviceGroup) DeviceGroup
+        +updateDeviceGroup(Long, DeviceGroup) DeviceGroup
+        +deleteDeviceGroup(Long) boolean
+        +deleteAllDeviceGroups() void
+    }
+
+    DeviceGroupController --> DeviceGroupService : uses
+
+    class DeviceGroupServiceImpl{
+        +getAllDeviceGroups() List
+        +getDeviceGroupById(Long) DeviceGroup
+        +createDeviceGroup(DeviceGroup) DeviceGroup
+        +updateDeviceGroup(Long, DeviceGroup) DeviceGroup
+        +deleteDeviceGroup(Long) boolean
+        +deleteAllDeviceGroups() void
+    }
+
+    DeviceGroupService <|.. DeviceGroupServiceImpl : implements
+
+    class DeviceGroupRepository{
+        <<interface>>
+    }
+
+    DeviceGroupServiceImpl --> DeviceRGroupepository : uses
+    
+```
+
+
 ## API Endpoints
 
 ### Authentication
