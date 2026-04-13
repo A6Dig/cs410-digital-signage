@@ -263,6 +263,782 @@ AdCollectionContentLink {
 
 ```
 
+
+## UML Diagrams
+
+### Entity UML
+
+```mermaid
+
+classDiagram
+
+class Device{
+    -Long id
+    -String name
+    -String ipAddress
+    -LolcaDatetime createdAt
+    -LocalDateTime updatedAt
+}
+
+class DeviceGroup{
+    -Long id
+    -String name
+    -String description
+    -LolcaDatetime createdAt
+    -LocalDateTime updatedAt
+}
+
+class Layout{
+    -Long id
+    -String name
+    -int cols
+    -int rows
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+    
+    +addLayoutSlot(LayoutSlot) void
+    +addLayoutSlots(List<LayoutSlot>) void
+}
+
+class LayoutSlot{
+    -Long id
+    -int colPos
+    -int rowPos
+    -int colSpan
+    -int rowSpan
+    -int zIndex
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+    
+    +LayoutSlot(Layout)
+}
+
+class Module{
+    -Long id
+    -String name
+    -String config
+    -LocalDateTime createdAt
+    -LocalDateTime cupdatedAt
+    
+    +builder() ModuleBuilder
+}
+
+
+class AdCollection{
+    -Long id
+    -String name
+    -String url
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+class AdContent{
+    -Long id
+    -String name
+    -String url
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+class Domain{
+    -Long id
+    -String type
+    -String name
+    -String description
+    -String alphaNumCode
+    -int displayOrder
+    -LocalDateTime createdAt
+    -LocalDateTime updatedAt
+}
+
+DeviceGroup "1..*"-->"0..*" Layout : uses
+DeviceGroup "1" --> "0..*" Device : uses
+
+Device "1..*"-->"0..1" Layout : uses
+
+
+
+Layout "1"*--"0..*" LayoutSlot : has
+LayoutSlot "0..*" --> "1" Layout
+LayoutSlot "0..*" --> "0..1" Module : uses
+
+
+Module "0..*" --> "0..1" AdCollection : has
+AdCollection "0..*" --> "0..*" AdContent : uses
+
+
+Module "1..*" --> "1" Domain : uses
+AdContent "1..*" --> "1" Domain : uses
+
+
+```
+
+### DTO UML
+
+```mermaid
+
+classDiagram
+    
+    class LayoutDtoBase~T~{
+        <<abstract>>
+        -name : String
+        -cols : Integer
+        -rows : Integer
+        -slots : List<T>
+    }
+    
+    class LayoutRequestDto~T~{
+    }
+    class LayoutResponseDto~T~{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+
+    class LayoutSlotDtoBase{
+        <<abstract>>
+        -moduleId : Long
+        -colPos : Integer
+        -rowPos : Integer
+        -colSpan : Integer
+        -rowSpan : Integer
+        -zIndex : Integer
+    }
+    class LayoutSlotRequestDto{
+    }
+    
+    class LayoutSlotRequestUpdateDto{
+        -id : Long
+    }
+    class LayoutSlotResponseDto{
+        -id : Long
+        -layoutId : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    
+    LayoutDtoBase <|-- LayoutRequestDto
+    LayoutDtoBase <|-- LayoutResponseDto
+    
+    LayoutDtoBase "1" --> "0..*" LayoutSlotDtoBase : uses
+    
+    LayoutSlotDtoBase <|-- LayoutSlotRequestDto
+    LayoutSlotRequestDto <|-- LayoutSlotRequestUpdateDto
+    
+    LayoutSlotDtoBase <|-- LayoutSlotResponseDto
+    
+    
+    
+    class ModuleDtoBase{
+        <<abstract>>
+        -name : String
+        -config : JsonNode
+    }
+    class ModuleRequestDto{
+    }
+    
+    class ModuleRequestUpdateDto{
+        -id : Long
+    }
+    class ModuleResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    ModuleDtoBase <|-- ModuleRequestDto
+    ModuleRequestDto <|-- ModuleRequestUpdateDto
+    ModuleDtoBase <|-- ModuleResponseDto
+    
+    LayoutSlotResponseDto "0..*" --> "0..1" ModuleResponseDto : uses
+    
+    
+    class AdContentDtoBase{
+        <<abstract>>
+        -name : String
+        -url : String
+    }
+    class AdContentRequestDto{
+    }
+    class AdContentRequestUpdateDto{
+        -id : Long
+    }
+    class AdContentResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    AdContentDtoBase <|-- AdContentRequestDto
+    AdContentRequestDto <|-- AdContentRequestUpdateDto
+    AdContentDtoBase <|-- AdContentResponseDto
+    
+    
+    class AdCollectionDtoBase~T~{
+        <<abstract>>
+        -name : String
+        -url : String
+        -adContents : List<T>
+    }
+    class AdCollectionRequestDto~T~{
+    }
+    class AdCollectionRequestUpdateDto{
+        -id : Long
+    }
+    class AdCollectionResponseDto{
+        -id : Long
+        -createdAt : LocalDateTime
+        -updatedAt : LocalDateTime
+    }
+    
+    AdCollectionDtoBase <|-- AdCollectionRequestDto
+    AdCollectionRequestDto <|-- AdCollectionRequestUpdateDto
+    AdCollectionDtoBase <|-- AdCollectionResponseDto
+    
+    AdCollectionDtoBase "0..*" --> "0..*" AdContentDtoBase : uses
+    
+    AdCollectionRequestUpdateDto "0..1"<--"0..*" ModuleRequestUpdateDto : uses
+    AdCollectionResponseDto "0..1"<--"0..*" ModuleResponseDto : uses
+    
+    
+    class AdContentTypeEnum{
+        <<enumeration>>
+        IMAGE
+        VIDEO
+    }
+    
+    AdContentTypeEnum "1" <-- "1..*" AdContentDtoBase : uses
+    
+    class ModuleTypeEnum{
+        WEATHER
+        CLOCK
+        ROTATING_AD
+    }
+    
+    ModuleTypeEnum "1" <-- "1..*" ModuleDtoBase : uses
+    
+    
+    
+```
+
+### Mapper UML
+
+```mermaid
+
+classDiagram
+    class AdContent{ }
+    class AdContentResponseDto { }
+    class AdContentMapper{
+        +toAdContentResponseDto(AdContent) AdContentResponseDto
+    }
+    
+    AdContentMapper ..> AdContent : uses(input)
+    AdContentMapper ..> AdContentResponseDto : creates(output)
+    
+    class AdCollection { }
+    class AdCollectionMapper{
+        +toAdCollectionResponseDto(AdCollection) AdCollectionResponseDto
+    }
+    
+    AdCollectionMapper ..> AdCollection : uses(input)
+    AdCollectionMapper ..> AdContentMapper : delegates to
+    AdCollectionMapper ..> AdCollectionResponseDto : creates(output)
+    
+    class Module { }
+    class ModuleResponseDto { }
+    class ModuleMapper{
+        -objectMapper : ObjectMapper
+        +toModuleResponseDto(Module) ModuleResponseDto
+    }
+    
+    ModuleMapper ..> Module : uses(input)
+    ModuleMapper ..> AdCollectionMapper : delegates to
+    ModuleMapper ..> ModuleResponseDto : creates(output)
+    
+    class LayoutResponseDto { }
+    class Layout { }
+    class LayoutSlot { }
+    class LayoutSlotResponseDto { }
+    class LayoutMapper{
+        +toLayoutResponseDto(Layout) LayoutResponseDto
+        +toLayoutSlotResponseDto(LayoutSlot)
+    }
+    
+    LayoutMapper ..> Layout : uses(input)
+    LayoutMapper ..> LayoutResponseDto : creates(output)
+    LayoutMapper ..> ModuleMapper : delegates to
+    LayoutMapper ..> LayoutSlot : uses(input)
+    LayoutMapper ..> LayoutSlotResponseDto : creates(output)
+
+```
+
+### Module Management System - Layered Architecture UML
+```mermaid
+
+classDiagram
+    class DomainRepository{
+        <<interface>>
+    }
+    class DomainCache{
+        -cache : HashMap
+        +init void
+        +refresh(String) void
+        +buildDomain(Enum) Domain
+        +validate(String, String) void
+    }
+
+    class Domain {
+        -id : Long
+        -type : String
+        -name : String
+        -alphaNumCode : String
+        -displayOrder : int
+    }
+    class InvalidDomainException {
+    }
+
+    DomainCache --> Domain : caches
+    DomainCache --> DomainRepository : access data (Domain)
+    DomainCache ..> InvalidDomainException : throws
+    
+    class ModuleController{
+        <<controller>>
+        
+        +getAllModuleById(Long)
+        +getAllModules()
+        +createModule(ModuleRequestDto)
+        +updateLayout(Long, ModuleRequestUpdate)
+        +deleteModule(Long id)
+        +deleteModules()
+    }
+    
+    class ModuleFacade{
+        +getAllModules() List
+        +getModuleById(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleController --> ModuleFacade : uses
+    
+    class ModuleService{
+        <<interface>>
+        +getAllModules List
+        +getModuleById(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleFacade --> ModuleService : delegates to
+    
+    class ModuleServiceImpl{
+        +getAllModules() List
+        +getModuleId(Long) ModuleResponseDto
+        +createModule(ModuleRequestDto) ModuleResponseDto
+        +updateModuleById(Long, ModuleRequestUpdateDto) ModuleResponseDto
+        +deleteModuleById(Long) void
+        +deleteAllModules() void
+    }
+    
+    ModuleServiceImpl ..|> ModuleService : implements
+    
+    
+    class ModuleRepository{
+        <<interface>>
+    }
+    class ModuleMapper{ }
+    class ModuleFactory{
+        +createModuleFromDto(ModuleRequestDto, Module) Module
+    }
+    
+    class AdCollectionRepository{
+        <<interface>>
+    }
+    class ObjectMapper{ }
+    
+    class ModuleValidator{
+        +validateType(ModuleRequestDto) void
+    }
+    
+    ModuleValidator --> DomainCache : validates using
+    ModuleValidator ..> InvalidDomainException : throws
+    
+    ModuleServiceImpl --> ModuleRepository : access data(Module)
+    ModuleServiceImpl --> ModuleFactory : creates module using
+    ModuleServiceImpl --> ModuleMapper : mapping
+    
+    ModuleFactory --> DomainCache : resolves domain
+    ModuleFactory --> ObjectMapper : converts to JSON
+    ModuleFactory --> AdCollectionRepository : access data(AdCollection)
+    
+    ModuleMapper --> ObjectMapper : parses config (to String)
+    
+    ModuleFacade --> ModuleValidator : validates
+
+```
+
+### AdCollection Management System : Layered Architecture UML
+```mermaid
+
+classDiagram
+    class AdCollectionController{
+        <<controller>>
+        +getAllAdCollectionById(Long)
+        +getAllAdCollections()
+        +createAdCollection(AdCollectionRequestDto)
+        +updateAdCollection(Long, AdCollectionRequestUpdateDto)
+        +deleteAdCollection(Long id)
+        +deleteAdCollections()
+    }
+    
+    class AdCollectionService{
+        <<interface>>
+        +getAllAdCollections() List
+        +getAdCollectionById(Long) AdCollectionResponseDto
+        +createAdCollection(AdCollectionRequestDto) AdCollectionResponseDto
+        +updateAdCollectionById(Long, AdCollectionRequestUpdateDto) AdCollectionResponseDto
+        +deleteAdCollectionById(Long)
+        +deleteAllAdCollections()
+    }
+    
+    AdCollectionController --> AdCollectionService  : uses
+
+
+
+    class AdCollectionServiceImpl{
+        +getAllAdCollections() List
+        +getAdCollectionById(Long) AdCollectionResponseDto
+        +createAdCollection(AdCollectionRequestDto) AdCollectionResponseDto
+        +updateAdCollectionById(Long, AdCollectionRequestUpdateDto) AdCollectionResponseDto
+        +deleteAdCollectionById(Long)
+        +deleteAllAdCollections()
+    }
+    
+    AdCollectionService <|.. AdCollectionServiceImpl : implements
+    
+    class AdCollectionMapper{ }
+    
+    AdCollectionServiceImpl --> AdCollectionMapper : mapping
+    
+    class AdContentRepository{
+        <<interface>>
+    }
+    class AdCollectionRepository{
+        <<interface>>
+    }
+
+    AdCollectionServiceImpl --> AdContentRepository : access data(AdContent)
+    AdCollectionServiceImpl --> AdCollectionRepository : access data(AdCollection)
+
+
+    class AdCollectionNotFoundException{ }
+    class AdContentNotFoundException{ }
+
+    AdCollectionServiceImpl ..> AdCollectionNotFoundException : throws
+    AdCollectionServiceImpl ..> AdContentNotFoundException : throws
+    
+
+```
+
+### AdContent Management System : Layered Architecture UML
+```mermaid
+
+classDiagram
+    class AdContentController{
+        <<controller>>
+        +getAdContentById(Long)
+        +getAllAdContents()
+        +createAdContent(AdContentRequestDto)
+        +updateAdContent(Long, AdContentRequestUpdateDto)
+        +deleteAdContent(Long id)
+        +deleteAdContents()
+    }
+    
+    class AdContentService{
+        <<interface>>
+        +getAllAdContents() List
+        +getAdContentById(Long) AdContentResponseDto
+        +createAdContent(AdCootentnRequestDto) AdContentResponseDto
+        +updateAdContentById(Long, AdContentRequestUpdateDto) AdContentResponseDto
+        +deleteAdContentById(Long)
+        +deleteAllAdContents()
+    }
+
+    AdContentController --> AdContentService  : uses
+
+
+
+    class AdContentServiceImpl{
+        +getAllAdContents() List
+        +getAdContentById(Long) AdContentResponseDto
+        +createAdContent(AdCootentnRequestDto) AdContentResponseDto
+        +updateAdContentById(Long, AdContentRequestUpdateDto) AdContentResponseDto
+        +deleteAdContentById(Long)
+        +deleteAllAdContents()
+    }
+
+    AdContentService <|.. AdContentServiceImpl : implements
+    
+    class AdContentMapper{ }
+
+    AdContentServiceImpl --> AdContentMapper : mapping
+    
+    class AdContentRepository{
+        <<interface>>
+    }
+    class DomainCache{ }
+
+    AdContentServiceImpl --> AdContentRepository : access data(AdContent)
+    AdContentServiceImpl --> DomainCache : validates
+    
+    
+    class InvalidDomainException{ }
+    class AdContentNotFoundException{ }
+    
+    AdContentServiceImpl ..> InvalidDomainException : throws
+    AdContentServiceImpl ..> AdContentNotFoundException : throws
+    
+    
+
+```
+
+
+### Layout Management System : Layered Architecture UML
+
+```mermaid
+classDiagram
+    class LayoutController{
+        <<controller>>
+        +getLayoutById(Long)
+        +getAllLayouts()
+        +createLayout(LayoutRequestDto)
+        +updateLayout(Long, LayoutRequestDto)
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +getLayoutSlotsByLayoutId(Long)
+    }
+    
+    class LayoutService{
+        <<interface>>
+        +getLayoutById(Long) LayoutResponseDto
+        +getAllLayouts List
+        +createLayout(LayoutRequestDto) LayoutResponseDto
+        +updateLayout(Long, LayoutRequestDto) LayoutResponseDto
+        +updateLayoutSlots(Long, List) LayoutResponseDto
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +addLayoutSlotToLayout(Long, LayoutSlotRequestDto) LayoutResponseDto
+        +removeLayoutSlotFromLayout(Long, Long) LayoutResponseDto
+        +layoutExist(Long) boolean
+        +layoutCount() long
+        +getAllLayoutSlotsByLayoutId(Long) List
+    }
+    
+    LayoutController --> LayoutService : uses
+
+
+
+    class LayoutServiceImpl{
+        +getLayoutById(Long) LayoutResponseDto
+        +getAllLayouts List
+        +createLayout(LayoutRequestDto) LayoutResponseDto
+        +updateLayout(Long, LayoutRequestDto) LayoutResponseDto
+        +updateLayoutSlots(Long, List) LayoutResponseDto
+        +deleteLayout(Long)
+        +deleteAllLayouts()
+        +addLayoutSlotToLayout(Long, LayoutSlotRequestDto) LayoutResponseDto
+        +removeLayoutSlotFromLayout(Long, Long) LayoutResponseDto
+        +layoutExist(Long) boolean
+        +layoutCount() long
+        +getAllLayoutSlotsByLayoutId(Long) List
+        
+        -validateLayoutSlot(boolean, LayoutSlotRequestDto) void
+        -validateLayout(boolean, LayoutRequestDto) void
+    }
+    
+    LayoutService <|.. LayoutServiceImpl  : implements
+
+
+    class LayoutRepository{
+        <<interface>>
+    }
+    class LayoutSlotRepository{
+        <<interface>>
+    }
+    
+    class LayoutMapper{ }
+    class ModuleRepository{
+        <<iterface>>
+    }
+
+    class LayoutNotFoundException{ }
+    class ModuleNotFoundException{ }
+    class InvalidLayoutSlotException{ }
+    
+    LayoutServiceImpl --> LayoutRepository : access data(Layout)
+    LayoutServiceImpl --> LayoutSlotRepository : access data(LayoutSlot)
+    LayoutServiceImpl --> ModuleRepository : access data(Module)
+    LayoutServiceImpl --> LayoutMapper : mapping
+    
+    LayoutServiceImpl ..> LayoutNotFoundException : throws
+    LayoutServiceImpl ..> ModuleNotFoundException : throws
+    LayoutServiceImpl ..> InvalidLayoutSlotException : throws
+    
+```
+
+### LayoutSlot Management System : Layered Architecture UML
+```mermaid
+classDiagram
+    class LayoutSlotController{
+        <<controller>>
+        +delete3SelectedLayouts(Long, LayoutRequestDto)
+        +deleteAllLayouts(Long)    
+    }  
+    
+    class LayoutSlotService{
+        <<interface>>
+        +deleteAllSlotsByLayoutId(Long) void
+        +deleteLayoutSlotsByLayoutId(Long layoutId, LayoutRequestDto) void
+    }
+    
+    LayoutSlotController --> LayoutSlotService : uses
+
+    class LayoutSlotServiceImpl{
+        +deleteAllSlotsByLayoutId(Long) void
+        +deleteLayoutSlotsByLayoutId(Long layoutId, LayoutRequestDto) void
+    }
+    
+    LayoutSlotService <|.. LayoutSlotServiceImpl  : implements
+    
+    class LayoutRepository{
+        <<interface>>
+    }
+    class LayoutSlotRepository{
+        <<interface>>
+    }
+    
+    class LayoutNotFoundException{ }
+    class InvalidLayoutSlotException{ }
+    
+    LayoutSlotServiceImpl --> LayoutRepository : access data(Layout)
+    LayoutSlotServiceImpl --> LayoutSlotRepository : access data(LayoutSlot)
+    LayoutSlotServiceImpl ..> LayoutNotFoundException : throws
+    LayoutSlotServiceImpl ..> InvalidLayoutSlotException : throws
+    
+```
+
+
+### Device Management System : Layered Architecture UML
+
+
+```mermaid
+classDiagram
+    class DeviceController{
+        <<controller>>
+        +getAllDevices()
+        +getDeviceById(Long)
+        +getDevicesByDeviceGroupId(Long)
+        +createDevice(Device)
+        +updateDevice(Long, Device)
+        +deleteDevice(Long)
+        +deleteAllDevices()
+    }
+    
+    class DeviceService{
+        <<interface>>
+        +getAllDevices() List
+        +getDeviceById(Long) Device
+        +getDevicesByDeviceGroupId(Long) List
+        +createDevice(Device) Device
+        +updateDevice(Long, Device) Device
+        +deleteDevice(Long) void
+        +deleteAllDevices() void
+    }
+    
+    DeviceController --> DeviceService : uses
+
+
+
+    class DeviceServiceImpl{
+        +getAllDevices() List
+        +getDeviceById(Long) Device
+        +getDevicesByDeviceGroupId(Long) List
+        +createDevice(Device) Device
+        +updateDevice(Long, Device) Device
+        +deleteDevice(Long) void
+        +deleteAllDevices() void
+        +findExistingDevice(Long) Device
+    }
+    
+    DeviceService <|.. DeviceServiceImpl : implements
+    
+    class DeviceRepository{
+        <<interface>>
+    }
+    
+    DeviceServiceImpl --> DeviceRepository : uses
+    
+    
+    class InvalidDeviceException{ }
+    class DeviceNotFoundException{ }
+
+
+    DeviceServiceImpl ..> InvalidDeviceException : throws
+    DeviceServiceImpl ..> DeviceNotFoundException : throws
+    
+```
+
+### DeviceGroup Management System : Layered Architecture UML
+
+```mermaid
+classDiagram
+    class DeviceGroupController{
+        <<controller>>
+        +getAllDeviceGroups()
+        +getDeviceGroupById(Long)
+        +createDeviceGroup(DeviceGroup)
+        +updateDeviceGroup(Long, DeviceGroup)
+        +deleteDeviceGroup(Long)
+        +deleteAllDeviceGroups()
+    }
+    
+    class DeviceGroupService{
+        <<interface>>
+        +getAllDeviceGroups() List
+        +getDeviceGroupById(Long) DeviceGroup
+        +createDeviceGroup(DeviceGroup) DeviceGroup
+        +updateDeviceGroup(Long, DeviceGroup) DeviceGroup
+        +deleteDeviceGroup(Long) boolean
+        +deleteAllDeviceGroups() void
+    }
+
+    DeviceGroupController --> DeviceGroupService : uses
+
+    class DeviceGroupServiceImpl{
+        +getAllDeviceGroups() List
+        +getDeviceGroupById(Long) DeviceGroup
+        +createDeviceGroup(DeviceGroup) DeviceGroup
+        +updateDeviceGroup(Long, DeviceGroup) DeviceGroup
+        +deleteDeviceGroup(Long) boolean
+        +deleteAllDeviceGroups() void
+    }
+
+    DeviceGroupService <|.. DeviceGroupServiceImpl : implements
+
+    class DeviceGroupRepository{
+        <<interface>>
+    }
+
+    DeviceGroupServiceImpl --> DeviceRGroupepository : uses
+    
+```
+
+
 ## API Endpoints
 
 ### Authentication

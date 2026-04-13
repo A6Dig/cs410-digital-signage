@@ -2,6 +2,7 @@ package com.a6dig.digitalsignage.service;
 
 import com.a6dig.digitalsignage.constant.AppConstant;
 import com.a6dig.digitalsignage.entity.Device;
+import com.a6dig.digitalsignage.exception.InvalidDeviceException;
 import com.a6dig.digitalsignage.exception.DeviceNotFoundException;
 import com.a6dig.digitalsignage.repository.DeviceGroupRepository;
 import com.a6dig.digitalsignage.repository.DeviceRepository;
@@ -40,6 +41,13 @@ public class DeviceServiceImpl implements DeviceService {
     @Override
     @Transactional
     public Device createDevice(Device device) {
+        if (device == null) {
+            throw new InvalidDeviceException(
+                    AppConstant.ExceptionMessage.Device.INVALID_DATA_PROVIDED,
+                    List.of(ErrorMessage.createErrorMessage("Device cannot be null"))
+            );
+        }
+
         return deviceRepository.save(device);
     }
 
@@ -48,8 +56,8 @@ public class DeviceServiceImpl implements DeviceService {
     public Device updateDevice(Long id, Device device) {
         Device existing = findExistingDevice(id);
 
-        if (device.getLayoutId() != null) {
-            existing.setLayoutId(device.getLayoutId());
+        if (device.getLayout() != null) {
+            existing.setLayout(device.getLayout());
         }
         if (device.getName() != null) {
             existing.setName(device.getName().trim());
@@ -57,8 +65,8 @@ public class DeviceServiceImpl implements DeviceService {
         if (device.getIpAddress() != null) {
             existing.setIpAddress(device.getIpAddress().trim());
         }
-        if (device.getDeviceGroupId() != null) {
-            existing.setDeviceGroupId(device.getDeviceGroupId());
+        if (device.getDeviceGroup() != null) {
+            existing.setDeviceGroup(device.getDeviceGroup());
         }
 
         return deviceRepository.save(existing);

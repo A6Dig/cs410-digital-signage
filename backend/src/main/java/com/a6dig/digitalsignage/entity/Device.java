@@ -13,11 +13,8 @@ public class Device {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "layoutId", nullable = false)
-    private Long layoutId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "layoutId", insertable = false, updatable = false)
+    @JoinColumn(name = "layoutId")
     private Layout layout;
 
     @Column(length = 50, nullable = false)
@@ -26,15 +23,12 @@ public class Device {
     @Column(nullable = false)
     private String ipAddress;
 
-    @Column(name = "deviceGroupId")
-    private Long deviceGroupId;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "deviceGroupId", insertable = false, updatable = false)
+    @JoinColumn(name = "deviceGroupId")
     @JsonIgnoreProperties({"devices"})
     private DeviceGroup deviceGroup;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
@@ -57,14 +51,6 @@ public class Device {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getLayoutId() {
-        return layoutId;
-    }
-
-    public void setLayoutId(Long layoutId) {
-        this.layoutId = layoutId;
     }
 
     public Layout getLayout() {
@@ -91,13 +77,6 @@ public class Device {
         this.ipAddress = ipAddress;
     }
 
-    public Long getDeviceGroupId() {
-        return deviceGroupId;
-    }
-
-    public void setDeviceGroupId(Long deviceGroupId) {
-        this.deviceGroupId = deviceGroupId;
-    }
 
     public DeviceGroup getDeviceGroup() {
         return deviceGroup;
