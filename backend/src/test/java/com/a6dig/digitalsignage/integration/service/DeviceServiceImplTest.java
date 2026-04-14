@@ -1,23 +1,24 @@
 package com.a6dig.digitalsignage.integration.service;
 
-
+import com.a6dig.digitalsignage.dto.DevicePairRequestDto;
+import com.a6dig.digitalsignage.dto.DevicePairResponseDto;
+import com.a6dig.digitalsignage.dto.DeviceRegistrationResponseDto;
+import com.a6dig.digitalsignage.dto.DeviceResponseDto;
+import com.a6dig.digitalsignage.dto.DeviceVerifyRegistrationRequestDto;
 import com.a6dig.digitalsignage.entity.Device;
-import com.a6dig.digitalsignage.entity.DeviceGroup;
-import com.a6dig.digitalsignage.entity.Layout;
-import com.a6dig.digitalsignage.repository.DeviceGroupRepository;
 import com.a6dig.digitalsignage.repository.DeviceRepository;
-import com.a6dig.digitalsignage.repository.LayoutRepository;
 import com.a6dig.digitalsignage.service.DeviceServiceImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Optional;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -25,74 +26,70 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class DeviceServiceImplTest {
 
     @Autowired
-    private DeviceGroupRepository deviceGroupRepository;
-
-    @Autowired
     private DeviceRepository deviceRepository;
 
     @Autowired
     private DeviceServiceImpl deviceService;
 
-    @Autowired
-    private LayoutRepository layoutRepository;
+    @BeforeEach
+    void cleanUp() {
+        deviceRepository.deleteAll();
+    }
 
-
-    // helper
-    private Device buildDevice(Long id
-            , Long layoutId
-            , Layout layout
-            , String name
-            , String ipAddress
-            , Long deviceGroupId
-            , DeviceGroup deviceGroup) {
-
+    private Device buildDevice(String name, String ipAddress) {
         Device device = new Device();
-        device.setLayout(layout);
         device.setName(name);
         device.setIpAddress(ipAddress);
-        device.setDeviceGroup(deviceGroup);
-
         return device;
-
     }
-
-    private void assertDevice(Device device
-                              , Long expectedLayoutId
-                              , Optional<Layout> expectedLayout
-                              , String expectedName
-                              , String expectedIpAddress
-                              , Long expectedDeviceGroupId
-                              , Optional<DeviceGroup> expectedDeviceGroup
-                              ) {
-        assertNotNull(device.getId());
-        assertEquals(expectedLayoutId, device.getLayout());
-        assertEquals(expectedLayout.map(Layout::getId).orElse(null)
-                , device.getLayout() != null ? device.getLayout().getId() : null);
-        assertEquals(expectedName, device.getName());
-        assertEquals(expectedIpAddress, device.getIpAddress());
-        assertEquals(expectedDeviceGroupId, device.getDeviceGroup());
-        assertEquals(expectedDeviceGroup.map(DeviceGroup::getId).orElse(null),
-                device.getDeviceGroup() != null ?
-                device.getDeviceGroup() : null);
-        assertNotNull(device.getCreatedAt());
-        assertNotNull(device.getUpdatedAt());
-    }
-
 
     @Test
     void shouldCreateDevice() {
-        Device request = this.buildDevice(null,
-                null
-                ,null
-                ,"New Device"
-                ,"101.0.0.1"
-                , null
-                , null);
+        DeviceResponseDto saved = deviceService.createDevice(buildDevice("New Device", "101.0.0.1"));
 
-
-        Device saved = this.deviceService.createDevice(request);
-        assertDevice(saved,null, Optional.empty(), "New Device", "101.0.0.1", null, Optional.empty());
-
+        assertNotNull(saved.getId());
+        assertEquals("New Device", saved.getName());
+        assertEquals("101.0.0.1", saved.getIpAddress());
+        assertNotNull(saved.getPairingId());
+        assertFalse(saved.getPaired());
+        assertEquals("OFFLINE", saved.getStatus());
+        assertNotNull(saved.getCreatedAt());
+        assertNotNull(saved.getUpdatedAt());
     }
 
+    @Test
+    void shouldRegisterAndVerifyPendingDevice() {
+        DeviceRegistrationResponseDto registration = deviceService.registerDevice("127.0.0.1");
+
+        assertNotNull(registration.getPairingId());
+
+        DeviceVerifyRegistrationRequestDto verifyRequest = new DeviceVerifyRegistrationRequestDto();
+        verifyRequest.setPairingId(registration.getPairingId());
+
+        DevicePairResponseDto verification = deviceService.verifyRegistration(verifyRequest);
+
+        assertNotNull(verification.getId());
+        assertEquals(registration.getPairingId(), verification.getPairingId());
+        assertFalse(verification.getPairing().getPaired());
+    }
+
+    @Test
+    void shouldPairRegisteredDevice() {
+        DeviceRegistrationResponseDto registration = deviceService.registerDevice("127.0.0.1");
+        Device registeredDevice = deviceRepository.findByPairingId(registration.getPairingId()).orElseThrow();
+
+        DevicePairRequestDto pairRequest = new DevicePairRequestDto();
+        pairRequest.setPairingId(registration.getPairingId());
+        pairRequest.setPaired(true);
+
+        DevicePairResponseDto response = deviceService.pairDevice(registeredDevice.getId(), pairRequest);
+
+        assertEquals(registeredDevice.getId(), response.getId());
+        assertEquals(registration.getPairingId(), response.getPairingId());
+        assertTrue(response.getPairing().getPaired());
+
+        Device savedDevice = deviceRepository.findById(registeredDevice.getId()).orElseThrow();
+        assertTrue(savedDevice.getPaired());
+        assertEquals("ONLINE", savedDevice.getStatus());
+    }
 }

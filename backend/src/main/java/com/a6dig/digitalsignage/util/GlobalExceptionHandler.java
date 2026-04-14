@@ -37,6 +37,13 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(PairingNotFoundException.class)
+    public ResponseEntity<APIResponse<Void>> handlePairingNotFound(PairingNotFoundException exception){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                APIResponse.notFound(exception.getMessage(), exception.getErrors())
+        );
+    }
+
     @ExceptionHandler(InvalidDeviceException.class)
     public ResponseEntity<APIResponse<Void>> handleInvalidDevice(InvalidDeviceException exception){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(

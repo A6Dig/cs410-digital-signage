@@ -23,6 +23,15 @@ public class Device {
     @Column(nullable = false)
     private String ipAddress;
 
+    @Column(unique = true, nullable = false)
+    private Long pairingId;
+
+    @Column(nullable = false)
+    private Boolean paired = false;
+
+    @Column(length = 20, nullable = false)
+    private String status = "OFFLINE";
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "deviceGroupId")
     @JsonIgnoreProperties({"devices"})
@@ -75,6 +84,30 @@ public class Device {
 
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
+    }
+
+    public Long getPairingId() {
+        return pairingId;
+    }
+
+    public void setPairingId(Long pairingId) {
+        this.pairingId = pairingId;
+    }
+
+    public Boolean getPaired() {
+        return paired;
+    }
+
+    public void setPaired(Boolean paired) {
+        this.paired = paired;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public DeviceGroup getDeviceGroup() {
