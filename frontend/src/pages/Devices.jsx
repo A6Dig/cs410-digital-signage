@@ -23,14 +23,10 @@ function Devices() {
     )
 }
 
-// Device Groups Section
 function DeviceGroups() {
     return(
         <div className="subpage">
-            <div className="section-header">
-                <h1>Device Groups</h1>
-                <button>New Group</button>
-            </div>
+            <h1>Device Groups</h1>
             
             <GroupCards />
         </div>
@@ -40,26 +36,16 @@ function DeviceGroups() {
 function GroupCards() {
     return(
         <div className="groupcard">
-            <div className="section-header">
-                <h3>Campus Center</h3>
-
-                <div className="groupcard-UI">
-                    <button>Edit</button>
-                    <button>Delete</button>
-                </div>
-            </div>
-            
-            {/* Card Information */}
+            <h3>Campus Center</h3>
             <p>2 devices | Layout: Campus Center Default</p>
         </div>
     )
 }
 
-// Devices Section
 function DeviceList(){
     return (
         <div className="subpage">
-            <div className="section-header">
+            <div className="thing">
                 <h1>Devices</h1>
                 <button>Add Device</button>
             </div>
@@ -73,27 +59,10 @@ function DeviceList(){
 function DeviceCards() {
     return(
         <div className="devicecard">
-            <div className="devices-header">
-                <h3>CC Main Lobby</h3>
+            <h3>Devices</h3>
 
-                <div className="devices-UI">
-                    <p>Online</p>
-
-                    <div>
-                        <button>View</button>
-                        <button>Edit</button>
-                        <button>Delete</button>
-                    </div>
-                </div>
-            </div>
-
-            {/* Card information */}
-            <p>Campus Center - Main Lobby</p>
-            <p>Group: Campus Center</p>
-            <p>Assigned Layout: Campus Center Default</p>
             
         </div>
-        
     )
 }
 

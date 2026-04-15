@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
-import '../styles/Dashboard.css'
+import '../styles/Dashboard.css';
 
 const NavIcon = ({ to, children, title }) => (
   <NavLink
