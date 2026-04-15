@@ -3,6 +3,7 @@ package com.a6dig.digitalsignage.integration.service;
 
 import com.a6dig.digitalsignage.entity.*;
 import com.a6dig.digitalsignage.entity.Module;
+import com.a6dig.digitalsignage.exception.DeviceNotFoundException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.repository.DeviceGroupRepository;
 import com.a6dig.digitalsignage.repository.DeviceRepository;
@@ -147,6 +148,8 @@ public class DeviceGroupServiceImplTest {
     }
 
 
+    // read
+
     @Test
     void shouldGetAllDeviceGroups() {
         DeviceGroup deviceGroup1 = this.buildDeviceGroup("Device Group 1", "Description 1", null, new ArrayList<>());
@@ -164,6 +167,8 @@ public class DeviceGroupServiceImplTest {
         DeviceGroup response = this.deviceGroupService.getDeviceGroupById(saved.getId());
         assertDeviceGroup(response, saved.getName(), saved.getDescription(), saved.getLayout(), saved.getDevices());
     }
+
+    // create
 
     @Test
     void shouldCreateDeviceGroupWithoutLayout() {
@@ -237,8 +242,144 @@ public class DeviceGroupServiceImplTest {
 
         Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
 
-        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", savedLayout, new ArrayList<>());
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", savedLayout, List.of(device));
+        this.deviceGroupService.createDeviceGroup(deviceGroup);
+        assertEquals(0, this.deviceRepository.findAll().size());
+    }
 
+    @Test
+    void shouldAssignExistingDeviceWhenCreateDeviceGroup() {
+        Layout layout = this.buildLayout("Layout", 1,1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+        Device savedDevice = this.deviceRepository.saveAndFlush(device);
+
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", null, List.of(savedDevice));
+        DeviceGroup saved = this.deviceGroupService.createDeviceGroup(deviceGroup);
+
+        assertDeviceGroup(saved, deviceGroup.getName(), deviceGroup.getDescription(), null, List.of(savedDevice));
+        assertEquals(1, this.deviceRepository.findAll().size());
+    }
+
+    @Test
+    @Transactional
+    void shouldNotUpdateExistingDeviceWhenCreateDeviceGroup() {
+        Layout layout = this.buildLayout("Layout", 1, 1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+        Device savedDevice = this.deviceRepository.saveAndFlush(device);
+
+        savedDevice.setName("Modified Device Name");
+
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", null, List.of(savedDevice));
+        DeviceGroup saved = this.deviceGroupService.createDeviceGroup(deviceGroup);
+
+        assertDeviceGroup(saved, deviceGroup.getName(), deviceGroup.getDescription(), null, List.of(savedDevice));
+
+        // verify the device's properties didn't get modified when using this service
+        Optional<Device> existingDevice = this.deviceRepository.findById(device.getId());
+
+        assertTrue(existingDevice.isPresent());
+        assertEquals("Device", existingDevice.get().getName());
+        assertEquals("101.0.0.1", existingDevice.get().getIpAddress());
+        assertEquals(savedDevice.getCreatedAt(), existingDevice.get().getCreatedAt());
+        assertEquals(savedDevice.getUpdatedAt(), existingDevice.get().getUpdatedAt());
+        assertEquals(saved.getId(), existingDevice.get().getDeviceGroup().getId());
+    }
+
+    @Test
+    void shouldThrowDeviceNotFoundWhenAssignedNonExistentDeviceWhenCreateDeviceGroup() {
+        Layout layout = this.buildLayout("Layout", 1, 1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(1L, savedLayout, "Device", "101.0.0.1", null);
+
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", null, List.of(device));
+
+        assertThrows(DeviceNotFoundException.class, () -> this.deviceGroupService.createDeviceGroup(deviceGroup));
+
+    }
+
+    // update
+
+    @Test
+    void shouldThrowWhenUpdateNonExistentDeviceGroup() {
+        Layout layout = this.buildLayout("Layout", 1, 1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+        Device savedDevice = this.deviceRepository.save(device);
+
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", null, List.of(device));
+
+        // replace runtime error with appropiate exception
+        assertThrows(RuntimeException.class, () -> this.deviceGroupService.updateDeviceGroup(1L, deviceGroup));
+    }
+
+    // TODO
+    // Write remaining tests for the update method
+
+
+    // delete
+
+    @Test
+    @Transactional
+    void shouldDeleteDeviceGroupById() {
+        Layout layout = this.buildLayout("Layout", 1,1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+        Device savedDevice = this.deviceRepository.save(device);
+
+
+        DeviceGroup deviceGroup1 = this.buildDeviceGroup("Device Group 1", "Description 1", null, List.of(device));
+        DeviceGroup savedDeviceGroup1 = this.deviceGroupService.createDeviceGroup(deviceGroup1);
+
+        DeviceGroup deviceGroup2 = this.buildDeviceGroup("Device Group 2", "Description 2", savedLayout, new ArrayList<>());
+        DeviceGroup savedDeviceGroup2 = this.deviceGroupService.createDeviceGroup(deviceGroup2);
+
+        assertEquals(2, this.deviceGroupRepository.findAll().size());
+        this.deviceGroupService.deleteDeviceGroup(deviceGroup1.getId());
+
+        List<DeviceGroup> deviceGroups = this.deviceGroupRepository.findAll();
+
+        assertEquals(1, deviceGroups.size());
+
+        assertDeviceGroup(deviceGroups.get(0), savedDeviceGroup2.getName(), savedDeviceGroup2.getDescription(), savedDeviceGroup2.getLayout(), savedDeviceGroup2.getDevices());
+
+        // should not delete assigned layouts
+        assertEquals(1, this.layoutRepository.findAll().size());
+
+        // should not delete assigned devices
+        assertEquals(1, this.deviceRepository.findAll().size());
+    }
+
+    @Test
+    void shouldDeleteAllDeviceGroups() {
+
+        Layout layout = this.buildLayout("Layout", 1, 1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+        Device savedDevice = this.deviceRepository.save(device);
+
+        DeviceGroup deviceGroup1 = this.buildDeviceGroup("Device Group 1", "Description 1", null, List.of(device));
+        DeviceGroup savedDeviceGroup1 = this.deviceGroupService.createDeviceGroup(deviceGroup1);
+
+        DeviceGroup deviceGroup2 = this.buildDeviceGroup("Device Group 2", "Description 2", savedLayout, new ArrayList<>());
+        DeviceGroup savedDeviceGroup2 = this.deviceGroupService.createDeviceGroup(deviceGroup2);
+
+        assertEquals(2, this.deviceGroupRepository.findAll().size());
+        this.deviceGroupService.deleteAllDeviceGroups();
+        assertEquals(0, this.deviceGroupRepository.findAll().size());
+
+        // should not delete assigned layouts
+        assertEquals(1, this.layoutRepository.findAll().size());
+
+        // should not delete assigned devices
+        assertEquals(1, this.deviceRepository.findAll().size());
     }
 
 
