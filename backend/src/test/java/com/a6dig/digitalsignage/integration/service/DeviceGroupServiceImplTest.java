@@ -230,15 +230,16 @@ public class DeviceGroupServiceImplTest {
         assertEquals(1, this.layoutRepository.findAll().size());
     }
 
-//    @Test
-//    void shouldCreateDeviceGroupWithDevicesWithoutSavingNewDevices() {
-//        Layout layout = this.buildLayout("Layout", 1, 1);
-//        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
-//
-//        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
-//
-//
-//    }
+    @Test
+    void shouldCreateDeviceGroupWithDevicesWithoutSavingNewDevices() {
+        Layout layout = this.buildLayout("Layout", 1, 1);
+        Layout savedLayout = this.layoutRepository.saveAndFlush(layout);
+
+        Device device = this.buildDevice(null, savedLayout, "Device", "101.0.0.1", null);
+
+        DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", savedLayout, new ArrayList<>());
+
+    }
 
 
 }
