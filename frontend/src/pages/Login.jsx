@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/login.css";
@@ -71,7 +70,7 @@ function Login() {
 
       if (result.success) {
         // FUTURE: Store auth token / update auth context before navigating
-        navigate("/canvas");
+        navigate("/dashboard");
       } else {
         setError(result.message);
       }
@@ -125,14 +124,3 @@ function Login() {
 }
 
 export default Login;
-=======
-function Login() {
-    return (
-        <div>
-            <h1>Login</h1>
-        </div>
-    )
-}
-
-export default Login
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
