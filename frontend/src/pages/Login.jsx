@@ -70,7 +70,7 @@ function Login() {
 
       if (result.success) {
         // FUTURE: Store auth token / update auth context before navigating
-        navigate("/canvas");
+        navigate("/dashboard");
       } else {
         setError(result.message);
       }

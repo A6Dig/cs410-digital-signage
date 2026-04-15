@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard'
 import Devices from './pages/Devices'
 import Layouts from './pages/Layouts'
 import Login from './pages/Login'
+import Canvas from './pages/Canvas'
 
 function App() {
     return (
@@ -17,7 +18,7 @@ function App() {
                 <Route path="/content" element={<Content />} />
                 <Route path="/devices" element={<Devices />} />
                 <Route path="/layouts" element={<Layouts />} />
-                
+                <Route path="/canvas" element={<Canvas />} />
             </Routes>
         </BrowserRouter>
         
