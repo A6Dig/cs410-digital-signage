@@ -1,9 +1,10 @@
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import Toolbar from "../components/Toolbar";
 import SlidesPanel from "../components/SlidesPanel";
 import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
+import { layoutService } from "../api/layoutService";
 import "../styles/canvas.css";
 
 // ===== Layout Definitions =====
@@ -55,15 +56,69 @@ function createSlide(layout = "single") {
   };
 }
 
+// Grid dimensions the backend expects per LayoutDtoBase (cols/rows ints).
+// The frontend's named layouts are mapped to a coarse 12x8 grid so each
+// section becomes a LayoutSlotRequestDto with colPos/rowPos/colSpan/rowSpan.
+const GRID_COLS = 12;
+const GRID_ROWS = 8;
+
+// Maps a frontend slide to the backend LayoutRequestDto<LayoutSlotRequestDto>
+// shape documented in backend/src/main/java/com/a6dig/digitalsignage/dto/.
+function slideToLayoutRequest(slide, index) {
+  const count = slide.sections.length || 1;
+  const colSpan = Math.max(1, Math.floor(GRID_COLS / count));
+  return {
+    name: `${slide.layout}-${index + 1}`,
+    cols: GRID_COLS,
+    rows: GRID_ROWS,
+    slots: slide.sections.map((sec, i) => ({
+      // PENDING BACKEND SUPPORT: moduleId must reference an existing Module
+      // (see ModuleController). Until modules are created from the UI we
+      // send 0 as a placeholder; the backend will reject this until real
+      // module ids are wired through.
+      moduleId: 0,
+      colPos: i * colSpan,
+      rowPos: 0,
+      colSpan,
+      rowSpan: GRID_ROWS,
+      zIndex: 0,
+    })),
+  };
+}
+
 // ===== Canvas Page — Main Editor =====
 function Canvas() {
   const navigate = useNavigate();
 
-  // FUTURE: Load slides from API on mount
-  // useEffect(() => { fetch("/api/slides").then(...) }, []);
   const [slides, setSlides] = useState([createSlide("two-columns")]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
+  const [loadError, setLoadError] = useState("");
+  const [saveStatus, setSaveStatus] = useState("");
+
+  // Fetch existing layouts on mount so the editor reflects persisted state.
+  // The backend returns LayoutResponseDto { id, name, cols, rows, slots, ... }.
+  // PENDING BACKEND SUPPORT: the backend Layout model is a grid of slots,
+  // not a sequence of slides. For now we load the list only to prove the
+  // connection and surface errors; individual slide editing still runs on
+  // local state until a slide/layout mapping is agreed with the backend.
+  useEffect(() => {
+    let cancelled = false;
+    layoutService
+      .list()
+      .then((layouts) => {
+        if (cancelled) return;
+        // eslint-disable-next-line no-console
+        console.log("Fetched layouts from backend:", layouts);
+      })
+      .catch((err) => {
+        if (cancelled) return;
+        setLoadError(err.message || "Failed to load layouts");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const currentSlide = slides[currentSlideIndex];
 

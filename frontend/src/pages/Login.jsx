@@ -1,46 +1,7 @@
-<<<<<<< HEAD
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { login as loginRequest } from "../api/authService";
 import "../styles/login.css";
-
-// Mock user for dummy authentication
-const mockUser = {
-  username: "admin",
-  password: "1234",
-};
-
-/**
- * Authenticate against mock data.
- *
- * FUTURE: Replace the body of this function with a real API call:
- *
- *   const response = await fetch("http://localhost:5000/api/login", {
- *     method: "POST",
- *     headers: { "Content-Type": "application/json" },
- *     body: JSON.stringify({ username, password }),
- *   });
- *
- *   if (!response.ok) {
- *     const err = await response.json();
- *     return { success: false, message: err.message };
- *   }
- *
- *   const data = await response.json();
- *
- *   // Store JWT token for subsequent requests
- *   // localStorage.setItem("token", data.token);
- *
- *   return { success: true };
- */
-async function loginUser(username, password) {
-  // Simulate network delay
-  await new Promise((resolve) => setTimeout(resolve, 600));
-
-  if (username === mockUser.username && password === mockUser.password) {
-    return { success: true };
-  }
-  return { success: false, message: "Invalid username or password" };
-}
 
 function Login() {
   const navigate = useNavigate();
@@ -67,16 +28,14 @@ function Login() {
     setLoading(true);
 
     try {
-      const result = await loginUser(username.trim(), password.trim());
-
-      if (result.success) {
-        // FUTURE: Store auth token / update auth context before navigating
-        navigate("/canvas");
-      } else {
-        setError(result.message);
-      }
-    } catch {
-      setError("Something went wrong. Please try again.");
+      const user = await loginRequest(username.trim(), password.trim());
+      // PENDING BACKEND SUPPORT: no /login endpoint exists yet, so the
+      // authService resolves the user via GET /api/users without verifying
+      // the password. Persist the returned user so other pages can read it.
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      navigate("/canvas");
+    } catch (err) {
+      setError(err.message || "Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -125,14 +84,4 @@ function Login() {
 }
 
 export default Login;
-=======
-function Login() {
-    return (
-        <div>
-            <h1>Login</h1>
-        </div>
-    )
-}
 
-export default Login
->>>>>>> 28ec52b383dd2e358d2e5711391f9e0f9f3feb92
