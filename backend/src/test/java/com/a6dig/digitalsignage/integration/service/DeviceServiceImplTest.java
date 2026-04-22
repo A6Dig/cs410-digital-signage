@@ -85,7 +85,6 @@ public class DeviceServiceImplTest {
         device.setName(name);
         device.setIpAddress(ipAddress);
         device.setDeviceGroup(deviceGroup);
-        device.setDeviceGroup(deviceGroup);
 
         return device;
 
