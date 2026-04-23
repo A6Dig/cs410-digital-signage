@@ -9,7 +9,7 @@ const SLIDESHOW_IMAGES = [
   "https://placehold.co/400x200/dcfce7/22c55e?text=Slide+3",
 ];
 
-function Section({ section, isSelected, onSelect }) {
+function Section({ section, isSelected, onSelect, slotKey }) {
   const sectionRef = useRef(null);
   const [flexPercent, setFlexPercent] = useState(null);
 
@@ -86,7 +86,7 @@ function Section({ section, isSelected, onSelect }) {
     <div
       ref={sectionRef}
       className={`section ${isSelected ? "selected" : ""}`}
-      onClick={() => onSelect(section.id)}
+      onClick={() => onSelect(slotKey)}
       style={inlineStyle}
     >
       {section.content ? (

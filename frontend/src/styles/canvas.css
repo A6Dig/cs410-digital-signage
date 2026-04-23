@@ -301,6 +301,8 @@
   position: relative;
   overflow: hidden;
   box-sizing: border-box;
+  border: 1px solid #eee;
+  background: #ffffff;
 }
 
 .section-content {
@@ -458,4 +460,17 @@
   border-color: #3b82f6;
   background: #dbeafe;
   box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+
+
+
+/**
+test
+*/
+
+.layout-grid-test{
+    display: grid;
+    width: 100%;
+    height: 100%;
 }

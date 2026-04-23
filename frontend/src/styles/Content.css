@@ -1,0 +1,22 @@
+.content-page {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  height: 100%;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.content-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.content-sub {
+  font-size: 13px;
+  color: #666;
+  margin: 0;
+}
+

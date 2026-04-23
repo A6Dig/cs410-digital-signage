@@ -41,16 +41,32 @@ public class LayoutController {
     }
 
     // update
+//
+//    @PutMapping({"/{id}", "/{id}/slots"})
+//    @PostMapping("/{id}/slots")
+//    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
+//        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
+//        return ResponseEntity.status(HttpStatus.CREATED).body(
+//                APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
+//        );
+//    }
 
     @PutMapping({"/{id}", "/{id}/slots"})
-    @PostMapping("/{id}/slots")
-    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout1(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
         LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(
                 APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
         );
     }
 
+
+    @PostMapping("/{id}/slots")
+    public ResponseEntity<APIResponse<LayoutResponseDto<LayoutSlotResponseDto>>> updateLayout2(@PathVariable Long id, @RequestBody LayoutRequestDto<LayoutSlotRequestUpdateDto> request) {
+        LayoutResponseDto<LayoutSlotResponseDto> dto = this.layoutService.updateLayout(id, request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+                APIResponse.success(AppConstant.SuccessMessage.LAYOUT_UPDATED,dto)
+        );
+    }
 
     // delete
     @DeleteMapping("/{id}")
@@ -67,7 +83,7 @@ public class LayoutController {
 
     // layout slots
 
-    @GetMapping("/api/layouts/{id}/slots")
+    @GetMapping("/{id}/slots")
     public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getLayoutSlotsByLayoutId(@PathVariable(name = "id") Long layoutId) {
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
     }
