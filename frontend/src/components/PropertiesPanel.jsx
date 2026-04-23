@@ -2,7 +2,7 @@
 
 const CONTENT_TYPES = ["text", "image", "video", "slideshow", "weather"];
 
-function PropertiesPanel({ section, onUpdate }) {
+function PropertiesPanel({ section, sectionKey, onUpdate }) {
   if (!section) {
     return (
       <div className="properties-panel">
@@ -17,7 +17,7 @@ function PropertiesPanel({ section, onUpdate }) {
 
   const handleTypeChange = (e) => {
     // Reset content when switching types
-    onUpdate(section.id, { contentType: e.target.value, content: "" });
+    onUpdate(sectionKey, { contentType: e.target.value, content: "" });
   };
 
   const handleContentChange = (e) => {

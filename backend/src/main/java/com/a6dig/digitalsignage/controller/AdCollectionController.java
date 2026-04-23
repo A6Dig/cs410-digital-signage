@@ -45,7 +45,7 @@ public class AdCollectionController {
     // update
 
     @PutMapping("/{id}")
-    public ResponseEntity<APIResponse<AdCollectionResponseDto>> updatedAdCollection(@PathVariable Long id, @RequestBody AdCollectionRequestUpdateDto dto) {
+    public ResponseEntity<APIResponse<AdCollectionResponseDto>> updatedLayout(@PathVariable Long id, @RequestBody AdCollectionRequestUpdateDto dto) {
         AdCollectionResponseDto responseDto = this.adCollectionService.updateAdCollectionById(id, dto);
         return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(AppConstant.SuccessMessage.AdCollection.UPDATED, responseDto));
     }
