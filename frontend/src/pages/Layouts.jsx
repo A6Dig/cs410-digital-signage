@@ -90,7 +90,7 @@ function Layouts() {
                 </div>
                 <div className="layouts-card-footer">
                   <div>
-                    <div className="layouts-card-name">{l.name}</div>
+                    <div className="layouts-card-name">{l.name.includes('::') ? l.name.split('::')[0] : l.name}</div>
                   </div>
                   <div className="layouts-card-actions">
                     <button className="layouts-action-btn" onClick={() => navigate(`/canvas?layoutId=${l.id}`)}>
