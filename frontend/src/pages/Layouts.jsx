@@ -90,7 +90,12 @@ function Layouts() {
                 </div>
                 <div className="layouts-card-footer">
                   <div>
-                    <div className="layouts-card-name">{l.name.includes('::') ? l.name.split('::')[0] : l.name}</div>
+                    <div className="layouts-card-name">{l.name.includes('::') ? l.name.split('::')[0].replace(/\[\d+\]$/, '') : l.name}</div>
+                    {l.slots && l.slots.length > 0 && (
+                      <div style={{ fontSize: '0.7rem', color: '#888', marginTop: 2 }}>
+                        {new Set(l.slots.map(s => Math.floor((s.rowPos - 1) / 100))).size} slide(s)
+                      </div>
+                    )}
                   </div>
                   <div className="layouts-card-actions">
                     <button className="layouts-action-btn" onClick={() => navigate(`/canvas?layoutId=${l.id}`)}>

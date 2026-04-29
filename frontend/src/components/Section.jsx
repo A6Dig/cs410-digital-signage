@@ -9,7 +9,7 @@ const SLIDESHOW_IMAGES = [
   "https://placehold.co/400x200/dcfce7/22c55e?text=Slide+3",
 ];
 
-function Section({ section, isSelected, onSelect, slotKey }) {
+function Section({ section, isSelected, onSelect, slotKey, gridStyle = {} }) {
   const sectionRef = useRef(null);
   const [flexPercent, setFlexPercent] = useState(null);
 
@@ -79,8 +79,8 @@ function Section({ section, isSelected, onSelect, slotKey }) {
   }, []);
 
   const inlineStyle = flexPercent != null
-    ? { flex: `0 0 ${flexPercent}%`, overflow: "hidden" }
-    : { overflow: "hidden" };
+    ? { flex: `0 0 ${flexPercent}%`, overflow: "hidden", ...gridStyle }
+    : { overflow: "hidden", ...gridStyle };
 
   return (
     <div

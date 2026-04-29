@@ -2,17 +2,8 @@ import Section from "./Section";
 
 // ===== LayoutRenderer — renders sections according to the selected layout =====
 
-function LayoutRenderer({ layout, slots, selectedSectionId, onSelectSection, rows, cols, ads}) {
+function LayoutRenderer({ layout, slots, selectedSectionId, onSelectSection, rows, cols, gridSlots }) {
   const getSlotKey = (slot) => slot.id ?? `${slot.rowPos}-${slot.colPos}`;
-//   const renderSection = (slots) => (
-//     <Section
-//       key={getSlotKey(slots)}
-//       section={slots}
-//       slotKey={getSlotKey(slots)}
-//       isSelected={slots.dummyKey === selectedSectionId}
-//       onSelect={onSelectSection}
-//     />
-//   );
 
   return (
       <div
@@ -22,15 +13,24 @@ function LayoutRenderer({ layout, slots, selectedSectionId, onSelectSection, row
             gridTemplateRows: `repeat(${rows}, 1fr)`,
           }}
         >
-          {slots.map((slot) => (
-            <Section
-              key={getSlotKey(slot)}
-              section={slot}
-              slotKey={getSlotKey(slot)}
-              isSelected={getSlotKey(slot) === selectedSectionId}
-              onSelect={onSelectSection}
-            />
-          ))}
+          {slots.map((slot, index) => {
+            const gridInfo = gridSlots[index];
+            const gridStyle = gridInfo ? {
+              gridColumn: `${gridInfo.colPos} / span ${gridInfo.colSpan}`,
+              gridRow: `${gridInfo.rowPos} / span ${gridInfo.rowSpan}`,
+            } : {};
+
+            return (
+              <Section
+                key={getSlotKey(slot)}
+                section={slot}
+                slotKey={getSlotKey(slot)}
+                isSelected={getSlotKey(slot) === selectedSectionId}
+                onSelect={onSelectSection}
+                gridStyle={gridStyle}
+              />
+            );
+          })}
       </div>
     );
 
