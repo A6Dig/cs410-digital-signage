@@ -1039,7 +1039,7 @@ classDiagram
 ```
 
 
-## API Endpoints
+## API Endpoints 
 
 ### Authentication
 <table>
@@ -1089,6 +1089,14 @@ classDiagram
             </ul>
         </td>
     </tr>
+    <tr>
+        <td>POST</td><td>/api/devices/{id}/pair</td>
+        <td>
+            <ul>
+                <li>Admin confirms the device pairing.</li>
+            </ul>
+        </td>
+    </tr>
 </table>
 
 
@@ -1099,12 +1107,12 @@ classDiagram
 RESPONSE 201
 ```json
 {
-    "status": 200,
-    "message": "",
-    "data": {
-                "pairingId": 1
-            },
-    "errors":[]
+  "status": 201,
+  "message": "Device registered successfully",
+  "data": {
+    "pairingId": 459963
+  },
+  "errors": []
 }
 ```
 
@@ -1130,20 +1138,23 @@ RESPONSE 500
 REQUEST
 ```json
 {
-    "pairingId": 1
-    
+  "pairingId": 459963
 }
 ```
 RESPONSE 200
 ```json
 {
-    "status": 200,
-    "message": "Device already paired",
-    "data": {
-                "id": 1,
-                "paired": true
-            },
-    "errors":[]
+  "status": 200,
+  "message": "Device already paired",
+  "data": {
+    "id": 1,
+    "pairingId": 459963,
+    "pairing": {
+      "id": 1,
+      "paired": true
+    }
+  },
+  "errors": []
 }
 
 ```
@@ -1151,24 +1162,90 @@ RESPONSE 200
 RESPONSE 200
 ```json
 {
-    "status": 200,
-    "message": "Pending device pairing",
-    "data": {
-                "id": 1,
-                "paired": false
-            },
-    "errors":[]
+  "status": 200,
+  "message": "Pending device pairing",
+  "data": {
+    "id": 1,
+    "pairingId": 459963,
+    "pairing": {
+      "id": 1,
+      "paired": false
+    }
+  },
+  "errors": []
 }
 ```
 RESPONSE 404
 ```json
 {
-    "status": 404,
-    "message": "Pairing id not found",
+  "status": 404,
+  "message": "Pairing id not found",
+  "data": null,
+  "errors": [
+    {
+      "error": "Pairing id with 4599631 doesn't exist"
+    }
+  ]
+}
+
+```
+
+RESPONSE 500
+```json
+{
+    "status": 500,
+    "message": "Internal server error",
     "data": null,
     "errors":[
-        {"error": "Pairing id with 1 doesn't exist"}
+        {"error": "Unexpected error occurred"}
     ]
+}
+```
+</details>
+
+
+
+
+
+<details>
+    <summary><b>PATCH</b> /api/devices/1/pair</summary>
+
+REQUEST
+```json
+{
+  "pairingId": 459963,
+  "paired": true
+}
+```
+RESPONSE 200
+```json
+{
+  "status": 200,
+  "message": "Device paired successfully",
+  "data": {
+    "id": 1,
+    "pairingId": 459963,
+    "pairing": {
+      "id": 1,
+      "paired": true
+    }
+  },
+  "errors": []
+}
+
+```
+
+RESPONSE 404
+```json
+{
+  "status": 404,
+  "message": "Pairing id not found",
+  "data": null,
+  "errors": [
+    {
+      "error": "Pairing id with 4599631 doesn't exist"
+    }
+  ]
 }
 
 ```
