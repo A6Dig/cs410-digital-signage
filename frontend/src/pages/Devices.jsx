@@ -67,6 +67,10 @@ function GroupCards() {
 function DeviceList({ devices, setDevices }){
     const [showModal, setShowModal] = useState(false);
     
+    function handleDelete(id) {
+        setDevices(devices.filter(device => device.id !== id));
+    }
+    
     return (
         <div className="subpage">
             <div className="section-header">
@@ -74,7 +78,7 @@ function DeviceList({ devices, setDevices }){
                 <button onClick={() => setShowModal(true)}>Add Device</button>
             </div>
 
-            {devices.map(device => (<DeviceCard key={device.id} device={device} />))}
+            {devices.map(device => (<DeviceCard key={device.id} device={device} onDelete={handleDelete}/>))}
             {showModal && (
                 <NewDeviceModal
                     onClose={() => setShowModal(false)}
@@ -89,7 +93,7 @@ function DeviceList({ devices, setDevices }){
     )
 }
 
-function DeviceCard({ device }) {
+function DeviceCard({ device, onDelete }) {
     return (
         <div className="card">
             <div className="card-header">
@@ -97,7 +101,7 @@ function DeviceCard({ device }) {
                 <div className="card-UI">
                     <button>View</button>
                     <button>Edit</button>
-                    <button>Delete</button>
+                    <button onClick={() => onDelete(device.id)}>Delete</button>
                 </div>
             </div>
             <p>Pairing ID: {device.pairingId}</p>
@@ -110,7 +114,7 @@ function NewGroupModal({ onClose }) {
     const [description, setDescription] = useState('');
 
     function handleSubmit() {
-        // POST to backend will go here later
+
         console.log({ name, description });
         onClose();
     }
@@ -148,26 +152,29 @@ function NewDeviceModal({ onClose, onAdd }) {
     const [pairingId, setPairingId] = useState('');
 
     function handleSubmit() {
-        if (!name || !pairingId) return; // basic validation
-        onAdd({ id: Date.now(), name, pairingId }); // temporary id until backend is connected
+        if (!name || !pairingId) return;
+        onAdd({ id: Date.now(), name, pairingId });
     }
 
     return (
         <div className="modal-overlay" onClick={onClose}>
-            <div className="modal" onClick={e => e.sstopPropagation()}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
                 <h2>Add Device</h2>
                 <label>Device Name</label>
+
                 <input
                     value={name}
                     onChange={e => setName(e.target.value)}
                     placeholder="Device name"
                 />
+                
                 <label>Pairing ID</label>
                 <input
                     value={pairingId}
                     onChange={e => setPairingId(e.target.value)}
                     placeholder="Pairing ID"
                 />
+                
                 <div className="modal-buttons">
                     <button onClick={onClose}>Cancel</button>
                     <button onClick={handleSubmit}>Add</button>
