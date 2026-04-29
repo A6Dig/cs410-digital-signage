@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Toolbar from "../components/Toolbar";
 import SlidesPanel from "../components/SlidesPanel";
@@ -7,369 +7,458 @@ import PropertiesPanel from "../components/PropertiesPanel";
 import "../styles/canvas.css";
 
 // ===== Layout Definitions =====
-// Maps each layout name to its default sections
-// const LAYOUT_TEMPLATES = {
-//   single: [{ id: 1, contentType: "text", content: "" }],
-//   "two-columns": [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//   ],
-//   "header-two-columns": [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//     { id: 3, contentType: "text", content: "" },
-//   ],
-//   grid: [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//     { id: 3, contentType: "text", content: "" },
-//     { id: 4, contentType: "text", content: "" },
-//   ],
-//   "right-column": [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//     { id: 3, contentType: "text", content: "" },
-//     { id: 4, contentType: "text", content: "" },
-//   ],
-//   "bottom-row": [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//     { id: 3, contentType: "text", content: "" },
-//     { id: 4, contentType: "text", content: "" },
-//   ],
-//   "six-section-grid": [
-//     { id: 1, contentType: "text", content: "" },
-//     { id: 2, contentType: "text", content: "" },
-//     { id: 3, contentType: "text", content: "" },
-//     { id: 4, contentType: "text", content: "" },
-//     { id: 5, contentType: "text", content: "" },
-//     { id: 6, contentType: "text", content: "" },
-//   ],
-// };
+const LAYOUT_TEMPLATES = {
+  single: [{ id: 1, contentType: "text", content: "" }],
+  "two-columns": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+  ],
+  "header-two-columns": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+  ],
+  grid: [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+  ],
+  "right-column": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+  ],
+  "bottom-row": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+  ],
+  "six-section-grid": [
+    { id: 1, contentType: "text", content: "" },
+    { id: 2, contentType: "text", content: "" },
+    { id: 3, contentType: "text", content: "" },
+    { id: 4, contentType: "text", content: "" },
+    { id: 5, contentType: "text", content: "" },
+    { id: 6, contentType: "text", content: "" },
+  ],
+};
 
-// Helper to create a fresh slide
-// function createSlide(layout = "single") {
-//   return {
-//     layout,
-//     sections: LAYOUT_TEMPLATES[layout].map((s) => ({ ...s })),
-//   };
-// }
+// Backend grid mapping (1-indexed positions as required by backend validation)
+const TEMPLATE_GRID_MAP = {
+  single: {
+    cols: 1,
+    rows: 1,
+    slots: [{ colPos: 1, rowPos: 1, colSpan: 1, rowSpan: 1 }],
+  },
+  "two-columns": {
+    cols: 2,
+    rows: 1,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 1, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+  "header-two-columns": {
+    cols: 2,
+    rows: 2,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 2, rowSpan: 1 },
+      { colPos: 1, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 2, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+  grid: {
+    cols: 2,
+    rows: 2,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 1, colSpan: 1, rowSpan: 1 },
+      { colPos: 1, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 2, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+  "right-column": {
+    cols: 2,
+    rows: 3,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 1, rowSpan: 3 },
+      { colPos: 2, rowPos: 1, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 3, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+  "bottom-row": {
+    cols: 3,
+    rows: 2,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 3, rowSpan: 1 },
+      { colPos: 1, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 3, rowPos: 2, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+  "six-section-grid": {
+    cols: 3,
+    rows: 3,
+    slots: [
+      { colPos: 1, rowPos: 1, colSpan: 2, rowSpan: 2 },
+      { colPos: 3, rowPos: 1, colSpan: 1, rowSpan: 1 },
+      { colPos: 3, rowPos: 2, colSpan: 1, rowSpan: 1 },
+      { colPos: 1, rowPos: 3, colSpan: 1, rowSpan: 1 },
+      { colPos: 2, rowPos: 3, colSpan: 1, rowSpan: 1 },
+      { colPos: 3, rowPos: 3, colSpan: 1, rowSpan: 1 },
+    ],
+  },
+};
 
-// ===== Canvas Page — Main Editor =====
-function Canvas() {
-    const [layout, setLayout] = useState({
-        name:"Main Layout",
-        cols: 1,
-        rows: 1,
-        id: null,
-        slots: [
-            {id: null, colPos: 1, rowPos: 1, colSpan: 1, rowSpan: 1, zIndex: 1}
-        ]
+function detectTemplate(cols, rows, slotCount) {
+  if (cols === 1 && rows === 1) return "single";
+  if (cols === 2 && rows === 1) return "two-columns";
+  if (cols === 2 && rows === 2 && slotCount === 3) return "header-two-columns";
+  if (cols === 2 && rows === 2) return "grid";
+  if (cols === 2 && rows === 3) return "right-column";
+  if (cols === 3 && rows === 2) return "bottom-row";
+  if (cols === 3 && rows === 3) return "six-section-grid";
+  return "single";
+}
 
-      });
-
-  const [searchParams] = useSearchParams();
-  const layoutId = searchParams.get("layoutId");
-  const [loading, setLoading] = useState(true);
-  const hasFetched = useRef(false);
-
-
-  const handleSave = async () => {
-    try {
-    console.log(JSON.stringify(layout))
-     const res = await fetch(`/api/layouts/${layoutId}/slots`, {
-       method: "POST",
-       headers: {
-         "Content-Type": "application/json",
-       },
-       body: JSON.stringify(layout),
-     });
-
-     if (!res.ok) {
-       throw new Error("Failed to save slot");
-     }
-
-     const data = await res.json();
-     return data;
-    } catch (err) {
-     console.error("Slot save error:", err);
-     return null;
-    }
+function parseLayoutName(name) {
+  if (!name) return { displayName: "", template: null };
+  const idx = name.lastIndexOf("::");
+  if (idx === -1) return { displayName: name, template: null };
+  return {
+    displayName: name.substring(0, idx),
+    template: name.substring(idx + 2),
   };
+}
 
-  useEffect(() => {
-      if (hasFetched.current) return;
-      if (!layoutId) return;
+// Layout.name is VARCHAR(50) — keep the encoded name within that limit
+function encodeLayoutName(displayName, template) {
+  const suffix = `::${template}`;
+  const maxDisplayLen = 50 - suffix.length;
+  const truncated =
+    displayName.length > maxDisplayLen
+      ? displayName.substring(0, maxDisplayLen)
+      : displayName;
+  return `${truncated}${suffix}`;
+}
 
-      hasFetched.current = true;
+function createSlide(layout = "single") {
+  return {
+    layout,
+    sections: LAYOUT_TEMPLATES[layout].map((s) => ({ ...s })),
+  };
+}
 
-      fetch(`/api/layouts/${layoutId}`)
-        .then(r => r.json())
-        .then(res => {
-          const data = res.data || {};
-
-          setLayout(prev => ({
-            ...prev,
-            id: data.id ?? prev.id,
-            cols: data.cols ?? prev.cols,
-            rows: data.rows ?? prev.rows,
-            slots: Array.isArray(data.slots) && data.slots.length
-              ? data.slots
-              : buildSlots(data.rows ?? prev.rows, data.cols ?? prev.cols),
-          }));
-        })
-        .finally(() => setLoading(false));
-    }, [layoutId]);
-
-    const buildSlots = (rows, cols, prevSlots = []) => {
-      const map = new Map();
-      prevSlots.forEach((s) => {
-        map.set(`${s.rowPos}-${s.colPos}`, s);
-      });
-
-      const slots = [];
-
-      for (let r = 1; r <= rows; r++) {
-        for (let c = 1; c <= cols; c++) {
-          const key = `${r}-${c}`;
-          slots.push(
-            map.get(key) || {
-              id: null,
-              rowPos: r,
-              colPos: c,
-              rowSpan: 1,
-              colSpan: 1,
-              zIndex: 1,
-              contentType: "text",
-              content: ""
-            }
-          );
-        }
-      }
-
-      return slots;
-    };
-  const addRow = useCallback(() => {
-      setLayout((prev) => {
-        const rows = prev.rows + 1;
-        return {
-          ...prev,
-          rows,
-          slots: buildSlots(rows, prev.cols, prev.slots),
-        };
-      });
-
-  },[]);
-
-  const removeRow = useCallback(() => {
-      setLayout((prev) => {
-        if (prev.rows <= 1) return prev;
-
-        const rows = prev.rows - 1;
-
-        return {
-          ...prev,
-          rows,
-          slots: buildSlots(rows, prev.cols, prev.slots),
-        };
-      });
-  },[]);
-
-
-  const addColumn = useCallback(() => {
-      setLayout((prev) => {
-        const cols = prev.cols + 1;
-
-        return {
-          ...prev,
-          cols,
-          slots: buildSlots(prev.rows, cols, prev.slots),
-        };
-      });
-  },[]);
-
-
-  const removeColumn = useCallback(() => {
-      setLayout((prev) => {
-        if (prev.cols <= 1) return prev;
-
-        const cols = prev.cols - 1;
-
-        return {
-          ...prev,
-          cols,
-          slots: buildSlots(prev.rows, cols, prev.slots),
-        };
-      });
-
-  },[]);
-
-  useEffect(() => {
-    console.log(layout);
-  }, [layout]);
-
+function Canvas() {
   const navigate = useNavigate();
-//
-//   // FUTURE: Load slides from API on mount
-//   // useEffect(() => { fetch("/api/slides").then(...) }, []);
-//   const [slides, setSlides] = useState([createSlide("two-columns")]);
+  const [searchParams] = useSearchParams();
+  const layoutIdParam = searchParams.get("layoutId");
+
+  const [slides, setSlides] = useState([createSlide("two-columns")]);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(0);
   const [selectedSectionId, setSelectedSectionId] = useState(null);
-//
-//   const currentSlide = slides[currentSlideIndex];
-//
-//   // ===== Slide Operations =====
+  const [activeLayoutId, setActiveLayoutId] = useState(layoutIdParam);
+  const [layoutDisplayName, setLayoutDisplayName] = useState("");
+  const [savedSlotIds, setSavedSlotIds] = useState([]);
+  const [savedModuleIds, setSavedModuleIds] = useState([]);
+  const [saveStatus, setSaveStatus] = useState(null);
+
+  const currentSlide = slides[currentSlideIndex];
+
+  useEffect(() => {
+    function loadLayout(layout) {
+      const { displayName, template: savedTemplate } = parseLayoutName(
+        layout.name
+      );
+      setLayoutDisplayName(displayName || layout.name);
+      setActiveLayoutId(layout.id);
+
+      const slots = layout.slots ?? [];
+      const sortedSlots = [...slots].sort(
+        (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)
+      );
+      const slotCount = sortedSlots.length;
+      const template =
+        savedTemplate && LAYOUT_TEMPLATES[savedTemplate]
+          ? savedTemplate
+          : detectTemplate(layout.cols, layout.rows, slotCount);
+
+      // Rebuild sections from template, restoring saved content from module.config
+      const templateSections = LAYOUT_TEMPLATES[template];
+      const sections = templateSections.map((defaultSection, i) => {
+        const slot = sortedSlots[i];
+        const config = slot?.module?.config;
+        if (config && (config.contentType || config.content)) {
+          return {
+            ...defaultSection,
+            contentType: config.contentType || defaultSection.contentType,
+            content: config.content || "",
+          };
+        }
+        return { ...defaultSection };
+      });
+
+      setSlides([{ layout: template, sections }]);
+      setCurrentSlideIndex(0);
+      setSelectedSectionId(null);
+      setSavedSlotIds(sortedSlots.map((s) => s.id));
+      setSavedModuleIds(sortedSlots.map((s) => s.module?.id ?? null));
+    }
+
+    if (layoutIdParam) {
+      fetch(`/api/layouts/${layoutIdParam}`)
+        .then((r) => r.json())
+        .then((res) => {
+          if (res.data) loadLayout(res.data);
+        })
+        .catch((err) => console.error("Failed to load layout:", err));
+    } else {
+      fetch("/api/layouts")
+        .then((r) => r.json())
+        .then((res) => {
+          const layouts = res.data ?? [];
+          if (layouts.length > 0) loadLayout(layouts[layouts.length - 1]);
+        })
+        .catch((err) => console.error("Failed to load layouts:", err));
+    }
+  }, [layoutIdParam]);
+
+  // ===== Save — persist modules (content) then layout (structure) =====
+  const handleSave = useCallback(async () => {
+    if (!activeLayoutId) return;
+    setSaveStatus("saving");
+
+    try {
+      const slide = slides[currentSlideIndex] || slides[0];
+      const gridInfo =
+        TEMPLATE_GRID_MAP[slide.layout] || TEMPLATE_GRID_MAP.single;
+
+      // Step 1: create or update a Module for each section
+      const moduleIds = await Promise.all(
+        slide.sections.map(async (section, i) => {
+          const moduleData = {
+            name: `section-${i + 1}`,
+            type: "CLOCK",
+            config: {
+              contentType: section.contentType,
+              content: section.content,
+            },
+            adCollection: null,
+          };
+
+          const existingId = savedModuleIds[i];
+          if (existingId) {
+            const res = await fetch(`/api/modules/${existingId}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(moduleData),
+            });
+            if (!res.ok) throw new Error(`Module update failed for section ${i}`);
+            const data = await res.json();
+            return data.data?.id ?? existingId;
+          }
+
+          const res = await fetch("/api/modules", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(moduleData),
+          });
+          if (!res.ok) throw new Error(`Module creation failed for section ${i}`);
+          const data = await res.json();
+          return data.data?.id;
+        })
+      );
+
+      // Step 2: save the layout with slot positions + module references
+      const slots = gridInfo.slots.map((slotPos, i) => ({
+        id: i < savedSlotIds.length ? savedSlotIds[i] : null,
+        moduleId: moduleIds[i] ?? null,
+        colPos: slotPos.colPos,
+        rowPos: slotPos.rowPos,
+        colSpan: slotPos.colSpan,
+        rowSpan: slotPos.rowSpan,
+        zIndex: i + 1,
+      }));
+
+      const body = {
+        name: encodeLayoutName(
+          layoutDisplayName || slide.layout,
+          slide.layout
+        ),
+        cols: gridInfo.cols,
+        rows: gridInfo.rows,
+        slots,
+      };
+
+      const layoutRes = await fetch(`/api/layouts/${activeLayoutId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      if (!layoutRes.ok) throw new Error("Layout save failed");
+      const layoutData = await layoutRes.json();
+
+      // Update tracked IDs from the response
+      if (layoutData.data?.slots) {
+        const returnedSlots = [...layoutData.data.slots].sort(
+          (a, b) => (a.zIndex ?? 0) - (b.zIndex ?? 0)
+        );
+        setSavedSlotIds(returnedSlots.map((s) => s.id));
+        setSavedModuleIds(returnedSlots.map((s) => s.module?.id ?? null));
+      }
+
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus(null), 2000);
+    } catch (err) {
+      console.error("Save error:", err);
+      setSaveStatus("error");
+      setTimeout(() => setSaveStatus(null), 3000);
+    }
+  }, [
+    activeLayoutId,
+    slides,
+    currentSlideIndex,
+    layoutDisplayName,
+    savedSlotIds,
+    savedModuleIds,
+  ]);
+
+  // ===== Slide Operations =====
   const addSlide = useCallback(() => {
-//     setSlides((prev) => [...prev, createSlide("single")]);
-//     setCurrentSlideIndex(slides.length);
-//     setSelectedSectionId(null);
-  }, []);
-//
+    setSlides((prev) => [...prev, createSlide("single")]);
+    setCurrentSlideIndex(slides.length);
+    setSelectedSectionId(null);
+  }, [slides.length]);
+
   const switchSlide = useCallback((index) => {
-//     setCurrentSlideIndex(index);
-//     setSelectedSectionId(null);
+    setCurrentSlideIndex(index);
+    setSelectedSectionId(null);
   }, []);
-//
+
   const deleteSlide = useCallback(
     (index) => {
-//       if (slides.length <= 1) return;
-//       setSlides((prev) => prev.filter((_, i) => i !== index));
-//       setCurrentSlideIndex((prev) => {
-//         if (prev >= slides.length - 1) return Math.max(0, slides.length - 2);
-//         if (index <= prev) return Math.max(0, prev - 1);
-//         return prev;
-//       });
-//       setSelectedSectionId(null);
+      if (slides.length <= 1) return;
+      setSlides((prev) => prev.filter((_, i) => i !== index));
+      setCurrentSlideIndex((prev) => {
+        if (prev >= slides.length - 1) return Math.max(0, slides.length - 2);
+        if (index <= prev) return Math.max(0, prev - 1);
+        return prev;
+      });
+      setSelectedSectionId(null);
     },
-    []
+    [slides.length]
   );
-//
-//   // ===== Layout Change =====
+
+  // ===== Layout Change =====
   const changeLayout = useCallback(
     (layout) => {
-//       setSlides((prev) =>
-//         prev.map((slide, i) =>
-//           i === currentSlideIndex
-//             ? {
-//                 ...slide,
-//                 layout,
-//                 sections: LAYOUT_TEMPLATES[layout].map((s) => ({ ...s })),
-//               }
-//             : slide
-//         )
-//       );
-//       setSelectedSectionId(null);
+      setSlides((prev) =>
+        prev.map((slide, i) =>
+          i === currentSlideIndex
+            ? {
+                ...slide,
+                layout,
+                sections: LAYOUT_TEMPLATES[layout].map((s) => ({ ...s })),
+              }
+            : slide
+        )
+      );
+      setSelectedSectionId(null);
     },
-    []
+    [currentSlideIndex]
   );
-//
-//   // ===== Section Selection =====
+
+  // ===== Section Selection =====
   const selectSection = useCallback((sectionId) => {
     setSelectedSectionId(sectionId);
   }, []);
-//
-//   // ===== Section Update (from PropertiesPanel) =====
 
-    const updateSection = useCallback((sectionKey, changes) => {
-      setLayout((prev) => ({
-        ...prev,
-        slots: prev.slots.map((slot) => {
-          const key = `${slot.rowPos}-${slot.colPos}`;
-
-          if (key === sectionKey) {
-            return {
-              ...slot,
-              ...changes,
-            };
-          }
-
-          return slot;
-        }),
-      }));
-    }, []);
-
-//
-//   // ===== Slide Reorder =====
-  const reorderSlides = useCallback(
-    (fromIndex, toIndex) => {
-//       setSlides((prev) => {
-//         const updated = [...prev];
-//         const [moved] = updated.splice(fromIndex, 1);
-//         updated.splice(toIndex, 0, moved);
-//         return updated;
-//       });
-//       // Adjust currentSlideIndex to follow the moved slide
-//       setCurrentSlideIndex((prev) => {
-//         if (prev === fromIndex) return toIndex;
-//         if (fromIndex < prev && toIndex >= prev) return prev - 1;
-//         if (fromIndex > prev && toIndex <= prev) return prev + 1;
-//         return prev;
-//       });
+  // ===== Section Update (from PropertiesPanel) =====
+  const updateSection = useCallback(
+    (sectionId, changes) => {
+      setSlides((prev) =>
+        prev.map((slide, i) =>
+          i === currentSlideIndex
+            ? {
+                ...slide,
+                sections: slide.sections.map((sec) =>
+                  sec.id === sectionId ? { ...sec, ...changes } : sec
+                ),
+              }
+            : slide
+        )
+      );
     },
-    []
+    [currentSlideIndex]
   );
-//
-//   // ===== Preview (stub) =====
-  const handlePreview = useCallback(() => {
-//     console.log("Preview slides:", JSON.stringify(slides, null, 2));
-  }, []);
-//
-//   // Get currently selected section data for the properties panel
-  const getSlotKey = (s) => s.id ?? `${s.rowPos}-${s.colPos}`;
 
-  const selectedSection = layout.slots.find(
-    (s) => getSlotKey(s) === selectedSectionId
-  );
+  // ===== Slide Reorder =====
+  const reorderSlides = useCallback((fromIndex, toIndex) => {
+    setSlides((prev) => {
+      const updated = [...prev];
+      const [moved] = updated.splice(fromIndex, 1);
+      updated.splice(toIndex, 0, moved);
+      return updated;
+    });
+    setCurrentSlideIndex((prev) => {
+      if (prev === fromIndex) return toIndex;
+      if (fromIndex < prev && toIndex >= prev) return prev - 1;
+      if (fromIndex > prev && toIndex <= prev) return prev + 1;
+      return prev;
+    });
+  }, []);
+
+  // ===== Preview (stub) =====
+  const handlePreview = useCallback(() => {
+    console.log("Preview slides:", JSON.stringify(slides, null, 2));
+  }, [slides]);
+
+  const selectedSection = currentSlide
+    ? currentSlide.sections.find((s) => s.id === selectedSectionId)
+    : null;
 
   return (
     <div className="editor">
-      {/* Top Toolbar */}
       <Toolbar
-        currentLayout={layout}
+        currentLayout={currentSlide?.layout}
         onAddSlide={addSlide}
         onChangeLayout={changeLayout}
         onPreview={handlePreview}
+        onGoToLayouts={() => navigate("/layouts")}
         onSave={handleSave}
-        onLogout={() => navigate("/")}
-
-
-        onAddRow={addRow}
-        onAddColumn={addColumn}
-
-        onRemoveRow={removeRow}
-        onRemoveColumn={removeColumn}
+        saveStatus={saveStatus}
       />
 
       <div className="editor-body">
-        {/* Left — Slides Panel */}
-{/*         <SlidesPanel */}
-{/*           slides={layout} */}
-{/*           currentSlideIndex={1} */}
-{/*           onSwitchSlide={switchSlide} */}
-{/*           onAddSlide={addSlide} */}
-{/*           onDeleteSlide={deleteSlide} */}
-{/*           onReorderSlides={reorderSlides} */}
-{/*         /> */}
+        <SlidesPanel
+          slides={slides}
+          currentSlideIndex={currentSlideIndex}
+          onSwitchSlide={switchSlide}
+          onAddSlide={addSlide}
+          onDeleteSlide={deleteSlide}
+          onReorderSlides={reorderSlides}
+        />
 
-        {/* Center — Canvas */}
         <div className="canvas-area">
           <div className="canvas-frame">
-            <LayoutRenderer
-                layout={layout}
-                slots={layout.slots}
+            {currentSlide && (
+              <LayoutRenderer
+                layout={currentSlide.layout}
+                sections={currentSlide.sections}
                 selectedSectionId={selectedSectionId}
                 onSelectSection={selectSection}
-                rows={layout.rows}
-                cols={layout.cols}
               />
+            )}
           </div>
         </div>
 
-        {/* Right — Properties Panel */}
         <PropertiesPanel
           section={selectedSection}
           onUpdate={updateSection}
-          sectionKey={selectedSectionId}
         />
       </div>
     </div>
