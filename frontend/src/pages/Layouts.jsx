@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Layouts.css';
 
+const BASE_URL = "https://cs410-digital-signage.onrender.com";
+
 function Layouts() {
   const [layouts, setLayouts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -11,7 +13,7 @@ function Layouts() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch('/api/layouts')
+    fetch(`${BASE_URL}/api/layouts`)
       .then(r => r.json())
       .then(res => setLayouts(res.data ?? []))
       .catch(() => setError('Could not reach the server.'))
@@ -20,7 +22,7 @@ function Layouts() {
 
   const handleCreate = () => {
     if (!newName.trim()) return;
-    fetch('/api/layouts', {
+    fetch(`${BASE_URL}/api/layouts`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: newName, cols: 2, rows: 2 }),
@@ -33,7 +35,7 @@ function Layouts() {
 
   const handleDelete = (e, id) => {
     e.stopPropagation();
-    fetch(`/api/layouts/${id}`, { method: 'DELETE' })
+    fetch(`${BASE_URL}/api/layouts/${id}`, { method: 'DELETE' })
       .then(() => setLayouts(prev => prev.filter(l => l.id !== id)));
   };
 
@@ -90,7 +92,12 @@ function Layouts() {
                 </div>
                 <div className="layouts-card-footer">
                   <div>
-                    <div className="layouts-card-name">{l.name}</div>
+                    <div className="layouts-card-name">{l.name.includes('::') ? l.name.split('::')[0].replace(/\[\d+\]$/, '') : l.name}</div>
+                    {l.slots && l.slots.length > 0 && (
+                      <div style={{ fontSize: '0.7rem', color: '#888', marginTop: 2 }}>
+                        {new Set(l.slots.map(s => Math.floor((s.rowPos - 1) / 100))).size} slide(s)
+                      </div>
+                    )}
                   </div>
                   <div className="layouts-card-actions">
                     <button className="layouts-action-btn" onClick={() => navigate(`/canvas?layoutId=${l.id}`)}>

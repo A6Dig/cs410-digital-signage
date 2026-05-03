@@ -83,6 +83,9 @@ function Login() {
 
   return (
     <div className="login-wrapper">
+      <div className="login-tagline">
+        &gt; Digital Signage<span className="login-tagline-cursor">_</span>
+      </div>
       <div className="login-card">
         <h1 className="login-title">Welcome</h1>
 

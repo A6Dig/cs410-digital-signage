@@ -9,7 +9,7 @@ const SLIDESHOW_IMAGES = [
   "https://placehold.co/400x200/dcfce7/22c55e?text=Slide+3",
 ];
 
-function Section({ section, isSelected, onSelect, slotKey }) {
+function Section({ section, isSelected, onSelect, slotKey, gridStyle = {} }) {
   const sectionRef = useRef(null);
   const [flexPercent, setFlexPercent] = useState(null);
 
@@ -79,8 +79,8 @@ function Section({ section, isSelected, onSelect, slotKey }) {
   }, []);
 
   const inlineStyle = flexPercent != null
-    ? { flex: `0 0 ${flexPercent}%`, overflow: "hidden" }
-    : { overflow: "hidden" };
+    ? { flex: `0 0 ${flexPercent}%`, overflow: "hidden", ...gridStyle }
+    : { overflow: "hidden", ...gridStyle };
 
   return (
     <div
@@ -94,6 +94,7 @@ function Section({ section, isSelected, onSelect, slotKey }) {
           <ContentRenderer
             contentType={section.contentType}
             content={section.content}
+            fontSize={section.fontSize}
           />
         </div>
       ) : (
@@ -114,10 +115,10 @@ function Section({ section, isSelected, onSelect, slotKey }) {
 }
 
 // ===== Content Renderer — renders content based on type =====
-function ContentRenderer({ contentType, content }) {
+function ContentRenderer({ contentType, content, fontSize }) {
   switch (contentType) {
     case "text":
-      return <p>{content}</p>;
+      return <p style={fontSize ? { fontSize: `${fontSize}px` } : undefined}>{content}</p>;
 
     case "image":
       return <img src={content} alt="Section content" />;

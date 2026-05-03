@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import '../styles/Dashboard.css';
 
+const BASE_URL = "https://cs410-digital-signage.onrender.com";
+
 const NavIcon = ({ to, children, title }) => (
   <NavLink
     to={to}
@@ -20,8 +22,8 @@ function Dashboard() {
 
   useEffect(() => {
     Promise.all([
-      fetch('/api/devices').then(r => r.json()),
-      fetch('/api/layouts').then(r => r.json()),
+      fetch(`${BASE_URL}/api/devices`).then(r => r.json()),
+      fetch(`${BASE_URL}/api/layouts`).then(r => r.json()),
     ])
       .then(([devRes, layRes]) => {
         setDevices(devRes.data ?? [])
