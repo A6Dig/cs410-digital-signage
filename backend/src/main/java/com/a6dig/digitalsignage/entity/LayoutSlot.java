@@ -76,6 +76,7 @@ public class LayoutSlot {
 //        this.layout = layout;
 //    }
 
+
     public Module getModule() {
         return module;
     }

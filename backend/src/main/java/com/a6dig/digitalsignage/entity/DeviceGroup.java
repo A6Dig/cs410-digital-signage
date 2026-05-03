@@ -14,14 +14,14 @@ public class DeviceGroup {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 50, nullable = false)
+    @Column(length = 50)
     private String name;
 
     @Column(length = 255)
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "layoutId", insertable = false, updatable = false)
+    @JoinColumn(name = "layoutId")
     private Layout layout;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
@@ -30,22 +30,20 @@ public class DeviceGroup {
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
     private LocalDateTime updatedAt;
 
-    // on create populate the createdAt and updatedAt
+    @OneToMany(mappedBy = "deviceGroup")
+    @JsonIgnore
+    private List<Device> devices;
+
     @PrePersist
     protected void onCreate() {
         createdAt = LocalDateTime.now();
         updatedAt = LocalDateTime.now();
     }
 
-    // update updatedAt date everytime update happens
     @PreUpdate
     protected void onUpdate() {
         updatedAt = LocalDateTime.now();
     }
-
-    @OneToMany(mappedBy = "deviceGroup")
-    @JsonIgnore
-    private List<Device> devices;
 
     public Long getId() {
         return id;

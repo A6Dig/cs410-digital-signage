@@ -411,3 +411,32 @@
   color: var(--text-faint);
   font-family: var(--mono);
 }
+
+/* ── Hover expand ────────────────────────────────────── */
+.dash-nav {
+  transition: width 0.25s ease;
+  overflow: hidden;
+}
+
+.dash-nav:hover {
+  width: 200px;
+}
+
+.dash-nav-icon {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 0 10px;
+  gap: 10px;
+}
+
+.dash-nav-label {
+  font-size: 12px;
+  color: var(--nav-icon);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.dash-nav:hover .dash-nav-label {
+  opacity: 1;
+}
