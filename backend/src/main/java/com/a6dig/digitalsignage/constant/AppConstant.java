@@ -14,7 +14,6 @@ public final class AppConstant {
 
         public static final String LAYOUT_SLOT_INVALID_LAYOUT_SLOT = "Invalid layout slot provided.";
 
-
         public static final String INTERNAL_SERVER_ERROR = "Internal server error";
         public static final String UNEXPECTED_ERROR = "Unexpected error occurred.";
 
@@ -68,10 +67,14 @@ public final class AppConstant {
 
         public static final class Device {
             public static final String NOT_FOUND = "Device not found";
+            public static final String PAIRING_ID_NOT_FOUND = "Pairing id not found";
             public static final String ID_NOT_PROVIDED = "Null or empty id provided";
             public static final String INVALID_DATA_PROVIDED = "Invalid data";
             public static String idDoesNotExist(Long id) {
                 return "Device with id " + id + " doesn't exist";
+            }
+            public static String pairingIdDoesNotExist(Long pairingId) {
+                return "Pairing id with " + pairingId + " doesn't exist";
             }
         }
 
@@ -142,6 +145,12 @@ public final class AppConstant {
         public static final class Device {
             public static final String CREATED = "Device created successfully";
             public static final String UPDATED = "Device updated successfully";
+            public static final String REGISTERED = "Device registered successfully";
+            public static final String PAIRED = "Device paired successfully";
+            public static final String ALREADY_PAIRED = "Device already paired";
+            public static final String PENDING_PAIRING = "Pending device pairing";
+            public static final String STATUS_UPDATED = "Device status updated successfully";
+            public static final String GROUP_UPDATED = "Device group updated successfully";
             public static final String DELETED = "Device deleted successfully";
             public static final String DELETED_ALL = "Devices deleted successfully";
         }

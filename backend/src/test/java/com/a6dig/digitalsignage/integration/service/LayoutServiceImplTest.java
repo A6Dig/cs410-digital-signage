@@ -297,24 +297,6 @@ public class LayoutServiceImplTest {
         assertLayout(updated, "Updated Layout", 1,1);
     }
 
-//
-//
-//    @Test
-//    void shouldUpdateLayoutWithNewLayoutSlot() {
-//        LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
-//                this.buildLayoutRequestDto("Main Layout", 1,1)
-//        );
-//
-//        LayoutSlotRequestUpdateDto slot = this.buildLayoutSlotRequestDto(1L,1,1,1,1,0);
-//
-//
-//        LayoutRequestDto<LayoutSlotRequestUpdateDto> updateRequest = this.buildLayoutRequestDto("Updated Layout", 1,1);
-//        updateRequest.setSlots(List.of(slot));
-//
-//        LayoutResponseDto<LayoutSlotResponseDto> updated = this.layoutServiceImpl.updateLayout(created.getId(), updateRequest);
-//        assertLayout(updated, "Updated Layout", 1,1);
-//    }
-
     @Test
     void shouldOnlyUpdateNonNullableLayoutProperties() {
         LayoutResponseDto<LayoutSlotResponseDto> created = this.layoutServiceImpl.createLayout(
