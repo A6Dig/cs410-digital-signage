@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../styles/Devices.css'
 
-const BASE_URL = '';
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 // ─── API helpers ────────────────────────────────────────────
 
@@ -10,7 +10,14 @@ async function apiFetch(path, options = {}) {
         headers: { 'Content-Type': 'application/json' },
         ...options,
     });
-    const json = await res.json();
+    
+    let json;
+    try {
+        json = await res.json();
+    } catch {
+        throw new Error('Server returned an unexpected response.');
+    }
+    
     if (!res.ok) throw new Error(json.message || 'Request failed');
     return json.data;
 }
@@ -404,28 +411,17 @@ function NewDeviceModal({ onClose, onAdd, existingDevice }) {
     async function handleSubmit() {
         if (!pairingId || !name) return;
         try {
-            const verifyRes = await fetch('/api/devices/verify-register', {
+            const verifyData = await apiFetch('/api/devices/verify-register', {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pairingId: Number(pairingId) }),
             });
-            const verifyData = await verifyRes.json();
-            if (!verifyRes.ok) {
-                setError('Pairing ID not found.');
-                return;
-            }
 
-            const deviceId = verifyData.data.id;
+            const deviceId = verifyData.id;
 
-            const pairRes = await fetch(`/api/devices/${deviceId}/pair`, {
+            await apiFetch(`/api/devices/${deviceId}/pair`, {
                 method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ pairingId: Number(pairingId), paired: true }),
             });
-            if (!pairRes.ok) {
-                setError('Pairing failed.');
-                return;
-            }
 
             onAdd({
                 id: deviceId,
@@ -435,7 +431,7 @@ function NewDeviceModal({ onClose, onAdd, existingDevice }) {
                 deviceGroupId: null,
             });
         } catch (err) {
-            setError('Could not reach the server.');
+            setError(err.message || 'Could not reach the server.');
         }
     }
 

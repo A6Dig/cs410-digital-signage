@@ -6,7 +6,7 @@ import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
 import "../styles/canvas.css";
 
-const BASE_URL = "https://cs410-digital-signage.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL;
 const SLIDE_ROW_OFFSET = 100;
 
 // ===== Layout Definitions =====

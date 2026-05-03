@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { NavLink } from 'react-router-dom'
 import '../styles/Dashboard.css';
 
-const BASE_URL = "https://cs410-digital-signage.onrender.com";
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const NavIcon = ({ to, children, title }) => (
   <NavLink
