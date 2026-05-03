@@ -144,7 +144,6 @@ function DeviceGroups({ groups, setGroups, devices, layouts }) {
                 <NewGroupModal
                     onClose={() => setShowModal(false)}
                     onAdd={handleAdd}
-                    devices={devices}
                 />
             )}
 
@@ -301,6 +300,35 @@ function DeviceCard({ device, onDelete, onEdit, layouts }) {
             </div>
             <p>Pairing ID: {device.pairingId}</p>
             <p>Layout: {assignedLayout ? assignedLayout.name : 'No layout assigned'}</p>
+        </div>
+    );
+}
+
+function NewGroupModal({ onClose, onAdd }) {
+    const [name, setName] = useState('');
+
+    function handleSubmit() {
+        if (!name) return;
+        onAdd({ name, deviceIds: [] });
+    }
+
+    return (
+        <div className="modal-overlay" onClick={onClose}>
+            <div className="modal" onClick={e => e.stopPropagation()}>
+                <h2>New Device Group</h2>
+
+                <label>Name</label>
+                <input
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                    placeholder="Group name"
+                />
+
+                <div className="modal-buttons">
+                    <button onClick={onClose}>Cancel</button>
+                    <button onClick={handleSubmit}>Create</button>
+                </div>
+            </div>
         </div>
     );
 }
