@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import '../styles/Devices.css'
 
-const BASE_URL = '';
+const BASE_URL = 'https://cs410-digital-signage.onrender.com';
 
 // ─── API helpers ────────────────────────────────────────────
 
