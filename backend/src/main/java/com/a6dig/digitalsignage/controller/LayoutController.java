@@ -82,9 +82,9 @@ public class LayoutController {
     }
 
     // layout slots
-
-    @GetMapping("/{id}/slots")
-    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getLayoutSlotsByLayoutId(@PathVariable(name = "id") Long layoutId) {
-        return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
-    }
+//
+//    @GetMapping("/{id}/slots")
+//    public ResponseEntity<APIResponse<List<LayoutResponseDto<LayoutSlotResponseDto>>>> getLayoutSlotsByLayoutId(@PathVariable(name = "id") Long layoutId) {
+//        return ResponseEntity.status(HttpStatus.OK).body(APIResponse.success(this.layoutService.getAllLayouts()));
+//    }
 }

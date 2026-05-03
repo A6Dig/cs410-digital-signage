@@ -4,6 +4,8 @@ package com.a6dig.digitalsignage.integration.service;
 import com.a6dig.digitalsignage.entity.*;
 import com.a6dig.digitalsignage.entity.Module;
 import com.a6dig.digitalsignage.exception.DeviceNotFoundException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutException;
+import com.a6dig.digitalsignage.exception.InvalidLayoutSlotException;
 import com.a6dig.digitalsignage.exception.LayoutNotFoundException;
 import com.a6dig.digitalsignage.repository.DeviceGroupRepository;
 import com.a6dig.digitalsignage.repository.DeviceRepository;
@@ -195,7 +197,7 @@ public class DeviceGroupServiceImplTest {
     void shouldThrowWhenCreateDeviceGroupWithInvalidLayout() {
         Layout layout = this.buildLayout("Layout", 1, 1);
         DeviceGroup deviceGroup = this.buildDeviceGroup("Device Group", "Description", layout, new ArrayList<>());
-        assertThrows(LayoutNotFoundException.class, () -> this.deviceGroupService.createDeviceGroup(deviceGroup));
+        assertThrows(InvalidLayoutException.class, () -> this.deviceGroupService.createDeviceGroup(deviceGroup));
     }
 
     @Test

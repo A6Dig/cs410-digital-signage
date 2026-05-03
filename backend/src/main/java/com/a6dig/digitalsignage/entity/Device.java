@@ -23,7 +23,7 @@ public class Device {
     @Column(nullable = false)
     private String ipAddress;
 
-    @Column(unique = true, nullable = false)
+    @Column(unique = true, nullable = true)
     private Long pairingId;
 
     @Column(nullable = false)
@@ -37,7 +37,7 @@ public class Device {
     @JsonIgnoreProperties({"devices"})
     private DeviceGroup deviceGroup;
 
-    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
+    @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP", updatable = false)
     private LocalDateTime createdAt;
 
     @Column(columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP")
