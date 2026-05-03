@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import Toolbar from "../components/Toolbar";
 import SlidesPanel from "../components/SlidesPanel";
@@ -6,6 +6,7 @@ import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
 import "../styles/canvas.css";
 
+const BASE_URL = "https://cs410-digital-signage.onrender.com";
 const SLIDE_ROW_OFFSET = 100;
 
 // ===== Layout Definitions =====
@@ -127,10 +128,21 @@ function detectTemplate(cols, rows, slotCount) {
   return "single";
 }
 
+const TINT_PRESETS = [
+  { label: "None", value: null, color: "#e5e7eb" },
+  { label: "Light Blue", value: "rgba(100, 149, 237, 0.35)", color: "rgb(100, 149, 237)" },
+  { label: "Yellow", value: "rgba(255, 215, 0, 0.35)", color: "rgb(255, 215, 0)" },
+  { label: "Black", value: "rgba(0, 0, 0, 0.35)", color: "rgb(0, 0, 0)" },
+  { label: "Red", value: "rgba(220, 50, 50, 0.35)", color: "rgb(220, 50, 50)" },
+  { label: "White", value: "rgba(255, 255, 255, 0.35)", color: "rgb(255, 255, 255)" },
+];
+
 function createSlide(layout = "single") {
   return {
     layout,
     sections: LAYOUT_TEMPLATES[layout].map((s) => ({ ...s })),
+    backgroundImage: null,
+    backgroundTint: null,
   };
 }
 
@@ -144,11 +156,13 @@ function Canvas() {
   const [selectedSectionId, setSelectedSectionId] = useState(null);
   const [layoutDisplayName, setLayoutDisplayName] = useState("");
   const [saveStatus, setSaveStatus] = useState(null);
+  const [isPreviewMode, setIsPreviewMode] = useState(false);
 
   const [savedLayoutId, setSavedLayoutId] = useState(null);
   const [savedModuleIds, setSavedModuleIds] = useState([]);
 
   const currentSlide = slides[currentSlideIndex];
+  const bgInputRef = useRef(null);
 
   useEffect(() => {
     function loadFromLayout(layout) {
@@ -209,7 +223,9 @@ function Canvas() {
           return { ...defaultSection };
         });
 
-        newSlides.push({ layout: template, sections });
+        const bgImage = firstConfig?.backgroundImage || null;
+        const bgTint = firstConfig?.backgroundTint || null;
+        newSlides.push({ layout: template, sections, backgroundImage: bgImage, backgroundTint: bgTint });
         newModuleIds.push(slideSlots.map((s) => s.module?.id ?? null));
       }
 
@@ -224,14 +240,14 @@ function Canvas() {
     }
 
     if (layoutIdParam) {
-      fetch(`/api/layouts/${layoutIdParam}`)
+      fetch(`${BASE_URL}/api/layouts/${layoutIdParam}`)
         .then((r) => r.json())
         .then((res) => {
           if (res.data) loadFromLayout(res.data);
         })
         .catch((err) => console.error("Failed to load layout:", err));
     } else {
-      fetch("/api/layouts")
+      fetch(`${BASE_URL}/api/layouts`)
         .then((r) => r.json())
         .then((res) => {
           const layouts = res.data ?? [];
@@ -266,13 +282,17 @@ function Canvas() {
                 template: slide.layout,
                 contentType: section.contentType,
                 content: section.content,
+                ...(i === 0 && {
+                  backgroundImage: slide.backgroundImage,
+                  backgroundTint: slide.backgroundTint,
+                }),
               },
               adCollection: null,
             };
 
             const existingId = existingModules[i];
             if (existingId) {
-              const res = await fetch(`/api/modules/${existingId}`, {
+              const res = await fetch(`${BASE_URL}/api/modules/${existingId}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(moduleData),
@@ -285,7 +305,7 @@ function Canvas() {
               return data.data?.id ?? existingId;
             }
 
-            const res = await fetch("/api/modules", {
+            const res = await fetch(`${BASE_URL}/api/modules`, {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify(moduleData),
@@ -302,7 +322,7 @@ function Canvas() {
       }
 
       if (savedLayoutId) {
-        await fetch(`/api/layouts/${savedLayoutId}/slots/all`, {
+        await fetch(`${BASE_URL}/api/layouts/${savedLayoutId}/slots/all`, {
           method: "DELETE",
         });
       }
@@ -340,13 +360,13 @@ function Canvas() {
 
       let layoutRes;
       if (savedLayoutId) {
-        layoutRes = await fetch(`/api/layouts/${savedLayoutId}`, {
+        layoutRes = await fetch(`${BASE_URL}/api/layouts/${savedLayoutId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(layoutBody),
         });
       } else {
-        layoutRes = await fetch("/api/layouts", {
+        layoutRes = await fetch(`${BASE_URL}/api/layouts`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(layoutBody),
@@ -458,14 +478,62 @@ function Canvas() {
     });
   }, []);
 
-  // ===== Preview (stub) =====
   const handlePreview = useCallback(() => {
-    console.log("Preview slides:", JSON.stringify(slides, null, 2));
-  }, [slides]);
+    setIsPreviewMode(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isPreviewMode) return;
+    const onKey = (e) => {
+      if (e.key === "Escape") setIsPreviewMode(false);
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [isPreviewMode]);
 
   const selectedSection = currentSlide
     ? currentSlide.sections.find((s) => s.id === selectedSectionId)
     : null;
+
+  const handleBgUpload = useCallback((e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      setSlides((prev) =>
+        prev.map((slide, i) =>
+          i === currentSlideIndex
+            ? { ...slide, backgroundImage: reader.result }
+            : slide
+        )
+      );
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  }, [currentSlideIndex]);
+
+  const handleRemoveBg = useCallback(() => {
+    setSlides((prev) =>
+      prev.map((slide, i) =>
+        i === currentSlideIndex
+          ? { ...slide, backgroundImage: null }
+          : slide
+      )
+    );
+  }, [currentSlideIndex]);
+
+  const handleTintChange = useCallback((tintValue) => {
+    setSlides((prev) =>
+      prev.map((slide, i) => {
+        if (i !== currentSlideIndex) return slide;
+        if (tintValue === null) return { ...slide, backgroundTint: null };
+        return {
+          ...slide,
+          backgroundTint: slide.backgroundTint === tintValue ? null : tintValue,
+        };
+      })
+    );
+  }, [currentSlideIndex]);
 
   return (
     <div className="editor">
@@ -500,9 +568,53 @@ function Canvas() {
                 rows={TEMPLATE_GRID_MAP[currentSlide.layout]?.rows ?? 1}
                 cols={TEMPLATE_GRID_MAP[currentSlide.layout]?.cols ?? 1}
                 gridSlots={TEMPLATE_GRID_MAP[currentSlide.layout]?.slots ?? []}
+                backgroundImage={currentSlide.backgroundImage}
+                backgroundTint={currentSlide.backgroundTint}
               />
             )}
           </div>
+          {currentSlide && (
+            <div className="bg-controls">
+              <div className="bg-controls-row">
+                <input
+                  ref={bgInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleBgUpload}
+                  style={{ display: "none" }}
+                />
+                <button onClick={() => bgInputRef.current?.click()}>
+                  Upload Background
+                </button>
+                {currentSlide.backgroundImage && (
+                  <>
+                    <img
+                      src={currentSlide.backgroundImage}
+                      alt="Background preview"
+                      className="bg-thumb"
+                    />
+                    <button onClick={handleRemoveBg}>Remove</button>
+                  </>
+                )}
+              </div>
+              <div className="bg-controls-row">
+                <span className="bg-label">Tint:</span>
+                {TINT_PRESETS.map((preset) => (
+                  <button
+                    key={preset.label}
+                    className={`tint-swatch${
+                      currentSlide.backgroundTint === preset.value
+                        ? " tint-swatch-active"
+                        : ""
+                    }`}
+                    style={{ backgroundColor: preset.color }}
+                    title={preset.label}
+                    onClick={() => handleTintChange(preset.value)}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <PropertiesPanel
@@ -510,6 +622,30 @@ function Canvas() {
           onUpdate={updateSection}
         />
       </div>
+
+      {isPreviewMode && currentSlide && (
+        <div className="preview-overlay">
+          <button
+            className="preview-exit"
+            onClick={() => setIsPreviewMode(false)}
+          >
+            Exit Preview
+          </button>
+          <div className="preview-canvas">
+            <LayoutRenderer
+              layout={currentSlide.layout}
+              slots={currentSlide.sections}
+              selectedSectionId={null}
+              onSelectSection={() => {}}
+              rows={TEMPLATE_GRID_MAP[currentSlide.layout]?.rows ?? 1}
+              cols={TEMPLATE_GRID_MAP[currentSlide.layout]?.cols ?? 1}
+              gridSlots={TEMPLATE_GRID_MAP[currentSlide.layout]?.slots ?? []}
+              backgroundImage={currentSlide.backgroundImage}
+              backgroundTint={currentSlide.backgroundTint}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
