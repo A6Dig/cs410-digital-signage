@@ -58,8 +58,8 @@
 
 /* ===== Slides Panel (Left) ===== */
 .slides-panel {
-  width: 200px;
-  min-width: 200px;
+  width: 160px;
+  min-width: 160px;
   background: #ffffff;
   border-right: 1px solid #dde1e6;
   display: flex;
@@ -147,9 +147,11 @@
 .canvas-area {
   flex: 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 32px;
+  gap: 12px;
   overflow: auto;
 }
 
@@ -358,8 +360,8 @@
 
 /* ===== Properties Panel (Right) ===== */
 .properties-panel {
-  width: 260px;
-  min-width: 260px;
+  width: 220px;
+  min-width: 220px;
   background: #ffffff;
   border-left: 1px solid #dde1e6;
   padding: 20px 16px;
@@ -409,6 +411,50 @@
   color: #9ca3af;
   font-size: 0.85rem;
   font-style: italic;
+}
+
+.font-size-control {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.font-size-control button {
+  width: 30px;
+  height: 30px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s;
+}
+
+.font-size-control button:hover {
+  background: #f0f0f0;
+}
+
+.font-size-control input {
+  width: 52px;
+  text-align: center;
+  margin-bottom: 0;
+  -moz-appearance: textfield;
+}
+
+.font-size-control input::-webkit-inner-spin-button,
+.font-size-control input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.font-size-unit {
+  font-size: 0.8rem;
+  color: #888;
 }
 
 /* ===== Resize Handles ===== */
@@ -469,8 +515,160 @@
 test
 */
 
-.layout-grid-test{
-    display: grid;
-    width: 100%;
-    height: 100%;
+.layout-grid-test {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+/* ===== Background / Tint ===== */
+.layout-background-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.layout-tint-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.layout-background-container.has-bg .section {
+  background: rgba(255, 255, 255, 0.75);
+}
+
+.layout-background-container.has-bg .section:hover {
+  background: rgba(249, 250, 251, 0.85);
+}
+
+.layout-background-container.has-bg .section.selected {
+  background: rgba(239, 246, 255, 0.85);
+}
+
+/* ===== Background Controls ===== */
+.bg-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 16px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  width: 800px;
+  box-sizing: border-box;
+}
+
+.bg-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bg-controls button {
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.bg-controls button:hover {
+  background: #f5f5f5;
+}
+
+.bg-thumb {
+  width: 40px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.bg-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #555;
+}
+
+.tint-swatch {
+  width: 24px;
+  height: 24px;
+  min-width: 24px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  padding: 0;
+  cursor: pointer;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.tint-swatch:hover {
+  transform: scale(1.15);
+  border-color: #999;
+}
+
+.tint-swatch.tint-swatch-active {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+/* ===== Preview Overlay ===== */
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.preview-canvas {
+  width: 90vw;
+  height: 80vh;
+  max-width: 1400px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  background: #ffffff;
+}
+
+.preview-exit {
+  position: absolute;
+  top: 24px;
+  right: 32px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(4px);
+  transition: background 0.2s;
+  z-index: 1001;
+}
+
+.preview-exit:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.preview-canvas .section {
+  cursor: default;
+  border-color: transparent;
+}
+
+.preview-canvas .section:hover {
+  border-color: transparent;
+}
+
+.preview-canvas .resize-handle {
+  display: none;
 }

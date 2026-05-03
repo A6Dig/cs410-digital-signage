@@ -94,6 +94,7 @@ function Section({ section, isSelected, onSelect, slotKey, gridStyle = {} }) {
           <ContentRenderer
             contentType={section.contentType}
             content={section.content}
+            fontSize={section.fontSize}
           />
         </div>
       ) : (
@@ -114,10 +115,10 @@ function Section({ section, isSelected, onSelect, slotKey, gridStyle = {} }) {
 }
 
 // ===== Content Renderer — renders content based on type =====
-function ContentRenderer({ contentType, content }) {
+function ContentRenderer({ contentType, content, fontSize }) {
   switch (contentType) {
     case "text":
-      return <p>{content}</p>;
+      return <p style={fontSize ? { fontSize: `${fontSize}px` } : undefined}>{content}</p>;
 
     case "image":
       return <img src={content} alt="Section content" />;

@@ -2,7 +2,7 @@
 
 const CONTENT_TYPES = ["text", "image", "video", "slideshow", "weather"];
 
-function PropertiesPanel({ section, sectionKey, onUpdate }) {
+function PropertiesPanel({ section, onUpdate }) {
   if (!section) {
     return (
       <div className="properties-panel">
@@ -17,7 +17,7 @@ function PropertiesPanel({ section, sectionKey, onUpdate }) {
 
   const handleTypeChange = (e) => {
     // Reset content when switching types
-    onUpdate(sectionKey, { contentType: e.target.value, content: "" });
+    onUpdate(section.id, { contentType: e.target.value, content: "" });
   };
 
   const handleContentChange = (e) => {
@@ -52,6 +52,40 @@ function PropertiesPanel({ section, sectionKey, onUpdate }) {
             onChange={handleContentChange}
             placeholder="Enter text..."
           />
+          <label htmlFor="font-size">Font Size</label>
+          <div className="font-size-control">
+            <button
+              onClick={() =>
+                onUpdate(section.id, {
+                  fontSize: Math.max(8, (section.fontSize || 16) - 2),
+                })
+              }
+            >
+              -
+            </button>
+            <input
+              id="font-size"
+              type="number"
+              min="8"
+              max="120"
+              value={section.fontSize || 16}
+              onChange={(e) => {
+                const v = parseInt(e.target.value, 10);
+                if (!isNaN(v) && v >= 8 && v <= 120)
+                  onUpdate(section.id, { fontSize: v });
+              }}
+            />
+            <span className="font-size-unit">px</span>
+            <button
+              onClick={() =>
+                onUpdate(section.id, {
+                  fontSize: Math.min(120, (section.fontSize || 16) + 2),
+                })
+              }
+            >
+              +
+            </button>
+          </div>
         </>
       )}
 

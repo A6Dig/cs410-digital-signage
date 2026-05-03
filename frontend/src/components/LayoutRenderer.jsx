@@ -2,37 +2,57 @@ import Section from "./Section";
 
 // ===== LayoutRenderer — renders sections according to the selected layout =====
 
-function LayoutRenderer({ layout, slots, selectedSectionId, onSelectSection, rows, cols, gridSlots }) {
+function LayoutRenderer({ layout, slots, selectedSectionId, onSelectSection, rows, cols, gridSlots, backgroundImage, backgroundTint }) {
   const getSlotKey = (slot) => slot.id ?? `${slot.rowPos}-${slot.colPos}`;
 
-  return (
-      <div
-          className="layout-grid-test"
-          style={{
-            gridTemplateColumns: `repeat(${cols}, 1fr)`,
-            gridTemplateRows: `repeat(${rows}, 1fr)`,
-          }}
-        >
-          {slots.map((slot, index) => {
-            const gridInfo = gridSlots[index];
-            const gridStyle = gridInfo ? {
-              gridColumn: `${gridInfo.colPos} / span ${gridInfo.colSpan}`,
-              gridRow: `${gridInfo.rowPos} / span ${gridInfo.rowSpan}`,
-            } : {};
+  const containerStyle = {};
+  if (backgroundImage) {
+    containerStyle.backgroundImage = `url(${backgroundImage})`;
+    containerStyle.backgroundSize = "cover";
+    containerStyle.backgroundPosition = "center";
+  }
 
-            return (
-              <Section
-                key={getSlotKey(slot)}
-                section={slot}
-                slotKey={getSlotKey(slot)}
-                isSelected={getSlotKey(slot) === selectedSectionId}
-                onSelect={onSelectSection}
-                gridStyle={gridStyle}
-              />
-            );
-          })}
+  return (
+    <div
+      className={`layout-background-container${backgroundImage ? " has-bg" : ""}`}
+      style={containerStyle}
+    >
+      {backgroundTint && (
+        <div
+          className="layout-tint-overlay"
+          style={{ backgroundColor: backgroundTint }}
+        />
+      )}
+      <div
+        className="layout-grid-test"
+        style={{
+          gridTemplateColumns: `repeat(${cols}, 1fr)`,
+          gridTemplateRows: `repeat(${rows}, 1fr)`,
+        }}
+      >
+        {slots.map((slot, index) => {
+          const gridInfo = gridSlots[index];
+          const gridStyle = gridInfo
+            ? {
+                gridColumn: `${gridInfo.colPos} / span ${gridInfo.colSpan}`,
+                gridRow: `${gridInfo.rowPos} / span ${gridInfo.rowSpan}`,
+              }
+            : {};
+
+          return (
+            <Section
+              key={getSlotKey(slot)}
+              section={slot}
+              slotKey={getSlotKey(slot)}
+              isSelected={getSlotKey(slot) === selectedSectionId}
+              onSelect={onSelectSection}
+              gridStyle={gridStyle}
+            />
+          );
+        })}
       </div>
-    );
+    </div>
+  );
 
 //   switch (layout) {
 //     // Full-width single section
