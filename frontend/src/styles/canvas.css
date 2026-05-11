@@ -308,9 +308,14 @@
 }
 
 .section-content {
+  position: absolute;
+  inset: 0;
   overflow: hidden;
-  max-width: 100%;
-  max-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
 }
 
 .section:hover {
@@ -471,7 +476,7 @@
 
 .resize-handle-right {
   top: 0;
-  right: -4px;
+  right: 0;
   width: 8px;
   height: 100%;
   cursor: col-resize;
@@ -485,7 +490,7 @@
 
 .resize-handle-bottom {
   left: 0;
-  bottom: -4px;
+  bottom: 0;
   width: 100%;
   height: 8px;
   cursor: row-resize;
@@ -671,4 +676,315 @@ test
 
 .preview-canvas .resize-handle {
   display: none;
+}
+
+/* ===== Section Widget Content (full-bleed container for widgets) ===== */
+.section-widget-content {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* ===== Clock Widget ===== */
+.clock-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: #1a1a2e;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 6px;
+  gap: 2px;
+}
+
+.clock-time {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #000000;
+  line-height: 1.1;
+}
+
+.clock-date {
+  font-size: 0.85rem;
+  color: #444;
+}
+
+.clock-timezone {
+  font-size: 0.65rem;
+  color: #888;
+}
+
+/* ===== Weather Widget ===== */
+.weather-widget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: transparent;
+  color: #1a1a2e;
+  overflow: hidden;
+  box-sizing: border-box;
+  padding: 6px;
+  gap: 2px;
+}
+
+.weather-loading {
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.weather-emoji {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.weather-city {
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.weather-temp {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #000;
+  line-height: 1.1;
+}
+
+.weather-desc {
+  font-size: 0.8rem;
+  color: #333;
+}
+
+.weather-wind {
+  font-size: 0.7rem;
+  color: #777;
+}
+
+/* ===== Slideshow Edit Mode ===== */
+.slideshow-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 12px;
+  box-sizing: border-box;
+  gap: 8px;
+  overflow-y: auto;
+}
+
+.slideshow-add-btn {
+  padding: 10px 20px;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  background: #f8f9fa;
+  color: #555;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.slideshow-add-btn:hover {
+  background: #eef1f5;
+  border-color: #3b82f6;
+  color: #3b82f6;
+}
+
+.slideshow-image-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.slideshow-image-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 8px;
+  background: #f3f4f6;
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+.slideshow-thumb {
+  width: 40px;
+  height: 28px;
+  object-fit: cover;
+  border-radius: 3px;
+  border: 1px solid #ddd;
+}
+
+.slideshow-duration-label {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #555;
+}
+
+.slideshow-duration-input {
+  width: 40px;
+  padding: 2px 4px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  text-align: center;
+}
+
+.slideshow-remove-btn {
+  width: 22px;
+  height: 22px;
+  border: none;
+  border-radius: 50%;
+  background: #ef4444;
+  color: #fff;
+  font-size: 0.85rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: background 0.15s;
+}
+
+.slideshow-remove-btn:hover {
+  background: #dc2626;
+}
+
+.slideshow-apply-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #3b82f6;
+  color: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.slideshow-apply-btn:hover {
+  background: #2563eb;
+}
+
+/* ===== Slideshow Timer Row ===== */
+.slideshow-timer-row {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 4px 0;
+}
+
+.slideshow-timer-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #444;
+}
+
+.slideshow-image-label {
+  font-size: 0.75rem;
+  color: #555;
+}
+
+/* ===== Slideshow Carousel ===== */
+.slideshow-carousel-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slideshow-slides {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.slideshow-slide {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: opacity 0.6s ease-in-out;
+}
+
+.slideshow-slide-active {
+  opacity: 1;
+}
+
+.slideshow-control {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s, background 0.15s;
+}
+
+.slideshow-carousel-container:hover .slideshow-control {
+  opacity: 1;
+}
+
+.slideshow-control:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.slideshow-control-prev {
+  left: 8px;
+}
+
+.slideshow-control-next {
+  right: 8px;
+}
+
+.slideshow-edit-toggle {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+  z-index: 5;
+}
+
+.slideshow-carousel-container:hover .slideshow-edit-toggle {
+  opacity: 1;
+}
+
+.slideshow-edit-toggle:hover {
+  background: rgba(0, 0, 0, 0.7);
 }

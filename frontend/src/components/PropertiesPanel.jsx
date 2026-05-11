@@ -1,6 +1,6 @@
 // ===== PropertiesPanel — right sidebar for editing selected section =====
 
-const CONTENT_TYPES = ["text", "image", "video", "slideshow", "weather"];
+const CONTENT_TYPES = ["text", "image", "video", "slideshow", "weather", "time"];
 
 function PropertiesPanel({ section, onUpdate }) {
   if (!section) {
@@ -122,13 +122,19 @@ function PropertiesPanel({ section, onUpdate }) {
 
       {section.contentType === "slideshow" && (
         <p className="properties-empty">
-          Slideshow cycles through placeholder images automatically.
+          Upload images inside the section to build a carousel.
         </p>
       )}
 
       {section.contentType === "weather" && (
         <p className="properties-empty">
-          Weather widget shows mock data. Replace with a live API later.
+          Live weather for Boston, MA via Open-Meteo.
+        </p>
+      )}
+
+      {section.contentType === "time" && (
+        <p className="properties-empty">
+          Live clock — Eastern Time (America/New_York).
         </p>
       )}
     </div>
