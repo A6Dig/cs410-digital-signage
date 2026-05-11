@@ -4,6 +4,7 @@ import Toolbar from "../components/Toolbar";
 import SlidesPanel from "../components/SlidesPanel";
 import LayoutRenderer from "../components/LayoutRenderer";
 import PropertiesPanel from "../components/PropertiesPanel";
+import { SectionUpdateContext } from "../components/Section";
 import "../styles/canvas.css";
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -218,6 +219,7 @@ function Canvas() {
               ...defaultSection,
               contentType: config.contentType || defaultSection.contentType,
               content: config.content || "",
+              ...(config.images && { images: config.images, slideDuration: config.slideDuration }),
             };
           }
           return { ...defaultSection };
@@ -282,6 +284,7 @@ function Canvas() {
                 template: slide.layout,
                 contentType: section.contentType,
                 content: section.content,
+                ...(section.images && section.images.length > 0 && { images: section.images, slideDuration: section.slideDuration }),
                 ...(i === 0 && {
                   backgroundImage: slide.backgroundImage,
                   backgroundTint: slide.backgroundTint,
@@ -536,6 +539,7 @@ function Canvas() {
   }, [currentSlideIndex]);
 
   return (
+    <SectionUpdateContext.Provider value={updateSection}>
     <div className="editor">
       <Toolbar
         currentLayout={currentSlide?.layout}
@@ -647,6 +651,7 @@ function Canvas() {
         </div>
       )}
     </div>
+    </SectionUpdateContext.Provider>
   );
 }
 
